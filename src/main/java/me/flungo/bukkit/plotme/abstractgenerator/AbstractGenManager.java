@@ -9,40 +9,27 @@
 package me.flungo.bukkit.plotme.abstractgenerator;
 
 import com.worldcretornica.plotme_core.api.v0_14b.IPlotMe_GeneratorManager;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
-import org.bukkit.Art;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.*;
+import java.util.logging.Level;
+
+import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
+
 /**
- *
  * @author Fabrizio Lungo <fab@lungo.co.uk>
  */
 public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
     // List of blocks that should be placed last in world generation
-    protected static final Set<Integer> blockPlacedLast = new HashSet<Integer>();
+    protected static final Set<Integer> blockPlacedLast = new HashSet<>();
 
     static {
         blockPlacedLast.add(Material.SAPLING.getId());
@@ -100,7 +87,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
     public AbstractGenManager(AbstractGenerator instance) {
         plugin = instance;
-        worldConfigs = new HashMap<String, WorldGenConfig>();
+        worldConfigs = new HashMap<>();
     }
 
     public WorldGenConfig getWGC(World w) {
@@ -172,7 +159,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
     @Override
     public List<Player> getPlayersInPlot(World w, String id) {
-        List<Player> playersInPlot = new ArrayList<Player>();
+        List<Player> playersInPlot = new ArrayList<>();
 
         for (Player p : w.getPlayers()) {
             if (getPlotId(p).equals(id)) {
@@ -258,7 +245,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
                     Location eloc = e.getLocation();
 
                     if (!(e instanceof Player) && eloc.getBlockX() >= bottom.getBlockX() && eloc.getBlockX() <= top.getBlockX()
-                            && eloc.getBlockZ() >= bottom.getBlockZ() && eloc.getBlockZ() <= top.getBlockZ()) {
+                                && eloc.getBlockZ() >= bottom.getBlockZ() && eloc.getBlockZ() <= top.getBlockZ()) {
                         e.remove();
                     }
                 }
@@ -275,7 +262,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         int highestZ = Math.max(bottomZ(id, w), topZ(id, w));
 
         return blocklocation.getBlockX() >= lowestX && blocklocation.getBlockX() <= highestX
-                && blocklocation.getBlockZ() >= lowestZ && blocklocation.getBlockZ() <= highestZ;
+                       && blocklocation.getBlockZ() >= lowestZ && blocklocation.getBlockZ() <= highestZ;
     }
 
     @Override
@@ -288,7 +275,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
 
-        Set<BlockInfo> lastblocks = new HashSet<BlockInfo>();
+        Set<BlockInfo> lastblocks = new HashSet<>();
 
         int bottomX = plot1Bottom.getBlockX();
         int topX = plot1Top.getBlockX();
@@ -335,7 +322,6 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         }
 
         lastblocks.clear();
-        lastblocks = null;
 
         //Move entities
         int minChunkX1 = (int) Math.floor((double) bottomX / 16);
@@ -348,8 +334,8 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         int minChunkZ2 = (int) Math.floor((double) (bottomZ - distanceZ) / 16);
         int maxChunkZ2 = (int) Math.floor((double) (topZ - distanceZ) / 16);
 
-        Set<Entity> entities1 = new HashSet<Entity>();
-        Set<Entity> entities2 = new HashSet<Entity>();
+        Set<Entity> entities1 = new HashSet<>();
+        Set<Entity> entities2 = new HashSet<>();
 
         for (int cx = minChunkX1; cx <= maxChunkX1; cx++) {
             for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
@@ -359,7 +345,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
                     Location eloc = e.getLocation();
 
                     if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot1Bottom.getBlockX() && eloc.getBlockX() <= plot1Top.getBlockX()
-                            && eloc.getBlockZ() >= plot1Bottom.getBlockZ() && eloc.getBlockZ() <= plot1Top.getBlockZ()) {
+                                && eloc.getBlockZ() >= plot1Bottom.getBlockZ() && eloc.getBlockZ() <= plot1Top.getBlockZ()) {
                         entities1.add(e);
                     }
                 }
@@ -374,7 +360,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
                     Location eloc = e.getLocation();
 
                     if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot2Bottom.getBlockX() && eloc.getBlockX() <= plot2Top.getBlockX()
-                            && eloc.getBlockZ() >= plot2Bottom.getBlockZ() && eloc.getBlockZ() <= plot2Top.getBlockZ()) {
+                                && eloc.getBlockZ() >= plot2Bottom.getBlockZ() && eloc.getBlockZ() <= plot2Top.getBlockZ()) {
                         entities2.add(e);
                     }
                 }

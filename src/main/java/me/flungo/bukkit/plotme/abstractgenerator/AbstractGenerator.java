@@ -8,14 +8,15 @@
  */
 package me.flungo.bukkit.plotme.abstractgenerator;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  *
@@ -29,7 +30,6 @@ public abstract class AbstractGenerator extends JavaPlugin {
     public static final String CORE_DEFAULT_LANG = "english";
     public static final String CORE_CAPTIONS_PATTERN = "caption-%s.yml";
     public static final String DEFAULT_CONFIG_NAME = "config.yml";
-    public static final String DEFAULT_LANG = "english";
     public static final String DEFAULT_CAPTIONS_FILE = "caption-english.yml";
     public static final String WORLDS_CONFIG_SECTION = "worlds";
 

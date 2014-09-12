@@ -8,17 +8,14 @@
  */
 package me.flungo.bukkit.plotme.abstractgenerator;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.*;
 
 /**
  * Represents the generation configuration for a single world.
@@ -27,10 +24,9 @@ import org.bukkit.util.Vector;
  */
 public final class WorldGenConfig implements ConfigurationSection {
 
-    private static HashMap<String, Object> DEFAULTS = new HashMap<String, Object>();
+    private static HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
-    private final HashMap<String, Object> defaults;
 
     /**
      * Creates a {@link WorldGenConfig} by wrapping a
@@ -54,9 +50,9 @@ public final class WorldGenConfig implements ConfigurationSection {
      */
     public WorldGenConfig(ConfigurationSection world, HashMap<String, Object> defaults) {
         this.world = world;
-        this.defaults = DEFAULTS;
-        this.defaults.putAll(defaults);
-        for (Map.Entry<String, Object> def : this.defaults.entrySet()) {
+        HashMap<String, Object> defaults1 = DEFAULTS;
+        defaults1.putAll(defaults);
+        for (Map.Entry<String, Object> def : defaults1.entrySet()) {
             if (!world.contains(def.getKey())) {
                 world.set(def.getKey(), def.getValue());
             }
@@ -192,7 +188,7 @@ public final class WorldGenConfig implements ConfigurationSection {
      * @param m mappings to be stored as defaults
      * @see Map#putAll(java.util.Map)
      */
-    public static void putAllDefaults(Map<? extends String, ? extends Object> m) {
+    public static void putAllDefaults(Map<? extends String, ?> m) {
         DEFAULTS.putAll(m);
     }
 
