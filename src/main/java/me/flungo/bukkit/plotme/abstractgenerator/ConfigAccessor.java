@@ -22,21 +22,21 @@
 package me.flungo.bukkit.plotme.abstractgenerator;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.worldcretornica.plotme_core.api.IConfigSection;
+import com.worldcretornica.plotme_core.api.IServerObjectBuilder;
 
 public class ConfigAccessor {
 
     private final String fileName;
-    private final JavaPlugin plugin;
+    private final AbstractGenerator plugin;
     private File configFile;
-    private FileConfiguration fileConfiguration;
+    private IConfigSection fileConfiguration;
+    private IServerObjectBuilder sob;
 
-    public ConfigAccessor(AbstractGenerator plugin, String fileName) {
+    @SuppressWarnings("deprecation")
+    public ConfigAccessor(AbstractGenerator plugin, String fileName, IServerObjectBuilder sob) {
+        this.sob = sob;
         if (plugin == null) {
             throw new IllegalArgumentException("plugin cannot be null");
         }
@@ -54,17 +54,17 @@ public class ConfigAccessor {
     }
 
     public void reloadConfig() {
-        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
+        fileConfiguration = sob.getConfig(fileName);
 
         // Look for defaults in the jar
         InputStream defConfigStream = plugin.getResource(fileName);
         if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            IConfigSection defConfig = sob.getConfig(defConfigStream);
             fileConfiguration.setDefaults(defConfig);
         }
     }
 
-    public FileConfiguration getConfig() {
+    public IConfigSection getConfig() {
         if (fileConfiguration == null) {
             this.reloadConfig();
         }
@@ -75,11 +75,8 @@ public class ConfigAccessor {
         if (fileConfiguration == null || configFile == null) {
             return;
         }
-        try {
-            getConfig().save(configFile);
-        } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
-        }
+        
+        getConfig().save(configFile);
     }
 
     public void saveDefaultConfig() {

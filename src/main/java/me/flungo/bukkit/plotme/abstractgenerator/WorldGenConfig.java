@@ -241,6 +241,7 @@ public final class WorldGenConfig implements ConfigurationSection {
      *
      * @return a clone of the Map representing the defaults
      */
+    @SuppressWarnings("unchecked")
     public static HashMap<String, Object> cloneDefaults() {
         return (HashMap<String, Object>) DEFAULTS.clone();
     }

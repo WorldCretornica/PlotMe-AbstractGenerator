@@ -8,15 +8,7 @@
  */
 package me.flungo.bukkit.plotme.abstractgenerator;
 
-import com.worldcretornica.plotme_core.api.v0_14b.IPlotMe_GeneratorManager;
-import org.bukkit.*;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
-import org.bukkit.inventory.ItemStack;
-
+import com.worldcretornica.plotme_core.api.*;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -31,67 +23,67 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     // List of blocks that should be placed last in world generation
     protected static final Set<Integer> blockPlacedLast = new HashSet<>();
 
-    static {
-        blockPlacedLast.add(Material.SAPLING.getId());
-        blockPlacedLast.add(Material.BED.getId());
-        blockPlacedLast.add(Material.POWERED_RAIL.getId());
-        blockPlacedLast.add(Material.DETECTOR_RAIL.getId());
-        blockPlacedLast.add(Material.LONG_GRASS.getId());
-        blockPlacedLast.add(Material.DEAD_BUSH.getId());
-        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
-        blockPlacedLast.add(Material.YELLOW_FLOWER.getId());
-        blockPlacedLast.add(Material.RED_ROSE.getId());
-        blockPlacedLast.add(Material.BROWN_MUSHROOM.getId());
-        blockPlacedLast.add(Material.RED_MUSHROOM.getId());
-        blockPlacedLast.add(Material.TORCH.getId());
-        blockPlacedLast.add(Material.FIRE.getId());
-        blockPlacedLast.add(Material.REDSTONE_WIRE.getId());
-        blockPlacedLast.add(Material.CROPS.getId());
-        blockPlacedLast.add(Material.LADDER.getId());
-        blockPlacedLast.add(Material.RAILS.getId());
-        blockPlacedLast.add(Material.LEVER.getId());
-        blockPlacedLast.add(Material.STONE_PLATE.getId());
-        blockPlacedLast.add(Material.WOOD_PLATE.getId());
-        blockPlacedLast.add(Material.REDSTONE_TORCH_OFF.getId());
-        blockPlacedLast.add(Material.REDSTONE_TORCH_ON.getId());
-        blockPlacedLast.add(Material.STONE_BUTTON.getId());
-        blockPlacedLast.add(Material.SNOW.getId());
-        blockPlacedLast.add(Material.PORTAL.getId());
-        blockPlacedLast.add(Material.DIODE_BLOCK_OFF.getId());
-        blockPlacedLast.add(Material.DIODE_BLOCK_ON.getId());
-        blockPlacedLast.add(Material.TRAP_DOOR.getId());
-        blockPlacedLast.add(Material.VINE.getId());
-        blockPlacedLast.add(Material.WATER_LILY.getId());
-        blockPlacedLast.add(Material.NETHER_WARTS.getId());
-        blockPlacedLast.add(Material.PISTON_BASE.getId());
-        blockPlacedLast.add(Material.PISTON_STICKY_BASE.getId());
-        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
-        blockPlacedLast.add(Material.PISTON_MOVING_PIECE.getId());
-        blockPlacedLast.add(Material.COCOA.getId());
-        blockPlacedLast.add(Material.TRIPWIRE_HOOK.getId());
-        blockPlacedLast.add(Material.TRIPWIRE.getId());
-        blockPlacedLast.add(Material.FLOWER_POT.getId());
-        blockPlacedLast.add(Material.CARROT.getId());
-        blockPlacedLast.add(Material.POTATO.getId());
-        blockPlacedLast.add(Material.WOOD_BUTTON.getId());
-        blockPlacedLast.add(Material.SKULL.getId());
-        blockPlacedLast.add(Material.GOLD_PLATE.getId());
-        blockPlacedLast.add(Material.IRON_PLATE.getId());
-        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_OFF.getId());
-        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_ON.getId());
-        blockPlacedLast.add(Material.ACTIVATOR_RAIL.getId());
-    }
-
     private AbstractGenerator plugin = null;
     private final Map<String, WorldGenConfig> worldConfigs;
+    protected IServerObjectBuilder sob;
 
-    public AbstractGenManager(AbstractGenerator instance) {
+    public AbstractGenManager(AbstractGenerator instance, IServerObjectBuilder sob) {
         plugin = instance;
         worldConfigs = new HashMap<>();
+        this.sob = sob;
+        
+        blockPlacedLast.add(sob.getMaterial("SAPLING").getId());
+        blockPlacedLast.add(sob.getMaterial("BED").getId());
+        blockPlacedLast.add(sob.getMaterial("POWERED_RAIL").getId());
+        blockPlacedLast.add(sob.getMaterial("DETECTOR_RAIL").getId());
+        blockPlacedLast.add(sob.getMaterial("LONG_GRASS").getId());
+        blockPlacedLast.add(sob.getMaterial("DEAD_BUSH").getId());
+        blockPlacedLast.add(sob.getMaterial("PISTON_EXTENSION").getId());
+        blockPlacedLast.add(sob.getMaterial("YELLOW_FLOWER").getId());
+        blockPlacedLast.add(sob.getMaterial("RED_ROSE").getId());
+        blockPlacedLast.add(sob.getMaterial("BROWN_MUSHROOM").getId());
+        blockPlacedLast.add(sob.getMaterial("RED_MUSHROOM").getId());
+        blockPlacedLast.add(sob.getMaterial("TORCH").getId());
+        blockPlacedLast.add(sob.getMaterial("FIRE").getId());
+        blockPlacedLast.add(sob.getMaterial("REDSTONE_WIRE").getId());
+        blockPlacedLast.add(sob.getMaterial("CROPS").getId());
+        blockPlacedLast.add(sob.getMaterial("LADDER").getId());
+        blockPlacedLast.add(sob.getMaterial("RAILS").getId());
+        blockPlacedLast.add(sob.getMaterial("LEVER").getId());
+        blockPlacedLast.add(sob.getMaterial("STONE_PLATE").getId());
+        blockPlacedLast.add(sob.getMaterial("WOOD_PLATE").getId());
+        blockPlacedLast.add(sob.getMaterial("REDSTONE_TORCH_OFF").getId());
+        blockPlacedLast.add(sob.getMaterial("REDSTONE_TORCH_ON").getId());
+        blockPlacedLast.add(sob.getMaterial("STONE_BUTTON").getId());
+        blockPlacedLast.add(sob.getMaterial("SNOW").getId());
+        blockPlacedLast.add(sob.getMaterial("PORTAL").getId());
+        blockPlacedLast.add(sob.getMaterial("DIODE_BLOCK_OFF").getId());
+        blockPlacedLast.add(sob.getMaterial("DIODE_BLOCK_ON").getId());
+        blockPlacedLast.add(sob.getMaterial("TRAP_DOOR").getId());
+        blockPlacedLast.add(sob.getMaterial("VINE").getId());
+        blockPlacedLast.add(sob.getMaterial("WATER_LILY").getId());
+        blockPlacedLast.add(sob.getMaterial("NETHER_WARTS").getId());
+        blockPlacedLast.add(sob.getMaterial("PISTON_BASE").getId());
+        blockPlacedLast.add(sob.getMaterial("PISTON_STICKY_BASE").getId());
+        blockPlacedLast.add(sob.getMaterial("PISTON_EXTENSION").getId());
+        blockPlacedLast.add(sob.getMaterial("PISTON_MOVING_PIECE").getId());
+        blockPlacedLast.add(sob.getMaterial("COCOA").getId());
+        blockPlacedLast.add(sob.getMaterial("TRIPWIRE_HOOK").getId());
+        blockPlacedLast.add(sob.getMaterial("TRIPWIRE").getId());
+        blockPlacedLast.add(sob.getMaterial("FLOWER_POT").getId());
+        blockPlacedLast.add(sob.getMaterial("CARROT").getId());
+        blockPlacedLast.add(sob.getMaterial("POTATO").getId());
+        blockPlacedLast.add(sob.getMaterial("WOOD_BUTTON").getId());
+        blockPlacedLast.add(sob.getMaterial("SKULL").getId());
+        blockPlacedLast.add(sob.getMaterial("GOLD_PLATE").getId());
+        blockPlacedLast.add(sob.getMaterial("IRON_PLATE").getId());
+        blockPlacedLast.add(sob.getMaterial("REDSTONE_COMPARATOR_OFF").getId());
+        blockPlacedLast.add(sob.getMaterial("REDSTONE_COMPARATOR_ON").getId());
+        blockPlacedLast.add(sob.getMaterial("ACTIVATOR_RAIL").getId());
     }
 
-    public WorldGenConfig getWGC(World w) {
-        return getWGC(w.getName());
+    public WorldGenConfig getWGC(IWorld iWorld) {
+        return getWGC(iWorld.getName());
     }
 
     public WorldGenConfig getWGC(String worldname) {
@@ -102,7 +94,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         return worldConfigs.put(worldname.toLowerCase(), wgc);
     }
 
-    public boolean containsWGC(World world) {
+    public boolean containsWGC(IWorld world) {
         return containsWGC(world.getName());
     }
 
@@ -125,7 +117,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public boolean createConfig(String worldname, Map<String, String> args, CommandSender cs) {
+    public boolean createConfig(String worldname, Map<String, String> args, ICommandSender cs) {
         WorldGenConfig wgc = plugin.getWorldGenConfig(worldname);
 
         for (String key : args.keySet()) {
@@ -153,15 +145,15 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public String getPlotId(Player player) {
+    public String getPlotId(IPlayer player) {
         return getPlotId(player.getLocation());
     }
 
     @Override
-    public List<Player> getPlayersInPlot(World w, String id) {
-        List<Player> playersInPlot = new ArrayList<>();
+    public List<IPlayer> getPlayersInPlot(IWorld w, String id) {
+        List<IPlayer> playersInPlot = new ArrayList<>();
 
-        for (Player p : w.getPlayers()) {
+        for (IPlayer p : sob.getOnlinePlayers()) {
             if (getPlotId(p).equals(id)) {
                 playersInPlot.add(p);
             }
@@ -170,7 +162,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public void setBiome(World w, String id, Biome b) {
+    public void setBiome(IWorld w, String id, IBiome b) {
         int bottomX = bottomX(id, w) - 1;
         int topX = topX(id, w) + 1;
         int bottomZ = bottomZ(id, w) - 1;
@@ -186,7 +178,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public void refreshPlotChunks(World w, String id) {
+    public void refreshPlotChunks(IWorld w, String id) {
         int bottomX = bottomX(id, w);
         int topX = topX(id, w);
         int bottomZ = bottomZ(id, w);
@@ -205,32 +197,32 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public Location getTop(World w, String id) {
+    public ILocation getTop(IWorld w, String id) {
         return getPlotTopLoc(w, id);
     }
 
     @Override
-    public Location getBottom(World w, String id) {
+    public ILocation getBottom(IWorld w, String id) {
         return getPlotBottomLoc(w, id);
     }
 
     @Override
-    public void clear(World w, String id) {
+    public void clear(IWorld w, String id) {
         clear(getBottom(w, id), getTop(w, id));
     }
 
     @Override
-    public Long[] clear(World w, String id, long maxBlocks, boolean clearEntities, Long[] start) {
+    public Long[] clear(IWorld w, String id, long maxBlocks, boolean clearEntities, Long[] start) {
         return clear(getBottom(w, id), getTop(w, id), maxBlocks, clearEntities, start);
     }
 
-    public void clearEntities(Location bottom, Location top) {
+    public void clearEntities(ILocation bottom, ILocation top) {
         int bottomX = bottom.getBlockX();
         int topX = top.getBlockX();
         int bottomZ = bottom.getBlockZ();
         int topZ = top.getBlockZ();
 
-        World w = bottom.getWorld();
+        IWorld w = bottom.getWorld();
 
         int minChunkX = (int) Math.floor((double) bottomX / 16);
         int maxChunkX = (int) Math.floor((double) topX / 16);
@@ -239,12 +231,12 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Chunk chunk = w.getChunkAt(cx, cz);
+                IChunk chunk = w.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (IEntity e : chunk.getEntities()) {
+                    ILocation eloc = e.getLocation();
 
-                    if (!(e instanceof Player) && eloc.getBlockX() >= bottom.getBlockX() && eloc.getBlockX() <= top.getBlockX()
+                    if (!(e instanceof IPlayer) && eloc.getBlockX() >= bottom.getBlockX() && eloc.getBlockX() <= top.getBlockX()
                                 && eloc.getBlockZ() >= bottom.getBlockZ() && eloc.getBlockZ() <= top.getBlockZ()) {
                         e.remove();
                     }
@@ -254,8 +246,8 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public boolean isBlockInPlot(String id, Location blocklocation) {
-        World w = blocklocation.getWorld();
+    public boolean isBlockInPlot(String id, ILocation blocklocation) {
+        IWorld w = blocklocation.getWorld();
         int lowestX = Math.min(bottomX(id, w), topX(id, w));
         int highestX = Math.max(bottomX(id, w), topX(id, w));
         int lowestZ = Math.min(bottomZ(id, w), topZ(id, w));
@@ -266,11 +258,11 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public boolean movePlot(World wFrom, World wTo, String idFrom, String idTo) {
-        Location plot1Bottom = getPlotBottomLoc(wFrom, idFrom);
-        Location plot2Bottom = getPlotBottomLoc(wTo, idTo);
-        Location plot1Top = getPlotTopLoc(wFrom, idFrom);
-        Location plot2Top = getPlotTopLoc(wTo, idTo);
+    public boolean movePlot(IWorld wFrom, IWorld wTo, String idFrom, String idTo) {
+        ILocation plot1Bottom = getPlotBottomLoc(wFrom, idFrom);
+        ILocation plot2Bottom = getPlotBottomLoc(wTo, idTo);
+        ILocation plot1Top = getPlotTopLoc(wFrom, idFrom);
+        ILocation plot2Top = getPlotTopLoc(wTo, idTo);
 
         int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
@@ -284,16 +276,16 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                Block plot1Block = wFrom.getBlockAt(x, 0, z);
+                IBlock plot1Block = wFrom.getBlockAt(x, 0, z);
                 BlockRepresentation plot1BlockRepresentation = new BlockRepresentation(plot1Block);
-                Block plot2Block = wTo.getBlockAt(x - distanceX, 0, z - distanceZ);
+                IBlock plot2Block = wTo.getBlockAt(x - distanceX, 0, z - distanceZ);
                 BlockRepresentation plot2BlockRepresentation = new BlockRepresentation(plot2Block);
 
                 String plot1Biome = plot1Block.getBiome().name();
                 String plot2Biome = plot2Block.getBiome().name();
 
-                plot1Block.setBiome(Biome.valueOf(plot2Biome));
-                plot2Block.setBiome(Biome.valueOf(plot1Biome));
+                plot1Block.setBiome(sob.getBiome(plot2Biome));
+                plot2Block.setBiome(sob.getBiome(plot1Biome));
 
                 for (int y = 0; y < wFrom.getMaxHeight(); y++) {
                     plot1Block = wFrom.getBlockAt(x, y, z);
@@ -317,7 +309,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         }
 
         for (BlockInfo bi : lastblocks) {
-            Block block = bi.loc.getBlock();
+            IBlock block = bi.loc.getBlock();
             bi.block.setBlock(block, false);
         }
 
@@ -334,17 +326,17 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         int minChunkZ2 = (int) Math.floor((double) (bottomZ - distanceZ) / 16);
         int maxChunkZ2 = (int) Math.floor((double) (topZ - distanceZ) / 16);
 
-        Set<Entity> entities1 = new HashSet<>();
-        Set<Entity> entities2 = new HashSet<>();
+        Set<IEntity> entities1 = new HashSet<>();
+        Set<IEntity> entities2 = new HashSet<>();
 
         for (int cx = minChunkX1; cx <= maxChunkX1; cx++) {
             for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
-                Chunk chunk = wFrom.getChunkAt(cx, cz);
+                IChunk chunk = wFrom.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (IEntity e : chunk.getEntities()) {
+                    ILocation eloc = e.getLocation();
 
-                    if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot1Bottom.getBlockX() && eloc.getBlockX() <= plot1Top.getBlockX()
+                    if (!(e instanceof IPlayer) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot1Bottom.getBlockX() && eloc.getBlockX() <= plot1Top.getBlockX()
                                 && eloc.getBlockZ() >= plot1Bottom.getBlockZ() && eloc.getBlockZ() <= plot1Top.getBlockZ()) {
                         entities1.add(e);
                     }
@@ -354,12 +346,12 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
 
         for (int cx = minChunkX2; cx <= maxChunkX2; cx++) {
             for (int cz = minChunkZ2; cz <= maxChunkZ2; cz++) {
-                Chunk chunk = wFrom.getChunkAt(cx, cz);
+                IChunk chunk = wFrom.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (IEntity e : chunk.getEntities()) {
+                    ILocation eloc = e.getLocation();
 
-                    if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot2Bottom.getBlockX() && eloc.getBlockX() <= plot2Top.getBlockX()
+                    if (!(e instanceof IPlayer) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot2Bottom.getBlockX() && eloc.getBlockX() <= plot2Top.getBlockX()
                                 && eloc.getBlockZ() >= plot2Bottom.getBlockZ() && eloc.getBlockZ() <= plot2Top.getBlockZ()) {
                         entities2.add(e);
                     }
@@ -367,23 +359,23 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
             }
         }
 
-        for (Entity e : entities1) {
-            Location l = e.getLocation();
-            Location newl = new Location(wTo, l.getX() - distanceX, l.getY(), l.getZ() - distanceZ);
+        for (IEntity e : entities1) {
+            ILocation l = e.getLocation();
+            ILocation newl = wTo.createLocation(l.getX() - distanceX, l.getY(), l.getZ() - distanceZ);
 
-            if (e.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame i = ((ItemFrame) e);
-                BlockFace bf = i.getFacing();
-                ItemStack is = i.getItem();
-                Rotation rot = i.getRotation();
+            if (e.getType() == sob.getEntityType("ITEM_FRAME")) {
+                IItemFrame i = ((IItemFrame) e);
+                IBlockFace bf = i.getFacing();
+                IItemStack is = i.getItem();
+                IRotation rot = i.getRotation();
 
                 i.teleport(newl);
                 i.setItem(is);
                 i.setRotation(rot);
                 i.setFacingDirection(bf, true);
-            } else if (e.getType() == EntityType.PAINTING) {
-                Painting p = ((Painting) e);
-                BlockFace bf = p.getFacing();
+            } else if (e.getType() == sob.getEntityType("PAINTING")) {
+                IPainting p = ((IPainting) e);
+                IBlockFace bf = p.getFacing();
                 int[] mod = getPaintingMod(p.getArt(), bf);
                 if (mod != null) {
                     newl = newl.add(mod[0], mod[1], mod[2]);
@@ -395,24 +387,24 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
             }
         }
 
-        for (Entity e : entities2) {
-            Location l = e.getLocation();
-            Location newl = new Location(wFrom, l.getX() + distanceX, l.getY(), l.getZ() + distanceZ);
+        for (IEntity e : entities2) {
+            ILocation l = e.getLocation();
+            ILocation newl = wFrom.createLocation(l.getX() + distanceX, l.getY(), l.getZ() + distanceZ);
 
-            if (e.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame i = ((ItemFrame) e);
-                BlockFace bf = i.getFacing();
-                ItemStack is = i.getItem();
-                Rotation rot = i.getRotation();
+            if (e.getType() == sob.getEntityType("ITEM_FRAME")) {
+                IItemFrame i = ((IItemFrame) e);
+                IBlockFace bf = i.getFacing();
+                IItemStack is = i.getItem();
+                IRotation rot = i.getRotation();
 
                 i.teleport(newl);
                 i.setItem(is);
                 i.setRotation(rot);
                 i.setFacingDirection(bf, true);
 
-            } else if (e.getType() == EntityType.PAINTING) {
-                Painting p = ((Painting) e);
-                BlockFace bf = p.getFacing();
+            } else if (e.getType() == sob.getEntityType("PAINTING")) {
+                IPainting p = ((IPainting) e);
+                IBlockFace bf = p.getFacing();
                 int[] mod = getPaintingMod(p.getArt(), bf);
                 if (mod != null) {
                     newl = newl.add(mod[0], mod[1], mod[2]);
@@ -427,7 +419,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
         return true;
     }
 
-    private int[] getPaintingMod(Art a, BlockFace bf) {
+    private int[] getPaintingMod(IArt a, IBlockFace bf) {
         int H = a.getBlockHeight();
         int W = a.getBlockWidth();
 
@@ -436,8 +428,8 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
             return new int[]{0, -1, 0};
         }
 
-        switch (bf) {
-            case WEST:
+        switch (bf.getFaceName()) {
+            case "WEST":
                 if (H == 3 && W == 4 || H == 1 && W == 2) {
                     return new int[]{0, 0, -1};
                 } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
@@ -445,7 +437,7 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
                 }
 
                 break;
-            case SOUTH:
+            case "SOUTH":
                 if (H == 3 && W == 4 || H == 1 && W == 2) {
                     return new int[]{-1, 0, 0};
                 } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
@@ -453,13 +445,13 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
                 }
 
                 break;
-            case EAST:
+            case "EAST":
                 if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
                     return new int[]{0, -1, 0};
                 }
 
                 break;
-            case NORTH:
+            case "NORTH":
                 if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
                     return new int[]{0, -1, 0};
                 }
@@ -473,22 +465,22 @@ public abstract class AbstractGenManager implements IPlotMe_GeneratorManager {
     }
 
     @Override
-    public int bottomX(String id, World w) {
+    public int bottomX(String id, IWorld w) {
         return getPlotBottomLoc(w, id).getBlockX();
     }
 
     @Override
-    public int bottomZ(String id, World w) {
+    public int bottomZ(String id, IWorld w) {
         return getPlotBottomLoc(w, id).getBlockZ();
     }
 
     @Override
-    public int topX(String id, World w) {
+    public int topX(String id, IWorld w) {
         return getPlotTopLoc(w, id).getBlockX();
     }
 
     @Override
-    public int topZ(String id, World w) {
+    public int topZ(String id, IWorld w) {
         return getPlotTopLoc(w, id).getBlockZ();
     }
 

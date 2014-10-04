@@ -1,28 +1,13 @@
-/*
- * Copyright (C) 2013 Fabrizio Lungo <fab@lungo.co.uk> - All Rights Reserved
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- *
- * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
- */
 package me.flungo.bukkit.plotme.abstractgenerator;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-/**
- *
- * @author Fabrizio Lungo <fab@lungo.co.uk>
- */
-public abstract class AbstractGenerator extends JavaPlugin {
+import com.worldcretornica.plotme_core.api.IConfigSection;
+
+public abstract class AbstractGenerator {
 
     public static final String CORE_PLUGIN_NAME = "PlotMe";
     public static final String CORE_CONFIG_NAME = "core-config.yml";
@@ -38,12 +23,11 @@ public abstract class AbstractGenerator extends JavaPlugin {
 
     private File coreConfigFile;
 
-    private FileConfiguration coreConfig;
-    private HashMap<String, FileConfiguration> coreCaptions;
+    private IConfigSection coreConfig;
+    private HashMap<String, IConfigSection> coreCaptions;
     private ConfigAccessor configCA;
     protected ConfigAccessor captionsCA;
 
-    @Override
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
@@ -55,7 +39,6 @@ public abstract class AbstractGenerator extends JavaPlugin {
      */
     public abstract void initialize();
 
-    @Override
     public final void onDisable() {
         configFolder = null;
         configCA = null;
@@ -222,7 +205,7 @@ public abstract class AbstractGenerator extends JavaPlugin {
      * @return Plugin configuration
      */
     @Override
-    public FileConfiguration getConfig() {
+    public IConfigSection getConfig() {
         return configCA.getConfig();
     }
 
