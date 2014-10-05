@@ -6,7 +6,7 @@
  *
  * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
  */
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator;
 
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;

@@ -1,13 +1,20 @@
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import com.worldcretornica.plotme_core.api.IConfigSection;
+import com.worldcretornica.plotme_abstractgenerator.AbstractGenManager;
+import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
+import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
+import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 
-public abstract class AbstractGenerator {
+public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     public static final String CORE_PLUGIN_NAME = "PlotMe";
     public static final String CORE_CONFIG_NAME = "core-config.yml";
@@ -23,10 +30,10 @@ public abstract class AbstractGenerator {
 
     private File coreConfigFile;
 
-    private IConfigSection coreConfig;
-    private HashMap<String, IConfigSection> coreCaptions;
-    private ConfigAccessor configCA;
-    protected ConfigAccessor captionsCA;
+    private FileConfiguration coreConfig;
+    private HashMap<String, FileConfiguration> coreCaptions;
+    private BukkitConfigAccessor configCA;
+    protected BukkitConfigAccessor captionsCA;
 
     public final void onEnable() {
         setupConfigFolders();
@@ -38,7 +45,7 @@ public abstract class AbstractGenerator {
      * Called when this plugin is enabled.
      */
     public abstract void initialize();
-
+    
     public final void onDisable() {
         configFolder = null;
         configCA = null;
@@ -190,7 +197,6 @@ public abstract class AbstractGenerator {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void reloadConfig() {
         configCA.reloadConfig();
     }
@@ -204,15 +210,13 @@ public abstract class AbstractGenerator {
      *
      * @return Plugin configuration
      */
-    @Override
-    public IConfigSection getConfig() {
+    public FileConfiguration getConfig() {
         return configCA.getConfig();
     }
 
     /**
      * Saves the {@link FileConfiguration} retrievable by {@link #getConfig()}.
      */
-    @Override
     public void saveConfig() {
         configCA.saveConfig();
     }
@@ -223,7 +227,6 @@ public abstract class AbstractGenerator {
      * embedded in the plugin, an empty config.yml file is saved. This should
      * fail silently if the config.yml already exists.
      */
-    @Override
     public void saveDefaultConfig() {
         configCA.saveDefaultConfig();
     }
@@ -233,7 +236,7 @@ public abstract class AbstractGenerator {
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
-        configCA = new ConfigAccessor(this, DEFAULT_CONFIG_NAME);
+        configCA = new BukkitConfigAccessor(this, DEFAULT_CONFIG_NAME);
 
         // Set defaults for WorldGenConfig
         for (AbstractWorldConfigPath configPath : AbstractWorldConfigPath.values()) {
@@ -241,7 +244,7 @@ public abstract class AbstractGenerator {
         }
 
         // Set the config accessor for the main caption-english.yml
-        captionsCA = new ConfigAccessor(this, DEFAULT_CAPTIONS_FILE);
+        captionsCA = new BukkitConfigAccessor(this, DEFAULT_CAPTIONS_FILE);
         // Save default config into file.
         captionsCA.saveConfig();
     }
@@ -254,7 +257,7 @@ public abstract class AbstractGenerator {
      * @return The {@link WorldGenConfig}
      * @see #getWorldGenConfig(java.lang.String, java.util.HashMap)
      */
-    protected WorldGenConfig getWorldGenConfig(String world) {
+    public WorldGenConfig getWorldGenConfig(String world) {
         return getWorldGenConfig(world, new HashMap<String, Object>());
     }
 

@@ -1,4 +1,4 @@
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator;
 
 import com.worldcretornica.plotme_core.api.IBlock;
 

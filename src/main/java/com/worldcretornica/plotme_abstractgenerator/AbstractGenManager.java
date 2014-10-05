@@ -6,14 +6,15 @@
  *
  * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
  */
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator;
 
 import com.worldcretornica.plotme_core.api.*;
+
 import java.util.*;
 import java.util.logging.Level;
 
-import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static me.flungo.bukkit.plotme.abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
 /**
  * @author Fabrizio Lungo <fab@lungo.co.uk>
