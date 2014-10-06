@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.worldcretornica.plotme_abstractgenerator.AbstractGenManager;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
@@ -287,5 +287,5 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         return new WorldGenConfig(worldConfigurationSection, defaults);
     }
 
-    public abstract AbstractGenManager getGeneratorManager();
+    public abstract BukkitAbstractGenManager getGeneratorManager();
 }

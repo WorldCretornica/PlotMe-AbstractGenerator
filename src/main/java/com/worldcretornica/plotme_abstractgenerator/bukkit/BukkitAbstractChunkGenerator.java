@@ -11,10 +11,10 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
-import com.worldcretornica.plotme_core.api.IPlotMe_ChunkGenerator;
-import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
+import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_ChunkGenerator;
+import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 
-public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implements IPlotMe_ChunkGenerator {
+public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implements IBukkitPlotMe_ChunkGenerator {
 
     private final String worldname;
     private final BukkitAbstractGenerator plugin;
@@ -31,7 +31,7 @@ public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implem
     }
 
     @Override
-    public IPlotMe_GeneratorManager getManager() {
+    public IBukkitPlotMe_GeneratorManager getManager() {
         return plugin.getGeneratorManager();
     }
 

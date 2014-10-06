@@ -1,22 +1,23 @@
-package com.worldcretornica.plotme_abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import com.worldcretornica.plotme_core.api.IBlock;
+import org.bukkit.block.Block;
 
-public class BlockRepresentation {
+public class BukkitBlockRepresentation {
 
     private final Short id;
     private final Byte data;
 
-    public BlockRepresentation(short id, byte value) {
+    public BukkitBlockRepresentation(short id, byte value) {
         this.id = id;
         this.data = value;
     }
 
-    public BlockRepresentation(String idvalue) {
+    public BukkitBlockRepresentation(String idvalue) {
         this(getBlockId(idvalue), getBlockData(idvalue));
     }
 
-    public BlockRepresentation(IBlock block) {
+    @SuppressWarnings("deprecation")
+    public BukkitBlockRepresentation(Block block) {
         this((short) block.getTypeId(), block.getData());
     }
 
@@ -48,11 +49,12 @@ public class BlockRepresentation {
         return (data == 0) ? id.toString() : id.toString() + ":" + data.toString();
     }
 
-    public boolean setBlock(IBlock b) {
+    public boolean setBlock(Block b) {
         return setBlock(b, true);
     }
 
-    public boolean setBlock(IBlock block, boolean applyPhysics) {
+    @SuppressWarnings("deprecation")
+    public boolean setBlock(Block block, boolean applyPhysics) {
         return block.setTypeIdAndData(getId(), getData(), applyPhysics);
     }
 

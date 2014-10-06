@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.flungo.bukkit</groupId>
+    <groupId>com.worldcretornica</groupId>
     <artifactId>PlotMe-AbstractGenerator</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -33,6 +33,7 @@
                                     <artifact>com.worldcretornica:PlotMe-Core</artifact>
                                     <includes>
                                         <include>com/worldcretornica/plotme_core/api/**</include>
+                                        <include>com/worldcretornica/plotme_core/bukkit/api/**</include>
                                     </includes>
                                 </filter>
                             </filters>
@@ -91,5 +92,4 @@
             <version>0.14-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
 </project>

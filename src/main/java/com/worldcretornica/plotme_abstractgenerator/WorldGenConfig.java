@@ -15,6 +15,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
+
 import java.util.*;
 
 /**
@@ -277,11 +279,11 @@ public final class WorldGenConfig implements ConfigurationSection {
         return DEFAULTS.entrySet();
     }
 
-    public BlockRepresentation getBlockRepresentation(String string) {
-        return new BlockRepresentation(getString(string));
+    public BukkitBlockRepresentation getBlockRepresentation(String string) {
+        return new BukkitBlockRepresentation(getString(string));
     }
 
-    public BlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
+    public BukkitBlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
         return getBlockRepresentation(wcp.path());
     }
 
@@ -366,8 +368,8 @@ public final class WorldGenConfig implements ConfigurationSection {
 
     @Override
     public void set(String string, Object o) {
-        if (o instanceof BlockRepresentation) {
-            o = ((BlockRepresentation) o).getBlockIdValue();
+        if (o instanceof BukkitBlockRepresentation) {
+            o = ((BukkitBlockRepresentation) o).getBlockIdValue();
         }
         world.set(string, o);
     }
