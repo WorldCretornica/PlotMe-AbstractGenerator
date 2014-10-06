@@ -46,7 +46,7 @@ public class BukkitBlockRepresentation {
     }
 
     public String getBlockIdValue() {
-        return (data == 0) ? id.toString() : id.toString() + ":" + data.toString();
+        return data == 0 ? id.toString() : id + ":" + data;
     }
 
     public boolean setBlock(Block b) {

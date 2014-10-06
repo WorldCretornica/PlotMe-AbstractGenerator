@@ -1,18 +1,17 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
-
+import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
+import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
+import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
-import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
-import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
@@ -85,7 +84,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Gets a <code>FileConfiguration</code> for the PlotMe core plugin, read
+     * Gets a {@code FileConfiguration} for the PlotMe core plugin, read
      * from "config.yml" in the PlotMe core data folder.
      *
      * @return PlotMe Core configuration
@@ -98,7 +97,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Saves the <code>FileConfiguration</code> retrievable by
+     * Saves the {@code FileConfiguration} retrievable by
      * {@link #getCoreConfig()}.
      */
     public void saveCoreConfig() {
@@ -136,7 +135,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Gets a <code>FileConfiguration</code> for the core PlotMe plugin's
+     * Gets a {@code FileConfiguration} for the core PlotMe plugin's
      * caption file for the default language.
      *
      * @return PlotMe Core captions configuration
@@ -146,7 +145,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Gets a <code>FileConfiguration</code> for the core PlotMe plugin's
+     * Gets a {@code FileConfiguration} for the core PlotMe plugin's
      * caption file for the specified language.
      *
      * @param lang The language to get the captions for
@@ -160,7 +159,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Saves the <code>FileConfiguration</code> retrievable by
+     * Saves the {@code FileConfiguration} retrievable by
      * {@link #getCoreCaptions()}.
      */
     public void saveCoreCaptions() {
@@ -168,7 +167,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Saves the <code>FileConfiguration</code> retrievable by
+     * Saves the {@code FileConfiguration} retrievable by
      * {@link #getCoreCaptions(java.lang.String) }.
      *
      * @param lang The language to save the captions for
@@ -194,9 +193,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         return configFolder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void reloadConfig() {
         configCA.reloadConfig();
     }

@@ -3,27 +3,16 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
-
-import java.util.*;
-import java.util.logging.Level;
-
-import org.bukkit.Art;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
+import java.util.logging.Level;
 
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
@@ -33,7 +22,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     // List of blocks that should be placed last in world generation
     protected static final Set<Integer> blockPlacedLast = new HashSet<>();
 
-    private AbstractGenerator plugin = null;
+    private AbstractGenerator plugin;
     private final Map<String, WorldGenConfig> worldConfigs;
 
     @SuppressWarnings("deprecation")
