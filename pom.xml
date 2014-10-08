@@ -66,19 +66,9 @@
             <id>hawkfalcon-repo</id>
             <url>http://ci.hawkfalcon.com/plugin/repository/everything/</url>
         </repository>
-        <repository>
-            <id>flungo-repo</id>
-            <url>http://ci.flungo.me/plugin/repository/everything/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-	        <version>4.12-beta-1</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
