@@ -1,11 +1,3 @@
-/*
- * Copyright (C) 2013 Fabrizio Lungo <fab@lungo.co.uk> - All Rights Reserved
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- *
- * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
- */
 package com.worldcretornica.plotme_abstractgenerator;
 
 import org.bukkit.Color;
@@ -22,10 +14,11 @@ import java.util.*;
 /**
  * Represents the generation configuration for a single world.
  *
- * @author Fabrizio Lungo <fab@lungo.co.uk>
  */
 public final class WorldGenConfig implements ConfigurationSection {
 
+    //TODO Abstract this class
+    
     private static HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
