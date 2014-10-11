@@ -3,7 +3,6 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,6 +34,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     private BukkitConfigAccessor configCA;
     protected BukkitConfigAccessor captionsCA;
 
+    @Override
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
@@ -45,7 +45,8 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * Called when this plugin is enabled.
      */
     public abstract void initialize();
-    
+
+    @Override
     public final void onDisable() {
         configFolder = null;
         configCA = null;
@@ -190,10 +191,12 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *
      * @return The folder
      */
+    @Override
     public File getConfigFolder() {
         return configFolder;
     }
 
+    @Override
     public void reloadConfig() {
         configCA.reloadConfig();
     }
@@ -207,6 +210,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *
      * @return Plugin configuration
      */
+    @Override
     public FileConfiguration getConfig() {
         return configCA.getConfig();
     }
@@ -214,6 +218,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     /**
      * Saves the {@link FileConfiguration} retrievable by {@link #getConfig()}.
      */
+    @Override
     public void saveConfig() {
         configCA.saveConfig();
     }
@@ -224,6 +229,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * embedded in the plugin, an empty config.yml file is saved. This should
      * fail silently if the config.yml already exists.
      */
+    @Override
     public void saveDefaultConfig() {
         configCA.saveDefaultConfig();
     }
@@ -254,6 +260,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * @return The {@link WorldGenConfig}
      * @see #getWorldGenConfig(java.lang.String, java.util.HashMap)
      */
+    @Override
     public WorldGenConfig getWorldGenConfig(String world) {
         return getWorldGenConfig(world, new HashMap<String, Object>());
     }
