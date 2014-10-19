@@ -3,7 +3,6 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
-
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -485,9 +484,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     public boolean isValidId(String id) {
         String[] coords = id.split(";");
 
-        if (coords.length != 2) {
-            return false;
-        } else {
+        if (coords.length == 2) {
             try {
                 Integer.parseInt(coords[0]);
                 Integer.parseInt(coords[1]);
@@ -495,6 +492,8 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             } catch (NumberFormatException e) {
                 return false;
             }
+        } else {
+            return false;
         }
     }
 
