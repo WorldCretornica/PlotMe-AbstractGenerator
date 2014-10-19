@@ -64,6 +64,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         coreFolder = new File(pluginsFolder, CORE_PLUGIN_NAME);
         coreConfigFile = new File(coreFolder, CORE_CONFIG_NAME);
         configFolder = new File(coreFolder, getName());
+        //noinspection ResultOfMethodCallIgnored
         configFolder.mkdirs();
     }
 
@@ -119,7 +120,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     /**
      * Discards any data in {@link #getCoreCaptions()} and reloads from disk.
-     * <p>
+     * <p/>
      * Reloads the default PlotMe plugin language.
      */
     public void reloadCoreCaptions() {
@@ -204,7 +205,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     /**
      * Gets a {@link FileConfiguration} for this plugin, read through
      * "config.yml"
-     * <p>
+     * <p/>
      * If there is a default config.yml embedded in this plugin, it will be
      * provided as a default for this Configuration.
      *
@@ -270,9 +271,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * specified in the HashMap which maps config paths to default values to be
      * added to or override the global defaults for {@link WorldGenConfig}.
      *
-     * @param world The world to get the {@link WorldGenConfig} for
+     * @param world    The world to get the {@link WorldGenConfig} for
      * @param defaults A map of paths to their default values to be populated
-     * for the WorldGenConfig
+     *                 for the WorldGenConfig
      * @return The {@link WorldGenConfig}
      */
     protected WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
