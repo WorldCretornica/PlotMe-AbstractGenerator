@@ -12,7 +12,7 @@ public enum AbstractWorldConfigPath implements WorldConfigPath {
     public final String path;
     public final Object def;
 
-    private AbstractWorldConfigPath(String path, Object def) {
+    AbstractWorldConfigPath(String path, Object def) {
         this.path = path;
         this.def = def;
     }

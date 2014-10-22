@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    public static final String CORE_PLUGIN_NAME = "PlotMe";
+    private static final String CORE_PLUGIN_NAME = "PlotMe";
     public static final String CORE_CONFIG_NAME = "core-config.yml";
     public static final String CORE_LANG_PATH = "Language";
     public static final String CORE_DEFAULT_LANG = "english";
