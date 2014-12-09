@@ -2,11 +2,10 @@ package com.worldcretornica.plotme_abstractgenerator;
 
 public enum AbstractWorldConfigPath implements WorldConfigPath {
 
-    PLOT_SIZE("PlotSize", 16),
+    PLOT_SIZE("PlotSize", 32),
     X_TRANSLATION("XTranslation", 0),
     Z_TRANSLATION("ZTranslation", 0),
     GROUND_LEVEL("GroundHeight", 64),
-    BASE_BLOCK("BottomBlock", "7"),
     FILL_BLOCK("FillBlock", "3");
 
     public final String path;

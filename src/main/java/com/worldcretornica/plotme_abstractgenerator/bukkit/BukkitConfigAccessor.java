@@ -1,14 +1,13 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 
 public class BukkitConfigAccessor {
 
@@ -20,9 +19,6 @@ public class BukkitConfigAccessor {
     public BukkitConfigAccessor(AbstractGenerator plugin, String fileName) {
         if (plugin == null) {
             throw new IllegalArgumentException("plugin cannot be null");
-        }
-        if (!plugin.isInitialized()) {
-            throw new IllegalArgumentException("plugin must be initiaized");
         }
         this.plugin = plugin;
         this.fileName = fileName;

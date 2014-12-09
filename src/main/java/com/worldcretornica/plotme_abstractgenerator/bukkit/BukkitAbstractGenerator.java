@@ -3,36 +3,24 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
+import com.worldcretornica.plotme_core.PlotMe_Core;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    private static final String CORE_PLUGIN_NAME = "PlotMe";
-    public static final String CORE_CONFIG_NAME = "core-config.yml";
-    public static final String CORE_LANG_PATH = "Language";
-    public static final String CORE_DEFAULT_LANG = "english";
-    public static final String CORE_CAPTIONS_PATTERN = "caption-%s.yml";
     public static final String DEFAULT_CONFIG_NAME = "config.yml";
-    public static final String DEFAULT_CAPTIONS_FILE = "caption-english.yml";
     public static final String WORLDS_CONFIG_SECTION = "worlds";
-
+    private static final String CORE_PLUGIN_NAME = "PlotMe";
     private File coreFolder;
     private File configFolder;
 
-    private File coreConfigFile;
-
-    private FileConfiguration coreConfig;
-    private HashMap<String, FileConfiguration> coreCaptions;
     private BukkitConfigAccessor configCA;
-    protected BukkitConfigAccessor captionsCA;
+    private BukkitConfigAccessor captionsCA;
 
     @Override
     public final void onEnable() {
@@ -62,8 +50,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     private void setupConfigFolders() {
         File pluginsFolder = getDataFolder().getParentFile();
         coreFolder = new File(pluginsFolder, CORE_PLUGIN_NAME);
-        coreConfigFile = new File(coreFolder, CORE_CONFIG_NAME);
+        getLogger().info(coreFolder.getName());
         configFolder = new File(coreFolder, getName());
+        getLogger().info(configFolder.getName());
         //noinspection ResultOfMethodCallIgnored
         configFolder.mkdirs();
     }
@@ -77,113 +66,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     public File getCoreFolder() {
         return coreFolder;
-    }
-
-    /**
-     * Discards any data in {@link #getCoreConfig()} and reloads from disk.
-     */
-    public void reloadCoreConfig() {
-        coreConfig = YamlConfiguration.loadConfiguration(coreConfigFile);
-    }
-
-    /**
-     * Gets a {@code FileConfiguration} for the PlotMe core plugin, read
-     * from "config.yml" in the PlotMe core data folder.
-     *
-     * @return PlotMe Core configuration
-     */
-    public FileConfiguration getCoreConfig() {
-        if (coreConfig == null) {
-            reloadCoreConfig();
-        }
-        return coreConfig;
-    }
-
-    /**
-     * Saves the {@code FileConfiguration} retrievable by
-     * {@link #getCoreConfig()}.
-     */
-    public void saveCoreConfig() {
-        if (coreConfig == null || coreConfigFile == null) {
-            return;
-        }
-        try {
-            getConfig().save(coreConfigFile);
-        } catch (IOException ex) {
-            getLogger().log(Level.SEVERE, "Could not save config to " + coreConfigFile, ex);
-        }
-    }
-
-    private File getCoreCaptionsFile(String lang) {
-        return new File(coreFolder, String.format(CORE_CAPTIONS_PATTERN, lang));
-    }
-
-    /**
-     * Discards any data in {@link #getCoreCaptions()} and reloads from disk.
-     * <p/>
-     * Reloads the default PlotMe plugin language.
-     */
-    public void reloadCoreCaptions() {
-        reloadCoreCaptions(getCoreConfig().getString(CORE_LANG_PATH, CORE_DEFAULT_LANG));
-    }
-
-    /**
-     * Discards any data in {@link #getCoreCaptions(String lang)} and reloads
-     * from disk.
-     *
-     * @param lang The language to reload
-     */
-    public void reloadCoreCaptions(String lang) {
-        coreCaptions.put(lang, YamlConfiguration.loadConfiguration(getCoreCaptionsFile(lang)));
-    }
-
-    /**
-     * Gets a {@code FileConfiguration} for the core PlotMe plugin's
-     * caption file for the default language.
-     *
-     * @return PlotMe Core captions configuration
-     */
-    public FileConfiguration getCoreCaptions() {
-        return getCoreCaptions(getCoreConfig().getString(CORE_LANG_PATH, CORE_DEFAULT_LANG));
-    }
-
-    /**
-     * Gets a {@code FileConfiguration} for the core PlotMe plugin's
-     * caption file for the specified language.
-     *
-     * @param lang The language to get the captions for
-     * @return PlotMe Core captions configuration
-     */
-    public FileConfiguration getCoreCaptions(String lang) {
-        if (!coreCaptions.containsKey(lang)) {
-            reloadCoreConfig();
-        }
-        return coreCaptions.get(lang);
-    }
-
-    /**
-     * Saves the {@code FileConfiguration} retrievable by
-     * {@link #getCoreCaptions()}.
-     */
-    public void saveCoreCaptions() {
-        saveCoreCaptions(getCoreConfig().getString(CORE_LANG_PATH, CORE_DEFAULT_LANG));
-    }
-
-    /**
-     * Saves the {@code FileConfiguration} retrievable by
-     * {@link #getCoreCaptions(java.lang.String) }.
-     *
-     * @param lang The language to save the captions for
-     */
-    public void saveCoreCaptions(String lang) {
-        if (!coreCaptions.containsKey(lang)) {
-            return;
-        }
-        try {
-            coreCaptions.get(lang).save(getCoreCaptionsFile(lang));
-        } catch (IOException ex) {
-            getLogger().log(Level.SEVERE, "Could not save config to " + coreConfigFile, ex);
-        }
     }
 
     /**
@@ -248,7 +130,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         }
 
         // Set the config accessor for the main caption-english.yml
-        captionsCA = new BukkitConfigAccessor(this, DEFAULT_CAPTIONS_FILE);
+        captionsCA = new BukkitConfigAccessor(this, PlotMe_Core.CAPTION_FILE);
         // Save default config into file.
         captionsCA.saveConfig();
     }

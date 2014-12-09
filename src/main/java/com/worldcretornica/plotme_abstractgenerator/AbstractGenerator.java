@@ -14,8 +14,6 @@ public interface AbstractGenerator {
 
     InputStream getResource(String fileName);
 
-    boolean isInitialized();
-
     void saveResource(String fileName, boolean b);
 
     WorldGenConfig getWorldGenConfig(String worldname);

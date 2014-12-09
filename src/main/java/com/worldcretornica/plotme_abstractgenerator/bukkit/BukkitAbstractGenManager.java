@@ -7,7 +7,6 @@ import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +21,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     // List of blocks that should be placed last in world generation
     protected static final Set<Integer> blockPlacedLast = new HashSet<>();
 
-    private AbstractGenerator plugin;
+    private final AbstractGenerator plugin;
     private final Map<String, WorldGenConfig> worldConfigs;
 
     @SuppressWarnings("deprecation")
@@ -115,7 +114,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public boolean createConfig(String worldname, Map<String, String> args, CommandSender cs) {
+    public boolean createConfig(String worldname, Map<String, String> args) {
         WorldGenConfig wgc = plugin.getWorldGenConfig(worldname);
 
         for (String key : args.keySet()) {
@@ -148,7 +147,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public List<Player> getPlayersInPlot(World w, String id) {
+    public List<Player> getPlayersInPlot(String id) {
         List<Player> playersInPlot = new ArrayList<>();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -210,8 +209,8 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public Long[] clear(World w, String id, long maxBlocks, boolean clearEntities, Long[] start) {
-        return clear(getBottom(w, id), getTop(w, id), maxBlocks, clearEntities, start);
+    public Long[] clear(World w, String id, long maxBlocks, Long[] start) {
+        return clear(getBottom(w, id), getTop(w, id), maxBlocks, start);
     }
 
     public void clearEntities(Location bottom, Location top) {
@@ -257,11 +256,11 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean movePlot(World wFrom, World wTo, String idFrom, String idTo) {
-        Location plot1Bottom = getPlotBottomLoc(wFrom, idFrom);
-        Location plot2Bottom = getPlotBottomLoc(wTo, idTo);
-        Location plot1Top = getPlotTopLoc(wFrom, idFrom);
-        Location plot2Top = getPlotTopLoc(wTo, idTo);
+    public boolean movePlot(World world, String idFrom, String idTo) {
+        Location plot1Bottom = getPlotBottomLoc(world, idFrom);
+        Location plot2Bottom = getPlotBottomLoc(world, idTo);
+        Location plot1Top = getPlotTopLoc(world, idFrom);
+        Location plot2Top = getPlotTopLoc(world, idTo);
 
         int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
@@ -275,30 +274,30 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                Block plot1Block = wFrom.getBlockAt(x, 0, z);
+                Block plot1Block = world.getBlockAt(x, 0, z);
                 BukkitBlockRepresentation plot1BlockRepresentation = new BukkitBlockRepresentation(plot1Block);
-                Block plot2Block = wTo.getBlockAt(x - distanceX, 0, z - distanceZ);
+                Block plot2Block = world.getBlockAt(x - distanceX, 0, z - distanceZ);
                 BukkitBlockRepresentation plot2BlockRepresentation = new BukkitBlockRepresentation(plot2Block);
 
                 plot1Block.setBiome(plot2Block.getBiome());
                 plot2Block.setBiome(plot1Block.getBiome());
 
-                for (int y = 0; y < wFrom.getMaxHeight(); y++) {
-                    plot1Block = wFrom.getBlockAt(x, y, z);
-                    plot2Block = wTo.getBlockAt(x - distanceX, y, z - distanceZ);
+                for (int y = 0; y < 256; y++) {
+                    plot1Block = world.getBlockAt(x, y, z);
+                    plot2Block = world.getBlockAt(x - distanceX, y, z - distanceZ);
 
                     if (!blockPlacedLast.contains((int) plot2BlockRepresentation.getId())) {
                         plot2BlockRepresentation.setBlock(plot1Block, false);
                     } else {
                         plot1Block.setTypeId(0, false);
-                        lastblocks.add(new BlockInfo(plot2BlockRepresentation, wFrom, x, y, z));
+                        lastblocks.add(new BlockInfo(plot2BlockRepresentation, world, x, y, z));
                     }
 
                     if (!blockPlacedLast.contains((int) plot1BlockRepresentation.getId())) {
                         plot1BlockRepresentation.setBlock(plot2Block, false);
                     } else {
                         plot2Block.setTypeId(0, false);
-                        lastblocks.add(new BlockInfo(plot1BlockRepresentation, wTo, x - distanceX, y, z - distanceZ));
+                        lastblocks.add(new BlockInfo(plot1BlockRepresentation, world, x - distanceX, y, z - distanceZ));
                     }
                 }
             }
@@ -327,7 +326,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (int cx = minChunkX1; cx <= maxChunkX1; cx++) {
             for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
-                Chunk chunk = wFrom.getChunkAt(cx, cz);
+                Chunk chunk = world.getChunkAt(cx, cz);
 
                 for (Entity e : chunk.getEntities()) {
                     Location eloc = e.getLocation();
@@ -342,7 +341,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (int cx = minChunkX2; cx <= maxChunkX2; cx++) {
             for (int cz = minChunkZ2; cz <= maxChunkZ2; cz++) {
-                Chunk chunk = wFrom.getChunkAt(cx, cz);
+                Chunk chunk = world.getChunkAt(cx, cz);
 
                 for (Entity e : chunk.getEntities()) {
                     Location eloc = e.getLocation();
@@ -357,7 +356,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (Entity e : entities1) {
             Location l = e.getLocation();
-            Location newl = new Location(wTo, l.getX() - distanceX, l.getY(), l.getZ() - distanceZ);
+            Location newl = new Location(world, l.getX() - distanceX, l.getY(), l.getZ() - distanceZ);
 
             if (e.getType() == EntityType.ITEM_FRAME) {
                 ItemFrame i = ((ItemFrame) e);
@@ -373,9 +372,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 Painting p = ((Painting) e);
                 BlockFace bf = p.getFacing();
                 int[] mod = getPaintingMod(p.getArt(), bf);
-                if (mod != null) {
-                    newl = newl.add(mod[0], mod[1], mod[2]);
-                }
+                newl = newl.add(mod[0], mod[1], mod[2]);
                 p.teleport(newl);
                 p.setFacingDirection(bf, true);
             } else {
@@ -383,12 +380,12 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             }
         }
 
-        for (Entity e : entities2) {
-            Location l = e.getLocation();
-            Location newl = new Location(wFrom, l.getX() + distanceX, l.getY(), l.getZ() + distanceZ);
+        for (Entity entity : entities2) {
+            Location location = entity.getLocation();
+            Location newl = new Location(world, location.getX() + distanceX, location.getY(), location.getZ() + distanceZ);
 
-            if (e.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame i = ((ItemFrame) e);
+            if (entity.getType() == EntityType.ITEM_FRAME) {
+                ItemFrame i = ((ItemFrame) entity);
                 BlockFace bf = i.getFacing();
                 ItemStack is = i.getItem();
                 Rotation rot = i.getRotation();
@@ -398,8 +395,8 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 i.setRotation(rot);
                 i.setFacingDirection(bf, true);
 
-            } else if (e.getType() == EntityType.PAINTING) {
-                Painting p = ((Painting) e);
+            } else if (entity.getType() == EntityType.PAINTING) {
+                Painting p = ((Painting) entity);
                 BlockFace bf = p.getFacing();
                 int[] mod = getPaintingMod(p.getArt(), bf);
                 if (mod != null) {
@@ -408,7 +405,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 p.teleport(newl);
                 p.setFacingDirection(bf, true);
             } else {
-                e.teleport(newl);
+                entity.teleport(newl);
             }
         }
 
