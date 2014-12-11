@@ -219,23 +219,23 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int bottomZ = bottom.getBlockZ();
         int topZ = top.getBlockZ();
 
-        World w = bottom.getWorld();
+        World world = bottom.getWorld();
 
-        int minChunkX = (int) Math.floor((double) bottomX / 16);
-        int maxChunkX = (int) Math.floor((double) topX / 16);
-        int minChunkZ = (int) Math.floor((double) bottomZ / 16);
-        int maxChunkZ = (int) Math.floor((double) topZ / 16);
+        int minChunkX = (int) Math.floor(bottomX / 16);
+        int maxChunkX = (int) Math.floor(topX / 16);
+        int minChunkZ = (int) Math.floor(bottomZ / 16);
+        int maxChunkZ = (int) Math.floor(topZ / 16);
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Chunk chunk = w.getChunkAt(cx, cz);
+                Chunk chunk = world.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (Entity entity : chunk.getEntities()) {
+                    Location location = entity.getLocation();
 
-                    if (!(e instanceof Player) && eloc.getBlockX() >= bottom.getBlockX() && eloc.getBlockX() <= top.getBlockX()
-                                && eloc.getBlockZ() >= bottom.getBlockZ() && eloc.getBlockZ() <= top.getBlockZ()) {
-                        e.remove();
+                    if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
+                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
+                        entity.remove();
                     }
                 }
             }
@@ -289,14 +289,14 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                     if (!blockPlacedLast.contains((int) plot2BlockRepresentation.getId())) {
                         plot2BlockRepresentation.setBlock(plot1Block, false);
                     } else {
-                        plot1Block.setTypeId(0, false);
+                        plot1Block.setType(Material.AIR);
                         lastblocks.add(new BlockInfo(plot2BlockRepresentation, world, x, y, z));
                     }
 
                     if (!blockPlacedLast.contains((int) plot1BlockRepresentation.getId())) {
                         plot1BlockRepresentation.setBlock(plot2Block, false);
                     } else {
-                        plot2Block.setTypeId(0, false);
+                        plot2Block.setType(Material.AIR);
                         lastblocks.add(new BlockInfo(plot1BlockRepresentation, world, x - distanceX, y, z - distanceZ));
                     }
                 }
@@ -328,12 +328,12 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
                 Chunk chunk = world.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (Entity entity : chunk.getEntities()) {
+                    Location location = entity.getLocation();
 
-                    if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot1Bottom.getBlockX() && eloc.getBlockX() <= plot1Top.getBlockX()
-                                && eloc.getBlockZ() >= plot1Bottom.getBlockZ() && eloc.getBlockZ() <= plot1Top.getBlockZ()) {
-                        entities1.add(e);
+                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot1Bottom.getBlockX() && location.getBlockX() <= plot1Top.getBlockX()
+                                && location.getBlockZ() >= plot1Bottom.getBlockZ() && location.getBlockZ() <= plot1Top.getBlockZ()) {
+                        entities1.add(entity);
                     }
                 }
             }
@@ -343,20 +343,20 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             for (int cz = minChunkZ2; cz <= maxChunkZ2; cz++) {
                 Chunk chunk = world.getChunkAt(cx, cz);
 
-                for (Entity e : chunk.getEntities()) {
-                    Location eloc = e.getLocation();
+                for (Entity entity : chunk.getEntities()) {
+                    Location location = entity.getLocation();
 
-                    if (!(e instanceof Player) /*&& !(e instanceof Hanging)*/ && eloc.getBlockX() >= plot2Bottom.getBlockX() && eloc.getBlockX() <= plot2Top.getBlockX()
-                                && eloc.getBlockZ() >= plot2Bottom.getBlockZ() && eloc.getBlockZ() <= plot2Top.getBlockZ()) {
-                        entities2.add(e);
+                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot2Bottom.getBlockX() && location.getBlockX() <= plot2Top.getBlockX()
+                                && location.getBlockZ() >= plot2Bottom.getBlockZ() && location.getBlockZ() <= plot2Top.getBlockZ()) {
+                        entities2.add(entity);
                     }
                 }
             }
         }
 
         for (Entity e : entities1) {
-            Location l = e.getLocation();
-            Location newl = new Location(world, l.getX() - distanceX, l.getY(), l.getZ() - distanceZ);
+            Location location = e.getLocation();
+            Location newl = new Location(world, location.getX() - distanceX, location.getY(), location.getZ() - distanceZ);
 
             if (e.getType() == EntityType.ITEM_FRAME) {
                 ItemFrame i = ((ItemFrame) e);
@@ -399,9 +399,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 Painting p = ((Painting) entity);
                 BlockFace bf = p.getFacing();
                 int[] mod = getPaintingMod(p.getArt(), bf);
-                if (mod != null) {
-                    newl = newl.add(mod[0], mod[1], mod[2]);
-                }
+                newl = newl.add(mod[0], mod[1], mod[2]);
                 p.teleport(newl);
                 p.setFacingDirection(bf, true);
             } else {
