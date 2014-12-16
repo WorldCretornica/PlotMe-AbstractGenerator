@@ -10,6 +10,12 @@ public interface AbstractGenerator {
 
     File getDataFolder();
 
+    /**
+     * Returns the folder that the plugin data's files are located in. The
+     * folder may not yet exist.
+     *
+     * @return The folder
+     */
     File getConfigFolder();
 
     InputStream getResource(String fileName);

@@ -19,7 +19,7 @@ import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPa
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
     // List of blocks that should be placed last in world generation
-    protected static final Set<Integer> blockPlacedLast = new HashSet<>();
+    private static final Set<Integer> blockPlacedLast = new HashSet<>();
 
     private final AbstractGenerator plugin;
     private final Map<String, WorldGenConfig> worldConfigs;
@@ -475,6 +475,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         return getPlotTopLoc(w, id).getBlockZ();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public boolean isValidId(String id) {
         String[] coords = id.split(";");

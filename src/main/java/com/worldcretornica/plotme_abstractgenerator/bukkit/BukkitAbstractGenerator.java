@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    public static final String DEFAULT_CONFIG_NAME = "config.yml";
-    public static final String WORLDS_CONFIG_SECTION = "worlds";
+    public static final String CONFIG_NAME = "config.yml";
+    public static final String WORLDS_CONFIG_SECTION = PlotMe_Core.WORLDS_CONFIG_SECTION;
     private static final String CORE_PLUGIN_NAME = "PlotMe";
     private File coreFolder;
     private File configFolder;
@@ -68,12 +68,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         return coreFolder;
     }
 
-    /**
-     * Returns the folder that the plugin data's files are located in. The
-     * folder may not yet exist.
-     *
-     * @return The folder
-     */
     @Override
     public File getConfigFolder() {
         return configFolder;
@@ -122,7 +116,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
-        configCA = new BukkitConfigAccessor(this, DEFAULT_CONFIG_NAME);
+        configCA = new BukkitConfigAccessor(this, CONFIG_NAME);
 
         // Set defaults for WorldGenConfig
         for (AbstractWorldConfigPath configPath : AbstractWorldConfigPath.values()) {
