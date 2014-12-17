@@ -19,7 +19,7 @@ import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPa
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
     // List of blocks that should be placed last in world generation
-    private static final Set<Integer> blockPlacedLast = new HashSet<>();
+    private static final Collection<Integer> blockPlacedLast = new HashSet<>();
 
     private final AbstractGenerator plugin;
     private final Map<String, WorldGenConfig> worldConfigs;
@@ -79,12 +79,86 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         blockPlacedLast.add(Material.ACTIVATOR_RAIL.getId());
     }
 
-    public WorldGenConfig getWGC(World iWorld) {
-        return getWGC(iWorld.getName());
+    public static void clearEntities(Location bottom, Location top) {
+        int bottomX = bottom.getBlockX();
+        int topX = top.getBlockX();
+        int bottomZ = bottom.getBlockZ();
+        int topZ = top.getBlockZ();
+
+        World world = bottom.getWorld();
+
+        int minChunkX = (int) Math.floor(bottomX / 16);
+        int maxChunkX = (int) Math.floor(topX / 16);
+        int minChunkZ = (int) Math.floor(bottomZ / 16);
+        int maxChunkZ = (int) Math.floor(topZ / 16);
+
+        for (int cx = minChunkX; cx <= maxChunkX; cx++) {
+            for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
+                Chunk chunk = world.getChunkAt(cx, cz);
+
+                for (Entity entity : chunk.getEntities()) {
+                    Location location = entity.getLocation();
+
+                    if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
+                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
+                        entity.remove();
+                    }
+                }
+            }
+        }
     }
 
-    public WorldGenConfig getWGC(String worldname) {
-        return worldConfigs.get(worldname.toLowerCase());
+    private static int[] getPaintingMod(Art a, BlockFace bf) {
+        int H = a.getBlockHeight();
+        int W = a.getBlockWidth();
+
+        //Same for all faces
+        if (H == 2 && W == 1) {
+            return new int[]{0, -1, 0};
+        }
+
+        switch (bf) {
+            case WEST:
+                if (H == 3 && W == 4 || H == 1 && W == 2) {
+                    return new int[]{0, 0, -1};
+                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
+                    return new int[]{0, -1, -1};
+                }
+
+                break;
+            case SOUTH:
+                if (H == 3 && W == 4 || H == 1 && W == 2) {
+                    return new int[]{-1, 0, 0};
+                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
+                    return new int[]{-1, -1, 0};
+                }
+
+                break;
+            case EAST:
+                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
+                    return new int[]{0, -1, 0};
+                }
+
+                break;
+            case NORTH:
+                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
+                    return new int[]{0, -1, 0};
+                }
+
+                break;
+            default:
+                return new int[]{0, 0, 0};
+        }
+
+        return new int[]{0, 0, 0};
+    }
+
+    public WorldGenConfig getWGC(World world) {
+        return getWGC(world.getName());
+    }
+
+    public WorldGenConfig getWGC(String world) {
+        return worldConfigs.get(world.toLowerCase());
     }
 
     public WorldGenConfig putWGC(String worldname, WorldGenConfig wgc) {
@@ -99,13 +173,9 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         return worldConfigs.containsKey(worldname.toLowerCase());
     }
 
-    public Set<String> worldSet() {
-        return worldConfigs.keySet();
-    }
-
     @Override
     public int getPlotSize(String worldname) {
-        if (containsWGC(worldname)) {
+        if (getWGC(worldname) != null) {
             return getWGC(worldname).getInt(PLOT_SIZE);
         } else {
             plugin.getLogger().log(Level.WARNING, "Tried to get plot size for undefined world '{0}'", worldname);
@@ -159,27 +229,27 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public void setBiome(World w, String id, Biome b) {
-        int bottomX = bottomX(id, w) - 1;
-        int topX = topX(id, w) + 1;
-        int bottomZ = bottomZ(id, w) - 1;
-        int topZ = topZ(id, w) + 1;
+    public void setBiome(World world, String id, Biome biome) {
+        int bottomX = bottomX(id, world) - 1;
+        int topX = topX(id, world) + 1;
+        int bottomZ = bottomZ(id, world) - 1;
+        int topZ = topZ(id, world) + 1;
 
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                w.getBlockAt(x, 0, z).setBiome(b);
+                world.getBlockAt(x, 0, z).setBiome(biome);
             }
         }
 
-        refreshPlotChunks(w, id);
+        refreshPlotChunks(world, id);
     }
 
     @Override
-    public void refreshPlotChunks(World w, String id) {
-        int bottomX = bottomX(id, w);
-        int topX = topX(id, w);
-        int bottomZ = bottomZ(id, w);
-        int topZ = topZ(id, w);
+    public void refreshPlotChunks(World world, String id) {
+        int bottomX = bottomX(id, world);
+        int topX = topX(id, world);
+        int bottomZ = bottomZ(id, world);
+        int topZ = topZ(id, world);
 
         int minChunkX = (int) Math.floor((double) bottomX / 16);
         int maxChunkX = (int) Math.floor((double) topX / 16);
@@ -188,70 +258,41 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                w.refreshChunk(x, z);
+                world.refreshChunk(x, z);
             }
         }
     }
 
     @Override
-    public Location getTop(World w, String id) {
-        return getPlotTopLoc(w, id);
+    public Location getTop(World world, String id) {
+        return getPlotTopLoc(world, id);
     }
 
     @Override
-    public Location getBottom(World w, String id) {
-        return getPlotBottomLoc(w, id);
+    public Location getBottom(World world, String id) {
+        return getPlotBottomLoc(world, id);
     }
 
     @Override
-    public void clear(World w, String id) {
-        clear(getBottom(w, id), getTop(w, id));
+    public void clear(World world, String id) {
+        clear(getBottom(world, id), getTop(world, id));
     }
 
     @Override
-    public Long[] clear(World w, String id, long maxBlocks, Long[] start) {
-        return clear(getBottom(w, id), getTop(w, id), maxBlocks, start);
-    }
-
-    public void clearEntities(Location bottom, Location top) {
-        int bottomX = bottom.getBlockX();
-        int topX = top.getBlockX();
-        int bottomZ = bottom.getBlockZ();
-        int topZ = top.getBlockZ();
-
-        World world = bottom.getWorld();
-
-        int minChunkX = (int) Math.floor(bottomX / 16);
-        int maxChunkX = (int) Math.floor(topX / 16);
-        int minChunkZ = (int) Math.floor(bottomZ / 16);
-        int maxChunkZ = (int) Math.floor(topZ / 16);
-
-        for (int cx = minChunkX; cx <= maxChunkX; cx++) {
-            for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Chunk chunk = world.getChunkAt(cx, cz);
-
-                for (Entity entity : chunk.getEntities()) {
-                    Location location = entity.getLocation();
-
-                    if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
-                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
-                        entity.remove();
-                    }
-                }
-            }
-        }
+    public Long[] clear(World world, String id, long maxBlocks, Long[] start) {
+        return clear(getBottom(world, id), getTop(world, id), maxBlocks, start);
     }
 
     @Override
-    public boolean isBlockInPlot(String id, Location blocklocation) {
-        World w = blocklocation.getWorld();
-        int lowestX = Math.min(bottomX(id, w), topX(id, w));
-        int highestX = Math.max(bottomX(id, w), topX(id, w));
-        int lowestZ = Math.min(bottomZ(id, w), topZ(id, w));
-        int highestZ = Math.max(bottomZ(id, w), topZ(id, w));
+    public boolean isBlockInPlot(String id, Location location) {
+        World world = location.getWorld();
+        int lowestX = Math.min(bottomX(id, world), topX(id, world));
+        int highestX = Math.max(bottomX(id, world), topX(id, world));
+        int lowestZ = Math.min(bottomZ(id, world), topZ(id, world));
+        int highestZ = Math.max(bottomZ(id, world), topZ(id, world));
 
-        return blocklocation.getBlockX() >= lowestX && blocklocation.getBlockX() <= highestX
-                       && blocklocation.getBlockZ() >= lowestZ && blocklocation.getBlockZ() <= highestZ;
+        return location.getBlockX() >= lowestX && location.getBlockX() <= highestX
+                       && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
     }
 
     @SuppressWarnings("deprecation")
@@ -265,7 +306,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
 
-        Set<BlockInfo> lastblocks = new HashSet<>();
+        Collection<BlockInfo> lastblocks = new HashSet<>();
 
         int bottomX = plot1Bottom.getBlockX();
         int topX = plot1Top.getBlockX();
@@ -321,8 +362,8 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int minChunkZ2 = (int) Math.floor((double) (bottomZ - distanceZ) / 16);
         int maxChunkZ2 = (int) Math.floor((double) (topZ - distanceZ) / 16);
 
-        Set<Entity> entities1 = new HashSet<>();
-        Set<Entity> entities2 = new HashSet<>();
+        Collection<Entity> entities1 = new HashSet<>();
+        Collection<Entity> entities2 = new HashSet<>();
 
         for (int cx = minChunkX1; cx <= maxChunkX1; cx++) {
             for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
@@ -408,51 +449,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         }
 
         return true;
-    }
-
-    private int[] getPaintingMod(Art a, BlockFace bf) {
-        int H = a.getBlockHeight();
-        int W = a.getBlockWidth();
-
-        //Same for all faces
-        if (H == 2 && W == 1) {
-            return new int[]{0, -1, 0};
-        }
-
-        switch (bf) {
-            case WEST:
-                if (H == 3 && W == 4 || H == 1 && W == 2) {
-                    return new int[]{0, 0, -1};
-                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, -1};
-                }
-
-                break;
-            case SOUTH:
-                if (H == 3 && W == 4 || H == 1 && W == 2) {
-                    return new int[]{-1, 0, 0};
-                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{-1, -1, 0};
-                }
-
-                break;
-            case EAST:
-                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, 0};
-                }
-
-                break;
-            case NORTH:
-                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, 0};
-                }
-
-                break;
-            default:
-                return new int[]{0, 0, 0};
-        }
-
-        return new int[]{0, 0, 0};
     }
 
     @Override

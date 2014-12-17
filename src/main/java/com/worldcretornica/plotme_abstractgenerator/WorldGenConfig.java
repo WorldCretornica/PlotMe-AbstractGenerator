@@ -1,13 +1,12 @@
 package com.worldcretornica.plotme_abstractgenerator;
 
+import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
-import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
 
 import java.util.*;
 
@@ -367,6 +366,7 @@ public final class WorldGenConfig implements ConfigurationSection {
         world.set(string, o);
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void set(WorldConfigPath wcp, Object o) {
         set(wcp.path(), o);
     }
@@ -719,26 +719,14 @@ public final class WorldGenConfig implements ConfigurationSection {
         return world.getColor(string);
     }
 
-    public Color getColor(WorldConfigPath wcp) {
-        return getColor(wcp.path());
-    }
-
     @Override
     public Color getColor(String string, Color color) {
         return world.getColor(string, color);
     }
 
-    public Color getColor(WorldConfigPath wcp, Color color) {
-        return getColor(wcp.path(), color);
-    }
-
     @Override
     public boolean isColor(String string) {
         return world.isColor(string);
-    }
-
-    public boolean isColor(WorldConfigPath wcp) {
-        return isColor(wcp.path());
     }
 
     @Override

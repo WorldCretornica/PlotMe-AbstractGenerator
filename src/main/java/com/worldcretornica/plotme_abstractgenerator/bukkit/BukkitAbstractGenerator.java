@@ -14,7 +14,6 @@ import java.util.HashMap;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     public static final String CONFIG_NAME = "config.yml";
-    public static final String WORLDS_CONFIG_SECTION = PlotMe_Core.WORLDS_CONFIG_SECTION;
     private static final String CORE_PLUGIN_NAME = "PlotMe";
     private File coreFolder;
     private File configFolder;
@@ -154,10 +153,10 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     protected WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
         ConfigurationSection worldsConfigurationSection;
-        if (getConfig().contains(WORLDS_CONFIG_SECTION)) {
-            worldsConfigurationSection = getConfig().getConfigurationSection(WORLDS_CONFIG_SECTION);
+        if (getConfig().contains(PlotMe_Core.WORLDS_CONFIG_SECTION)) {
+            worldsConfigurationSection = getConfig().getConfigurationSection(PlotMe_Core.WORLDS_CONFIG_SECTION);
         } else {
-            worldsConfigurationSection = getConfig().createSection(WORLDS_CONFIG_SECTION);
+            worldsConfigurationSection = getConfig().createSection(PlotMe_Core.WORLDS_CONFIG_SECTION);
         }
         ConfigurationSection worldConfigurationSection;
         if (worldsConfigurationSection.contains(world)) {
