@@ -1,34 +1,23 @@
-/*
- * Copyright (C) 2013 Fabrizio Lungo <fab@lungo.co.uk> - All Rights Reserved
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- *
- * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
- */
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import org.bukkit.block.Block;
 
-/**
- *
- * @author Fabrizio Lungo <fab@lungo.co.uk>
- */
-public class BlockRepresentation {
+public class BukkitBlockRepresentation {
 
     private final Short id;
     private final Byte data;
 
-    public BlockRepresentation(short id, byte value) {
+    public BukkitBlockRepresentation(short id, byte value) {
         this.id = id;
         this.data = value;
     }
 
-    public BlockRepresentation(String idvalue) {
+    public BukkitBlockRepresentation(String idvalue) {
         this(getBlockId(idvalue), getBlockData(idvalue));
     }
 
-    public BlockRepresentation(Block block) {
+    @SuppressWarnings("deprecation")
+    public BukkitBlockRepresentation(Block block) {
         this((short) block.getTypeId(), block.getData());
     }
 
@@ -57,15 +46,16 @@ public class BlockRepresentation {
     }
 
     public String getBlockIdValue() {
-        return (data == 0) ? id.toString() : id.toString() + ":" + data.toString();
+        return data == 0 ? id.toString() : id + ":" + data;
     }
 
     public boolean setBlock(Block b) {
         return setBlock(b, true);
     }
 
-    public boolean setBlock(Block b, boolean applyPhysics) {
-        return b.setTypeIdAndData(getId(), getData(), applyPhysics);
+    @SuppressWarnings("deprecation")
+    public boolean setBlock(Block block, boolean applyPhysics) {
+        return block.setTypeIdAndData(getId(), getData(), applyPhysics);
     }
 
 }

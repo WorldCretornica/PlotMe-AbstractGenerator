@@ -1,13 +1,6 @@
-/*
- * Copyright (C) 2013 Fabrizio Lungo <fab@lungo.co.uk> - All Rights Reserved
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- *
- * Created by Fabrizio Lungo <fab@lungo.co.uk>, November 2013
- */
-package me.flungo.bukkit.plotme.abstractgenerator;
+package com.worldcretornica.plotme_abstractgenerator;
 
+import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
@@ -20,10 +13,11 @@ import java.util.*;
 /**
  * Represents the generation configuration for a single world.
  *
- * @author Fabrizio Lungo <fab@lungo.co.uk>
  */
 public final class WorldGenConfig implements ConfigurationSection {
 
+    //TODO Abstract this class
+    
     private static HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
@@ -241,6 +235,7 @@ public final class WorldGenConfig implements ConfigurationSection {
      *
      * @return a clone of the Map representing the defaults
      */
+    @SuppressWarnings("unchecked")
     public static HashMap<String, Object> cloneDefaults() {
         return (HashMap<String, Object>) DEFAULTS.clone();
     }
@@ -276,11 +271,11 @@ public final class WorldGenConfig implements ConfigurationSection {
         return DEFAULTS.entrySet();
     }
 
-    public BlockRepresentation getBlockRepresentation(String string) {
-        return new BlockRepresentation(getString(string));
+    public BukkitBlockRepresentation getBlockRepresentation(String string) {
+        return new BukkitBlockRepresentation(getString(string));
     }
 
-    public BlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
+    public BukkitBlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
         return getBlockRepresentation(wcp.path());
     }
 
@@ -365,12 +360,13 @@ public final class WorldGenConfig implements ConfigurationSection {
 
     @Override
     public void set(String string, Object o) {
-        if (o instanceof BlockRepresentation) {
-            o = ((BlockRepresentation) o).getBlockIdValue();
+        if (o instanceof BukkitBlockRepresentation) {
+            o = ((BukkitBlockRepresentation) o).getBlockIdValue();
         }
         world.set(string, o);
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void set(WorldConfigPath wcp, Object o) {
         set(wcp.path(), o);
     }
@@ -723,26 +719,14 @@ public final class WorldGenConfig implements ConfigurationSection {
         return world.getColor(string);
     }
 
-    public Color getColor(WorldConfigPath wcp) {
-        return getColor(wcp.path());
-    }
-
     @Override
     public Color getColor(String string, Color color) {
         return world.getColor(string, color);
     }
 
-    public Color getColor(WorldConfigPath wcp, Color color) {
-        return getColor(wcp.path(), color);
-    }
-
     @Override
     public boolean isColor(String string) {
         return world.isColor(string);
-    }
-
-    public boolean isColor(WorldConfigPath wcp) {
-        return isColor(wcp.path());
     }
 
     @Override
