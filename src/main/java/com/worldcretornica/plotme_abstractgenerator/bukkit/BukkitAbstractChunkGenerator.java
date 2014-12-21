@@ -1,18 +1,15 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.X_TRANSLATION;
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.Z_TRANSLATION;
-
-import java.util.Random;
-
+import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
+import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_ChunkGenerator;
+import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
-import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
-import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_ChunkGenerator;
-import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
+import java.util.Random;
+
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.*;
 
 public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implements IBukkitPlotMe_ChunkGenerator {
 

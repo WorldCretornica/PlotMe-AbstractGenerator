@@ -452,23 +452,23 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public int bottomX(String id, World w) {
-        return getPlotBottomLoc(w, id).getBlockX();
+    public int bottomX(String id, World world) {
+        return getPlotBottomLoc(world, id).getBlockX();
     }
 
     @Override
-    public int bottomZ(String id, World w) {
-        return getPlotBottomLoc(w, id).getBlockZ();
+    public int bottomZ(String id, World world) {
+        return getPlotBottomLoc(world, id).getBlockZ();
     }
 
     @Override
-    public int topX(String id, World w) {
-        return getPlotTopLoc(w, id).getBlockX();
+    public int topX(String id, World world) {
+        return getPlotTopLoc(world, id).getBlockX();
     }
 
     @Override
-    public int topZ(String id, World w) {
-        return getPlotTopLoc(w, id).getBlockZ();
+    public int topZ(String id, World world) {
+        return getPlotTopLoc(world, id).getBlockZ();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
