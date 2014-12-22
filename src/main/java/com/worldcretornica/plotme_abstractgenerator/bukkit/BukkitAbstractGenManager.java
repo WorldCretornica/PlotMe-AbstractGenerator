@@ -2,7 +2,6 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
-import com.worldcretornica.plotme_core.Biomes;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -230,7 +229,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public void setBiome(World world, String id, Biomes biome) {
+    public void setBiome(World world, String id, Biome biome) {
         int bottomX = bottomX(id, world) - 1;
         int topX = topX(id, world) + 1;
         int bottomZ = bottomZ(id, world) - 1;
@@ -238,7 +237,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
-                world.getBlockAt(x, 0, z).setBiome(Biome.valueOf(biome.toString()));
+                world.getBlockAt(x, 0, z).setBiome(biome);
             }
         }
 
