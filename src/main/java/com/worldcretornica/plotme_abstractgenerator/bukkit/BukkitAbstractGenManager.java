@@ -251,10 +251,10 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int bottomZ = bottomZ(id, world);
         int topZ = topZ(id, world);
 
-        int minChunkX = (int) Math.floor((double) bottomX / 16);
-        int maxChunkX = (int) Math.floor((double) topX / 16);
-        int minChunkZ = (int) Math.floor((double) bottomZ / 16);
-        int maxChunkZ = (int) Math.floor((double) topZ / 16);
+        int minChunkX = (int) Math.floor(bottomX / 16);
+        int maxChunkX = (int) Math.floor(topX / 16);
+        int minChunkZ = (int) Math.floor(bottomZ / 16);
+        int maxChunkZ = (int) Math.floor(topZ / 16);
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
@@ -352,15 +352,15 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         lastblocks.clear();
 
         //Move entities
-        int minChunkX1 = (int) Math.floor((double) bottomX / 16);
-        int maxChunkX1 = (int) Math.floor((double) topX / 16);
-        int minChunkZ1 = (int) Math.floor((double) bottomZ / 16);
-        int maxChunkZ1 = (int) Math.floor((double) topZ / 16);
+        int minChunkX1 = (int) Math.floor(bottomX / 16);
+        int maxChunkX1 = (int) Math.floor(topX / 16);
+        int minChunkZ1 = (int) Math.floor(bottomZ / 16);
+        int maxChunkZ1 = (int) Math.floor(topZ / 16);
 
-        int minChunkX2 = (int) Math.floor((double) (bottomX - distanceX) / 16);
-        int maxChunkX2 = (int) Math.floor((double) (topX - distanceX) / 16);
-        int minChunkZ2 = (int) Math.floor((double) (bottomZ - distanceZ) / 16);
-        int maxChunkZ2 = (int) Math.floor((double) (topZ - distanceZ) / 16);
+        int minChunkX2 = (int) Math.floor((bottomX - distanceX) / 16);
+        int maxChunkX2 = (int) Math.floor((topX - distanceX) / 16);
+        int minChunkZ2 = (int) Math.floor((bottomZ - distanceZ) / 16);
+        int maxChunkZ2 = (int) Math.floor((topZ - distanceZ) / 16);
 
         Collection<Entity> entities1 = new HashSet<>();
         Collection<Entity> entities2 = new HashSet<>();
