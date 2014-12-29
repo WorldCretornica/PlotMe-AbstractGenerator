@@ -197,7 +197,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     @Override
     public Map<String, String> getDefaultGenerationConfig() {
         // TODO: Either change interface or change WGC
-        //return WorldGenConfig.cloneDefaults();
         throw new UnsupportedOperationException("Not supported yet. Either change interface or change WGC.");
     }
 
@@ -271,11 +270,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     @Override
     public Location getBottom(World world, String id) {
         return getPlotBottomLoc(world, id);
-    }
-
-    @Override
-    public void clear(World world, String id) {
-        clear(getBottom(world, id), getTop(world, id));
     }
 
     @Override
