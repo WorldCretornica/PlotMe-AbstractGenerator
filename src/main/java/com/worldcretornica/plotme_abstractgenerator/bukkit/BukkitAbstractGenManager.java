@@ -300,7 +300,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
 
-        Collection<BlockInfo> lastblocks = new HashSet<>();
+        Collection<Block> lastblocks = new HashSet<>();
 
         int bottomX = plot1Bottom.getBlockX();
         int topX = plot1Top.getBlockX();
@@ -310,9 +310,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         for (int x = bottomX; x <= topX; x++) {
             for (int z = bottomZ; z <= topZ; z++) {
                 Block plot1Block = world.getBlockAt(x, 0, z);
-                BukkitBlockRepresentation plot1BlockRepresentation = new BukkitBlockRepresentation(plot1Block);
                 Block plot2Block = world.getBlockAt(x - distanceX, 0, z - distanceZ);
-                BukkitBlockRepresentation plot2BlockRepresentation = new BukkitBlockRepresentation(plot2Block);
 
                 plot1Block.setBiome(plot2Block.getBiome());
                 plot2Block.setBiome(plot1Block.getBiome());
@@ -321,26 +319,26 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                     plot1Block = world.getBlockAt(x, y, z);
                     plot2Block = world.getBlockAt(x - distanceX, y, z - distanceZ);
 
-                    if (!blockPlacedLast.contains((int) plot2BlockRepresentation.getId())) {
-                        plot2BlockRepresentation.setBlock(plot1Block, false);
+                    if (!blockPlacedLast.contains(plot2Block.getTypeId())) {
+                        plot2Block.setTypeIdAndData(plot1Block.getTypeId(), plot1Block.getData(), false);
                     } else {
                         plot1Block.setType(Material.AIR);
-                        lastblocks.add(new BlockInfo(plot2BlockRepresentation, world, x, y, z));
+                        lastblocks.add(plot2Block);
                     }
 
-                    if (!blockPlacedLast.contains((int) plot1BlockRepresentation.getId())) {
-                        plot1BlockRepresentation.setBlock(plot2Block, false);
+                    if (!blockPlacedLast.contains(plot1Block.getTypeId())) {
+                        plot1Block.setTypeIdAndData(plot2Block.getTypeId(), plot2Block.getData(), false);
                     } else {
                         plot2Block.setType(Material.AIR);
-                        lastblocks.add(new BlockInfo(plot1BlockRepresentation, world, x - distanceX, y, z - distanceZ));
+                        lastblocks.add(plot1Block);
                     }
                 }
             }
         }
 
-        for (BlockInfo bi : lastblocks) {
-            Block block = bi.loc.getBlock();
-            bi.block.setBlock(block, false);
+        for (Block bi : lastblocks) {
+            Block block = bi.getLocation().getBlock();
+            bi.setTypeIdAndData(block.getTypeId(), block.getData(), false);
         }
 
         lastblocks.clear();
