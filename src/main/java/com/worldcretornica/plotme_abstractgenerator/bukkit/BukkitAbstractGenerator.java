@@ -57,11 +57,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Returns the folder that the core PlotMe plugin's data files are located
-     * in.
+     * Get the folder that contains data files for PlotMe-Core
      *
-     * @return The folder that the core PlotMe plugin's data files are located
-     * in
+     * @return the folder that contains data files for PlotMe-Core
      */
     public File getCoreFolder() {
         return coreFolder;
