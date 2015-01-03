@@ -710,23 +710,29 @@ public final class WorldGenConfig implements ConfigurationSection {
         return world.isItemStack(string);
     }
 
-    public boolean isItemStack(WorldConfigPath wcp) {
-        return isItemStack(wcp.path());
+    /**
+     * Gets the requested Color by path.
+     * <p/>
+     * If the Color does not exist but a default value has been specified,
+     * this will return the default value. If the Color does not exist and no
+     * default value was specified, this will return null.
+     *
+     * @param path Path of the Color to get.
+     * @return Requested Color.
+     */
+    @Override
+    public Color getColor(String path) {
+        return null;
     }
 
     @Override
-    public Color getColor(String string) {
-        return world.getColor(string);
+    public Color getColor(String path, Color def) {
+        return null;
     }
 
     @Override
-    public Color getColor(String string, Color color) {
-        return world.getColor(string, color);
-    }
-
-    @Override
-    public boolean isColor(String string) {
-        return world.isColor(string);
+    public boolean isColor(String path) {
+        return false;
     }
 
     @Override

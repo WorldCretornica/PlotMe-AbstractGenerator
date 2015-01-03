@@ -108,16 +108,16 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         }
     }
 
-    private static int[] getPaintingMod(Art a, BlockFace bf) {
-        int H = a.getBlockHeight();
-        int W = a.getBlockWidth();
+    private static int[] getPaintingMod(Art art, BlockFace blockFace) {
+        int H = art.getBlockHeight();
+        int W = art.getBlockWidth();
 
         //Same for all faces
         if (H == 2 && W == 1) {
             return new int[]{0, -1, 0};
         }
 
-        switch (bf) {
+        switch (blockFace) {
             case WEST:
                 if (H == 3 && W == 4 || H == 1 && W == 2) {
                     return new int[]{0, 0, -1};
@@ -387,29 +387,29 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             }
         }
 
-        for (Entity e : entities1) {
-            Location location = e.getLocation();
-            Location newl = new Location(world, location.getX() - distanceX, location.getY(), location.getZ() - distanceZ);
+        for (Entity entity1 : entities1) {
+            Location location = entity1.getLocation();
+            Location location1 = new Location(world, location.getX() - distanceX, location.getY(), location.getZ() - distanceZ);
 
-            if (e.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame i = ((ItemFrame) e);
-                BlockFace bf = i.getFacing();
-                ItemStack is = i.getItem();
-                Rotation rot = i.getRotation();
+            if (entity1.getType() == EntityType.ITEM_FRAME) {
+                ItemFrame itemFrame = ((ItemFrame) entity1);
+                BlockFace blockFace = itemFrame.getFacing();
+                ItemStack item = itemFrame.getItem();
+                Rotation rotation = itemFrame.getRotation();
 
-                i.teleport(newl);
-                i.setItem(is);
-                i.setRotation(rot);
-                i.setFacingDirection(bf, true);
-            } else if (e.getType() == EntityType.PAINTING) {
-                Painting p = ((Painting) e);
-                BlockFace bf = p.getFacing();
-                int[] mod = getPaintingMod(p.getArt(), bf);
-                newl = newl.add(mod[0], mod[1], mod[2]);
-                p.teleport(newl);
-                p.setFacingDirection(bf, true);
+                itemFrame.teleport(location1);
+                itemFrame.setItem(item);
+                itemFrame.setRotation(rotation);
+                itemFrame.setFacingDirection(blockFace, true);
+            } else if (entity1.getType() == EntityType.PAINTING) {
+                Painting painting = ((Painting) entity1);
+                BlockFace blockFace = painting.getFacing();
+                int[] mod = getPaintingMod(painting.getArt(), blockFace);
+                location1 = location1.add(mod[0], mod[1], mod[2]);
+                painting.teleport(location1);
+                painting.setFacingDirection(blockFace, true);
             } else {
-                e.teleport(newl);
+                entity1.teleport(location1);
             }
         }
 
@@ -418,23 +418,23 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             Location newl = new Location(world, location.getX() + distanceX, location.getY(), location.getZ() + distanceZ);
 
             if (entity.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame i = ((ItemFrame) entity);
-                BlockFace bf = i.getFacing();
-                ItemStack is = i.getItem();
-                Rotation rot = i.getRotation();
+                ItemFrame itemFrame = ((ItemFrame) entity);
+                BlockFace blockFace = itemFrame.getFacing();
+                ItemStack item = itemFrame.getItem();
+                Rotation rotation = itemFrame.getRotation();
 
-                i.teleport(newl);
-                i.setItem(is);
-                i.setRotation(rot);
-                i.setFacingDirection(bf, true);
+                itemFrame.teleport(newl);
+                itemFrame.setItem(item);
+                itemFrame.setRotation(rotation);
+                itemFrame.setFacingDirection(blockFace, true);
 
             } else if (entity.getType() == EntityType.PAINTING) {
-                Painting p = ((Painting) entity);
-                BlockFace bf = p.getFacing();
-                int[] mod = getPaintingMod(p.getArt(), bf);
+                Painting painting = ((Painting) entity);
+                BlockFace blockFace = painting.getFacing();
+                int[] mod = getPaintingMod(painting.getArt(), blockFace);
                 newl = newl.add(mod[0], mod[1], mod[2]);
-                p.teleport(newl);
-                p.setFacingDirection(bf, true);
+                painting.teleport(newl);
+                painting.setFacingDirection(blockFace, true);
             } else {
                 entity.teleport(newl);
             }
