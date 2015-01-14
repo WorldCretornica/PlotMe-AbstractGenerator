@@ -8,7 +8,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents the generation configuration for a single world.
@@ -17,7 +21,7 @@ import java.util.*;
 public final class WorldGenConfig implements ConfigurationSection {
 
     //TODO Abstract this class
-    
+
     private static HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
@@ -77,39 +81,39 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     /**
-     * Returns the default value to which the specified path is mapped, or
-     * {@code null} if there is no default for the path.
+     * Returns the default value to which the specified key is mapped, or
+     * {@code null} if there is no default for the key.
      *
-     * @param path the path whose default value is to be returned
-     * @return the default value to which the specified path is mapped
-     * @see Map#get(java.lang.Object)
+     * @param path the key whose default value is to be returned
+     * @return the default value to which the specified key is mapped
+     * @see Map#get(Object)
      */
     public static Object getDefault(String path) {
         return DEFAULTS.get(path);
     }
 
     /**
-     * Returns the default value to which the specified path is mapped, or
-     * {@code null} if there is no default for the path.
+     * Returns the default value to which the specified key is mapped, or
+     * {@code null} if there is no default for the key.
      *
      * @param wcp the {@link WorldConfigPath} whose default value is to be
      * returned
-     * @return the default value to which the specified path is mapped
-     * @see #getDefault(java.lang.String)
+     * @return the default value to which the specified key is mapped
+     * @see #getDefault(String)
      */
     public static Object getDefault(WorldConfigPath wcp) {
-        return getDefault(wcp.path());
+        return getDefault(wcp.key());
     }
 
     /**
      * Returns <tt>true</tt> if there is a default default for the specified
-     * <tt>path</tt>.
+     * <tt>key</tt>.
      *
-     * @param path The path whose presence in the {@link WorldGenConfig}
+     * @param path The key whose presence in the {@link WorldGenConfig}
      * defaults is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified
-     * path.
-     * @see Map#containsKey(java.lang.Object)
+     * key.
+     * @see Map#containsKey(Object)
      */
     public static boolean defaultContainsPath(String path) {
         return DEFAULTS.containsKey(path);
@@ -122,22 +126,22 @@ public final class WorldGenConfig implements ConfigurationSection {
      * @param wcp The {@link WorldConfigPath} whose presence in the
      * {@link WorldGenConfig} defaults is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified
-     * path.
-     * @see #defaultContainsPath(java.lang.String)
+     * key.
+     * @see #defaultContainsPath(String)
      */
     public static boolean defaultContainsPath(WorldConfigPath wcp) {
-        return defaultContainsPath(wcp.path());
+        return defaultContainsPath(wcp.key());
     }
 
     /**
-     * Associates the specified value with the specified path as the default for
+     * Associates the specified value with the specified key as the default for
      * {@link WorldGenConfig}s. If the map previously contained a default for
-     * the path, the old value is replaced by the specified value.
+     * the key, the old value is replaced by the specified value.
      *
-     * @param path path with which the specified default is to be associated
-     * @param value default value to be associated with the specified path
-     * @return the previous default value associated with <tt>path</tt>
-     * @see Map#put(java.lang.Object, java.lang.Object)
+     * @param path key with which the specified default is to be associated
+     * @param value default value to be associated with the specified key
+     * @return the previous default value associated with <tt>key</tt>
+     * @see Map#put(Object, Object)
      */
     public static Object putDefault(String path, Object value) {
         return DEFAULTS.put(path, value);
@@ -146,25 +150,25 @@ public final class WorldGenConfig implements ConfigurationSection {
     /**
      * Associates the specified value with the specified {@link WorldConfigPath}
      * as the default for {@link WorldGenConfig}s. If the map previously
-     * contained a default for the path, the old value is replaced by the
+     * contained a default for the key, the old value is replaced by the
      * specified value.
      *
      * @param wcp {@link WorldConfigPath} with which the specified default is to
      * be associated
-     * @param value default value to be associated with the specified path
+     * @param value default value to be associated with the specified key
      * @return the previous default value associated with
      * {@link WorldConfigPath}
-     * @see Map#put(java.lang.Object, java.lang.Object)
+     * @see Map#put(Object, Object)
      */
     public static Object putDefault(WorldConfigPath wcp, Object value) {
-        return putDefault(wcp.path(), value);
+        return putDefault(wcp.key(), value);
     }
 
     /**
      * Associates the specified {@link WorldConfigPath}'s default with the
      * specified {@link WorldConfigPath} as the default for
      * {@link WorldGenConfig}s. If the map previously contained a default for
-     * the path, the old value is replaced by the specified value.
+     * the key, the old value is replaced by the specified value.
      *
      * @param wcp {@link WorldConfigPath} with which the specified default is to
      * be associated and obtained from
@@ -172,7 +176,7 @@ public final class WorldGenConfig implements ConfigurationSection {
      * {@link WorldConfigPath}
      */
     public static Object putDefault(WorldConfigPath wcp) {
-        return putDefault(wcp.path(), wcp.def());
+        return putDefault(wcp.key(), wcp.def());
     }
 
     /**
@@ -180,19 +184,19 @@ public final class WorldGenConfig implements ConfigurationSection {
      * {@link WorldGenConfig} defaults.
      *
      * @param m mappings to be stored as defaults
-     * @see Map#putAll(java.util.Map)
+     * @see Map#putAll(Map)
      */
     public static void putAllDefaults(Map<? extends String, ?> m) {
         DEFAULTS.putAll(m);
     }
 
     /**
-     * Removes the default for a path if it is present
+     * Removes the default for a key if it is present
      *
-     * @param path path whose default is to be removed from the defaults
-     * @return the previous value associated with <tt>path</tt>, or
-     * <tt>null</tt> if there was no default for <tt>path</tt>.
-     * @see Map#remove(java.lang.Object)
+     * @param path key whose default is to be removed from the defaults
+     * @return the previous value associated with <tt>key</tt>, or
+     * <tt>null</tt> if there was no default for <tt>key</tt>.
+     * @see Map#remove(Object)
      */
     public static Object removeDefault(String path) {
         return DEFAULTS.remove(path);
@@ -205,10 +209,10 @@ public final class WorldGenConfig implements ConfigurationSection {
      * the defaults
      * @return the previous value associated with <tt>wcp</tt>, or
      * <tt>null</tt> if there was no default for <tt>wcp</tt>.
-     * @see #removeDefault(java.lang.String)
+     * @see #removeDefault(String)
      */
     public static Object removeDefault(WorldConfigPath wcp) {
-        return DEFAULTS.remove(wcp.path());
+        return DEFAULTS.remove(wcp.key());
     }
 
     /**
@@ -261,10 +265,10 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     /**
-     * Returns a {@link Set} view of the mappings from path to default value
+     * Returns a {@link Set} view of the mappings from key to default value
      * defined for {@link WorldGenConfig}s.
      *
-     * @return a {@link Set} view of the mappings from path to default value
+     * @return a {@link Set} view of the mappings from key to default value
      * defined for {@link WorldGenConfig}s.
      */
     public static Set<Map.Entry<String, Object>> defaultEntrySet() {
@@ -276,7 +280,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public BukkitBlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
-        return getBlockRepresentation(wcp.path());
+        return getBlockRepresentation(wcp.key());
     }
 
     public boolean isBlockRepresentation(String string) {
@@ -289,7 +293,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isBlockRepresentation(WorldConfigPath wcp) {
-        return isBlockRepresentation(wcp.path());
+        return isBlockRepresentation(wcp.key());
     }
 
     @Override
@@ -308,7 +312,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean contains(WorldConfigPath wcp) {
-        return contains(wcp.path());
+        return contains(wcp.key());
     }
 
     @Override
@@ -317,7 +321,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isSet(WorldConfigPath wcp) {
-        return isSet(wcp.path());
+        return isSet(wcp.key());
     }
 
     @Override
@@ -346,7 +350,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public Object get(WorldConfigPath wcp) {
-        return get(wcp.path());
+        return get(wcp.key());
     }
 
     @Override
@@ -355,7 +359,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public Object get(WorldConfigPath wcp, Object o) {
-        return get(wcp.path(), o);
+        return get(wcp.key(), o);
     }
 
     @Override
@@ -368,7 +372,7 @@ public final class WorldGenConfig implements ConfigurationSection {
 
     @SuppressWarnings("SameParameterValue")
     public void set(WorldConfigPath wcp, Object o) {
-        set(wcp.path(), o);
+        set(wcp.key(), o);
     }
 
     @Override
@@ -387,7 +391,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public String getString(WorldConfigPath wcp) {
-        return getString(wcp.path());
+        return getString(wcp.key());
     }
 
     @Override
@@ -396,7 +400,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public String getString(WorldConfigPath wcp, String string1) {
-        return getString(wcp.path(), string1);
+        return getString(wcp.key(), string1);
     }
 
     @Override
@@ -405,7 +409,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isString(WorldConfigPath wcp) {
-        return isString(wcp.path());
+        return isString(wcp.key());
     }
 
     @Override
@@ -414,7 +418,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public int getInt(WorldConfigPath wcp) {
-        return getInt(wcp.path());
+        return getInt(wcp.key());
     }
 
     @Override
@@ -423,7 +427,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public int getInt(WorldConfigPath wcp, int i) {
-        return getInt(wcp.path(), i);
+        return getInt(wcp.key(), i);
     }
 
     @Override
@@ -432,7 +436,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isInt(WorldConfigPath wcp) {
-        return isInt(wcp.path());
+        return isInt(wcp.key());
     }
 
     @Override
@@ -441,7 +445,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean getBoolean(WorldConfigPath wcp) {
-        return getBoolean(wcp.path());
+        return getBoolean(wcp.key());
     }
 
     @Override
@@ -450,7 +454,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean getBoolean(WorldConfigPath wcp, boolean bln) {
-        return getBoolean(wcp.path(), bln);
+        return getBoolean(wcp.key(), bln);
     }
 
     @Override
@@ -459,7 +463,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isBoolean(WorldConfigPath wcp) {
-        return isBoolean(wcp.path());
+        return isBoolean(wcp.key());
     }
 
     @Override
@@ -468,7 +472,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public double getDouble(WorldConfigPath wcp) {
-        return getDouble(wcp.path());
+        return getDouble(wcp.key());
     }
 
     @Override
@@ -477,7 +481,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public double getDouble(WorldConfigPath wcp, double d) {
-        return getDouble(wcp.path(), d);
+        return getDouble(wcp.key(), d);
     }
 
     @Override
@@ -486,7 +490,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isDouble(WorldConfigPath wcp) {
-        return isDouble(wcp.path());
+        return isDouble(wcp.key());
     }
 
     @Override
@@ -495,7 +499,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public long getLong(WorldConfigPath wcp) {
-        return getLong(wcp.path());
+        return getLong(wcp.key());
     }
 
     @Override
@@ -504,7 +508,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public long getLong(WorldConfigPath wcp, long l) {
-        return getLong(wcp.path(), l);
+        return getLong(wcp.key(), l);
     }
 
     @Override
@@ -513,7 +517,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isLong(WorldConfigPath wcp) {
-        return isLong(wcp.path());
+        return isLong(wcp.key());
     }
 
     @Override
@@ -522,7 +526,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<?> getList(WorldConfigPath wcp) {
-        return getList(wcp.path());
+        return getList(wcp.key());
     }
 
     @Override
@@ -531,7 +535,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<?> getList(WorldConfigPath wcp, List<?> list) {
-        return getList(wcp.path(), list);
+        return getList(wcp.key(), list);
     }
 
     @Override
@@ -540,7 +544,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isList(WorldConfigPath wcp) {
-        return isList(wcp.path());
+        return isList(wcp.key());
     }
 
     @Override
@@ -549,7 +553,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<String> getStringList(WorldConfigPath wcp) {
-        return getStringList(wcp.path());
+        return getStringList(wcp.key());
     }
 
     @Override
@@ -558,7 +562,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Integer> getIntegerList(WorldConfigPath wcp) {
-        return getIntegerList(wcp.path());
+        return getIntegerList(wcp.key());
     }
 
     @Override
@@ -567,7 +571,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Boolean> getBooleanList(WorldConfigPath wcp) {
-        return getBooleanList(wcp.path());
+        return getBooleanList(wcp.key());
     }
 
     @Override
@@ -576,7 +580,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Double> getDoubleList(WorldConfigPath wcp) {
-        return getDoubleList(wcp.path());
+        return getDoubleList(wcp.key());
     }
 
     @Override
@@ -585,7 +589,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Float> getFloatList(WorldConfigPath wcp) {
-        return getFloatList(wcp.path());
+        return getFloatList(wcp.key());
     }
 
     @Override
@@ -594,7 +598,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Long> getLongList(WorldConfigPath wcp) {
-        return getLongList(wcp.path());
+        return getLongList(wcp.key());
     }
 
     @Override
@@ -603,7 +607,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Byte> getByteList(WorldConfigPath wcp) {
-        return getByteList(wcp.path());
+        return getByteList(wcp.key());
     }
 
     @Override
@@ -612,7 +616,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Character> getCharacterList(WorldConfigPath wcp) {
-        return getCharacterList(wcp.path());
+        return getCharacterList(wcp.key());
     }
 
     @Override
@@ -621,7 +625,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Short> getShortList(WorldConfigPath wcp) {
-        return getShortList(wcp.path());
+        return getShortList(wcp.key());
     }
 
     @Override
@@ -630,7 +634,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public List<Map<?, ?>> getMapList(WorldConfigPath wcp) {
-        return getMapList(wcp.path());
+        return getMapList(wcp.key());
     }
 
     @Override
@@ -639,7 +643,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public Vector getVector(WorldConfigPath wcp) {
-        return getVector(wcp.path());
+        return getVector(wcp.key());
     }
 
     @Override
@@ -648,7 +652,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public Vector getVector(WorldConfigPath wcp, Vector vector) {
-        return getVector(wcp.path(), vector);
+        return getVector(wcp.key(), vector);
     }
 
     @Override
@@ -657,7 +661,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isVector(WorldConfigPath wcp) {
-        return isVector(wcp.path());
+        return isVector(wcp.key());
     }
 
     @Override
@@ -666,7 +670,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public OfflinePlayer getOfflinePlayer(WorldConfigPath wcp) {
-        return getOfflinePlayer(wcp.path());
+        return getOfflinePlayer(wcp.key());
     }
 
     @Override
@@ -675,7 +679,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public OfflinePlayer getOfflinePlayer(WorldConfigPath wcp, OfflinePlayer op) {
-        return getOfflinePlayer(wcp.path(), op);
+        return getOfflinePlayer(wcp.key(), op);
     }
 
     @Override
@@ -684,7 +688,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isOfflinePlayer(WorldConfigPath wcp) {
-        return isOfflinePlayer(wcp.path());
+        return isOfflinePlayer(wcp.key());
     }
 
     @Override
@@ -693,7 +697,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public ItemStack getItemStack(WorldConfigPath wcp) {
-        return getItemStack(wcp.path());
+        return getItemStack(wcp.key());
     }
 
     @Override
@@ -702,7 +706,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public ItemStack getItemStack(WorldConfigPath wcp, ItemStack is) {
-        return getItemStack(wcp.path(), is);
+        return getItemStack(wcp.key(), is);
     }
 
     @Override
@@ -711,7 +715,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     /**
-     * Gets the requested Color by path.
+     * Gets the requested Color by key.
      * <p/>
      * If the Color does not exist but a default value has been specified,
      * this will return the default value. If the Color does not exist and no
@@ -741,7 +745,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public ConfigurationSection getConfigurationSection(WorldConfigPath wcp) {
-        return getConfigurationSection(wcp.path());
+        return getConfigurationSection(wcp.key());
     }
 
     @Override
@@ -750,7 +754,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public boolean isConfigurationSection(WorldConfigPath wcp) {
-        return isConfigurationSection(wcp.path());
+        return isConfigurationSection(wcp.key());
     }
 
     @Override
@@ -764,7 +768,7 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     public void addDefault(WorldConfigPath wcp, Object o) {
-        addDefault(wcp.path(), o);
+        addDefault(wcp.key(), o);
     }
 
 }

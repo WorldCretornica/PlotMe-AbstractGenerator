@@ -52,7 +52,7 @@ public class BukkitConfigAccessor {
         if (fileConfiguration == null || configFile == null) {
             return;
         }
-        
+
         try {
             getConfig().save(configFile);
         } catch (IOException e) {
@@ -64,5 +64,5 @@ public class BukkitConfigAccessor {
         if (!configFile.exists()) {
             this.plugin.saveResource(fileName, false);
         }
-    }   
+    }
 }

@@ -14,7 +14,6 @@ import java.util.HashMap;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     public static final String CONFIG_NAME = "config.yml";
-    private static final String CORE_PLUGIN_NAME = "PlotMe";
     private File coreFolder;
     private File configFolder;
 
@@ -48,7 +47,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     private void setupConfigFolders() {
         File pluginsFolder = getDataFolder().getParentFile();
-        coreFolder = new File(pluginsFolder, CORE_PLUGIN_NAME);
+        coreFolder = new File(pluginsFolder, "PlotMe");
         getLogger().info(coreFolder.getName());
         configFolder = new File(coreFolder, getName());
         getLogger().info(configFolder.getName());
@@ -132,7 +131,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *
      * @param world The world to get the {@link WorldGenConfig} for
      * @return The {@link WorldGenConfig}
-     * @see #getWorldGenConfig(java.lang.String, java.util.HashMap)
+     * @see #getWorldGenConfig(String, HashMap)
      */
     @Override
     public WorldGenConfig getWorldGenConfig(String world) {

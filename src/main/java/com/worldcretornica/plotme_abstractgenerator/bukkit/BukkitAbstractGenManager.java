@@ -1,20 +1,34 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
+
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Rotation;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
-
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
@@ -28,7 +42,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     public BukkitAbstractGenManager(AbstractGenerator instance) {
         plugin = instance;
         worldConfigs = new HashMap<>();
-        
+
         blockPlacedLast.add(Material.SAPLING.getId());
         blockPlacedLast.add(Material.BED.getId());
         blockPlacedLast.add(Material.POWERED_RAIL.getId());
@@ -100,57 +114,12 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                     Location location = entity.getLocation();
 
                     if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
-                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
+                        && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
                         entity.remove();
                     }
                 }
             }
         }
-    }
-
-    private static int[] getPaintingMod(Art art, BlockFace blockFace) {
-        int H = art.getBlockHeight();
-        int W = art.getBlockWidth();
-
-        //Same for all faces
-        if (H == 2 && W == 1) {
-            return new int[]{0, -1, 0};
-        }
-
-        switch (blockFace) {
-            case WEST:
-                if (H == 3 && W == 4 || H == 1 && W == 2) {
-                    return new int[]{0, 0, -1};
-                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, -1};
-                }
-
-                break;
-            case SOUTH:
-                if (H == 3 && W == 4 || H == 1 && W == 2) {
-                    return new int[]{-1, 0, 0};
-                } else if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{-1, -1, 0};
-                }
-
-                break;
-            case EAST:
-                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, 0};
-                }
-
-                break;
-            case NORTH:
-                if (H == 2 && W == 2 || H == 4 && W == 4 || H == 2 && W == 4) {
-                    return new int[]{0, -1, 0};
-                }
-
-                break;
-            default:
-                return new int[]{0, 0, 0};
-        }
-
-        return new int[]{0, 0, 0};
     }
 
     public WorldGenConfig getWGC(World world) {
@@ -286,7 +255,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int highestZ = Math.max(bottomZ(id, world), topZ(id, world));
 
         return location.getBlockX() >= lowestX && location.getBlockX() <= highestX
-                       && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
+               && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
     }
 
     @SuppressWarnings("deprecation")
@@ -364,8 +333,9 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 for (Entity entity : chunk.getEntities()) {
                     Location location = entity.getLocation();
 
-                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot1Bottom.getBlockX() && location.getBlockX() <= plot1Top.getBlockX()
-                                && location.getBlockZ() >= plot1Bottom.getBlockZ() && location.getBlockZ() <= plot1Top.getBlockZ()) {
+                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot1Bottom.getBlockX()
+                        && location.getBlockX() <= plot1Top.getBlockX()
+                        && location.getBlockZ() >= plot1Bottom.getBlockZ() && location.getBlockZ() <= plot1Top.getBlockZ()) {
                         entities1.add(entity);
                     }
                 }
@@ -379,8 +349,9 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 for (Entity entity : chunk.getEntities()) {
                     Location location = entity.getLocation();
 
-                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot2Bottom.getBlockX() && location.getBlockX() <= plot2Top.getBlockX()
-                                && location.getBlockZ() >= plot2Bottom.getBlockZ() && location.getBlockZ() <= plot2Top.getBlockZ()) {
+                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot2Bottom.getBlockX()
+                        && location.getBlockX() <= plot2Top.getBlockX()
+                        && location.getBlockZ() >= plot2Bottom.getBlockZ() && location.getBlockZ() <= plot2Top.getBlockZ()) {
                         entities2.add(entity);
                     }
                 }
@@ -404,8 +375,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             } else if (entity1.getType() == EntityType.PAINTING) {
                 Painting painting = ((Painting) entity1);
                 BlockFace blockFace = painting.getFacing();
-                int[] mod = getPaintingMod(painting.getArt(), blockFace);
-                location1 = location1.add(mod[0], mod[1], mod[2]);
+                location1 = location1.add(painting.getLocation());
                 painting.teleport(location1);
                 painting.setFacingDirection(blockFace, true);
             } else {
@@ -415,7 +385,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
         for (Entity entity : entities2) {
             Location location = entity.getLocation();
-            Location newl = new Location(world, location.getX() + distanceX, location.getY(), location.getZ() + distanceZ);
+            Location location1 = new Location(world, location.getX() + distanceX, location.getY(), location.getZ() + distanceZ);
 
             if (entity.getType() == EntityType.ITEM_FRAME) {
                 ItemFrame itemFrame = ((ItemFrame) entity);
@@ -423,7 +393,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 ItemStack item = itemFrame.getItem();
                 Rotation rotation = itemFrame.getRotation();
 
-                itemFrame.teleport(newl);
+                itemFrame.teleport(location1);
                 itemFrame.setItem(item);
                 itemFrame.setRotation(rotation);
                 itemFrame.setFacingDirection(blockFace, true);
@@ -431,12 +401,11 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             } else if (entity.getType() == EntityType.PAINTING) {
                 Painting painting = ((Painting) entity);
                 BlockFace blockFace = painting.getFacing();
-                int[] mod = getPaintingMod(painting.getArt(), blockFace);
-                newl = newl.add(mod[0], mod[1], mod[2]);
-                painting.teleport(newl);
+                location1 = location1.add(painting.getLocation());
+                painting.teleport(location1);
                 painting.setFacingDirection(blockFace, true);
             } else {
-                entity.teleport(newl);
+                entity.teleport(location1);
             }
         }
 

@@ -2,7 +2,7 @@ package com.worldcretornica.plotme_abstractgenerator;
 
 public interface WorldConfigPath {
 
-    String path();
+    String key();
 
     Object def();
 

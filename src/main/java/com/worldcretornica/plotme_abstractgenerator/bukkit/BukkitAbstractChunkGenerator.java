@@ -1,5 +1,9 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.X_TRANSLATION;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.Z_TRANSLATION;
+
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_ChunkGenerator;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
@@ -8,8 +12,6 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.Random;
-
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.*;
 
 public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implements IBukkitPlotMe_ChunkGenerator {
 
@@ -38,5 +40,5 @@ public abstract class BukkitAbstractChunkGenerator extends ChunkGenerator implem
         }
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blockkid;
     }
-    
+
 }
