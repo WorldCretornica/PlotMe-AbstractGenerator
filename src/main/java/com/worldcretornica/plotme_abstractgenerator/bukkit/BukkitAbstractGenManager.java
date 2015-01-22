@@ -143,18 +143,18 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public int getPlotSize(String worldname) {
-        if (getWGC(worldname) != null) {
-            return getWGC(worldname).getInt(PLOT_SIZE);
+    public int getPlotSize(String worldName) {
+        if (getWGC(worldName) != null) {
+            return getWGC(worldName).getInt(PLOT_SIZE);
         } else {
-            plugin.getLogger().log(Level.WARNING, "Tried to get plot size for undefined world '{0}'", worldname);
+            plugin.getLogger().log(Level.WARNING, "Tried to get plot size for undefined world '{0}'", worldName);
             return 0;
         }
     }
 
     @Override
-    public boolean createConfig(String worldname, Map<String, String> args) {
-        WorldGenConfig wgc = plugin.getWorldGenConfig(worldname);
+    public boolean createConfig(String worldName, Map<String, String> args) {
+        WorldGenConfig wgc = plugin.getWorldGenConfig(worldName);
 
         for (String key : args.keySet()) {
             wgc.set(key, args.get(key));
@@ -170,11 +170,11 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public int getRoadHeight(String worldname) {
-        if (containsWGC(worldname)) {
-            return getWGC(worldname).getInt(GROUND_LEVEL);
+    public int getRoadHeight(String worldName) {
+        if (containsWGC(worldName)) {
+            return getWGC(worldName).getInt(GROUND_LEVEL);
         } else {
-            plugin.getLogger().log(Level.WARNING, "Tried to get road height for undefined world '{0}'", worldname);
+            plugin.getLogger().log(Level.WARNING, "Tried to get road height for undefined world '{0}'", worldName);
             return 64;
         }
     }
