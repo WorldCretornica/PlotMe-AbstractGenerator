@@ -91,6 +91,8 @@
             <groupId>com.worldcretornica</groupId>
             <artifactId>PlotMe-Core</artifactId>
             <version>0.16-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spongepowered</groupId>

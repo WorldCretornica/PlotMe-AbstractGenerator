@@ -13,7 +13,7 @@ public class BukkitConfigAccessor {
 
     private final String fileName;
     private final AbstractGenerator plugin;
-    private File configFile;
+    private final File configFile;
     private FileConfiguration fileConfiguration;
 
     public BukkitConfigAccessor(AbstractGenerator plugin, String fileName) {
