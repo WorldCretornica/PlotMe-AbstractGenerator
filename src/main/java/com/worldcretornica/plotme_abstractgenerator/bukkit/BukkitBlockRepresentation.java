@@ -12,8 +12,8 @@ public class BukkitBlockRepresentation {
         this.data = value;
     }
 
-    public BukkitBlockRepresentation(String idvalue) {
-        this(getBlockId(idvalue), getBlockData(idvalue));
+    public BukkitBlockRepresentation(String idValue) {
+        this(getBlockId(idValue), getBlockData(idValue));
     }
 
     @SuppressWarnings("deprecation")
@@ -21,17 +21,17 @@ public class BukkitBlockRepresentation {
         this((short) block.getTypeId(), block.getData());
     }
 
-    public static short getBlockId(String idvalue) throws NumberFormatException {
-        if (idvalue.indexOf(":") > 0) {
-            return Short.parseShort(idvalue.split(":")[0]);
+    public static short getBlockId(String idValue) throws NumberFormatException {
+        if (idValue.indexOf(":") > 0) {
+            return Short.parseShort(idValue.split(":")[0]);
         } else {
-            return Short.parseShort(idvalue);
+            return Short.parseShort(idValue);
         }
     }
 
-    public static byte getBlockData(String idvalue) throws NumberFormatException {
-        if (idvalue.indexOf(":") > 0) {
-            return Byte.parseByte(idvalue.split(":")[1]);
+    public static byte getBlockData(String idValue) throws NumberFormatException {
+        if (idValue.indexOf(":") > 0) {
+            return Byte.parseByte(idValue.split(":")[1]);
         } else {
             return 0;
         }

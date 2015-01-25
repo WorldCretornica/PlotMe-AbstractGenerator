@@ -129,13 +129,13 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * Gets a {@link WorldGenConfig} for the specified world with just the
      * global defaults for {@link WorldGenConfig}.
      *
-     * @param world The world to get the {@link WorldGenConfig} for
+     * @param worldName The world to get the {@link WorldGenConfig} for
      * @return The {@link WorldGenConfig}
      * @see #getWorldGenConfig(String, HashMap)
      */
     @Override
-    public WorldGenConfig getWorldGenConfig(String world) {
-        return getWorldGenConfig(world, new HashMap<String, Object>());
+    public WorldGenConfig getWorldGenConfig(String worldName) {
+        return getWorldGenConfig(worldName, new HashMap<String, Object>());
     }
 
     /**

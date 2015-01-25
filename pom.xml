@@ -69,7 +69,7 @@
         <repository>
             <id>sponge-maven-repo</id>
             <name>Sponge maven repo</name>
-            <url>http://repo.spongepowered.org/Sponge/maven</url>
+            <url>http://repo.spongepowered.org/maven/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -85,19 +85,17 @@
             <artifactId>bukkit</artifactId>
             <version>1.8-R0.1-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.worldcretornica</groupId>
             <artifactId>PlotMe-Core</artifactId>
             <version>0.16-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
-            <version>1.0</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
