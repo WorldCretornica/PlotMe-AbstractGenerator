@@ -4,6 +4,8 @@ import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.PlotMe_Core;
+
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,12 +21,28 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     private BukkitConfigAccessor configCA;
     private BukkitConfigAccessor captionsCA;
+    
+    private AbstractSchematicUtil schematicutil;
 
     @Override
     public final void onEnable() {
+        
+        if (Bukkit.getVersion().contains("1.7")) {
+            schematicutil = new com.worldcretornica.plotme_abstractgenerator.bukkit.v1_7.SchematicUtil(this);
+        } else if (Bukkit.getVersion().contains("1.8")) {
+            schematicutil = new com.worldcretornica.plotme_abstractgenerator.bukkit.v1_8.SchematicUtil(this);
+        } else {
+            getLogger().warning("This MC version is not supported yet, trying latest version!");
+            schematicutil = new com.worldcretornica.plotme_abstractgenerator.bukkit.v1_8.SchematicUtil(this);
+        }
+        
         setupConfigFolders();
         setupConfig();
         initialize();
+    }
+    
+    public AbstractSchematicUtil getSchematicUtil() {
+        return this.schematicutil;
     }
 
     /**
