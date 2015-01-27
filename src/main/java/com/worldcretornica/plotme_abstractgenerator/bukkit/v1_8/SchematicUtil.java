@@ -1,23 +1,73 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit.v1_8;
 
-import java.io.*;
-import java.util.*;
-
-import org.bukkit.*;
-import org.bukkit.block.*;
+import com.worldcretornica.schematic.Attribute;
+import com.worldcretornica.schematic.Entity;
+import com.worldcretornica.schematic.Item;
+import com.worldcretornica.schematic.ItemTag;
+import com.worldcretornica.schematic.Leash;
+import com.worldcretornica.schematic.Pattern;
+import com.worldcretornica.schematic.Pose;
+import com.worldcretornica.schematic.RecordItem;
+import com.worldcretornica.schematic.Schematic;
+import com.worldcretornica.schematic.TileEntity;
+import com.worldcretornica.schematic.jnbt.ByteArrayTag;
+import com.worldcretornica.schematic.jnbt.ByteTag;
+import com.worldcretornica.schematic.jnbt.CompoundTag;
+import com.worldcretornica.schematic.jnbt.DoubleTag;
+import com.worldcretornica.schematic.jnbt.FloatTag;
+import com.worldcretornica.schematic.jnbt.IntTag;
+import com.worldcretornica.schematic.jnbt.ListTag;
+import com.worldcretornica.schematic.jnbt.NBTInputStream;
+import com.worldcretornica.schematic.jnbt.ShortTag;
+import com.worldcretornica.schematic.jnbt.StringTag;
+import com.worldcretornica.schematic.jnbt.Tag;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Rotation;
+import org.bukkit.SkullType;
+import org.bukkit.World;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Jukebox;
+import org.bukkit.block.NoteBlock;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Guardian;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Rabbit.Type;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import com.worldcretornica.schematic.*;
-import com.worldcretornica.schematic.Entity;
-import com.worldcretornica.schematic.Item;
-import com.worldcretornica.schematic.jnbt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.bukkit.v1_7.SchematicUtil {
         
@@ -107,26 +157,66 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         if (bs instanceof Skull) {
                             Skull skull = (Skull) bs;
 
-                            switch(skull.getRotation()) {
-                            case NORTH: rot = 0; break;
-                            case NORTH_NORTH_EAST: rot = 1; break;
-                            case NORTH_EAST: rot = 2; break;
-                            case EAST_NORTH_EAST: rot = 3; break;
-                            case EAST: rot = 4; break;
-                            case EAST_SOUTH_EAST: rot = 5;
-                            case SOUTH_EAST: rot = 6;
-                            case SOUTH_SOUTH_EAST: rot = 7;
-                            case SOUTH: rot = 8;
-                            case SOUTH_SOUTH_WEST: rot = 9;
-                            case SOUTH_WEST: rot = 10;
-                            case WEST_SOUTH_WEST: rot = 11;
-                            case WEST: rot = 12;
-                            case WEST_NORTH_WEST: rot = 13;
-                            case NORTH_WEST: rot = 14;
-                            case NORTH_NORTH_WEST: rot = 15;
-                            default: rot = 0;
+                            switch (skull.getRotation()) {
+                                case NORTH:
+                                    rot = 0;
+                                    break;
+                                case NORTH_NORTH_EAST:
+                                    rot = 1;
+                                    break;
+                                case UP:
+                                    break;
+                                case DOWN:
+                                    break;
+                                case NORTH_EAST:
+                                    rot = 2;
+                                    break;
+                                case EAST_NORTH_EAST:
+                                    rot = 3;
+                                    break;
+                                case EAST:
+                                    rot = 4;
+                                    break;
+                                case EAST_SOUTH_EAST:
+                                    rot = 5;
+                                    break;
+                                case SOUTH_EAST:
+                                    rot = 6;
+                                    break;
+                                case SOUTH_SOUTH_EAST:
+                                    rot = 7;
+                                    break;
+                                case SOUTH:
+                                    rot = 8;
+                                    break;
+                                case SOUTH_SOUTH_WEST:
+                                    rot = 9;
+                                    break;
+                                case SOUTH_WEST:
+                                    rot = 10;
+                                    break;
+                                case WEST_SOUTH_WEST:
+                                    rot = 11;
+                                    break;
+                                case WEST:
+                                    rot = 12;
+                                    break;
+                                case WEST_NORTH_WEST:
+                                    rot = 13;
+                                    break;
+                                case NORTH_WEST:
+                                    rot = 14;
+                                    break;
+                                case NORTH_NORTH_WEST:
+                                    rot = 15;
+                                    break;
+                                case SELF:
+                                    break;
+                                default:
+                                    rot = 0;
+                                    break;
                             }
-                            
+
                             skulltype = (byte) skull.getSkullType().ordinal();
                             
                             isTileEntity = true;
@@ -152,7 +242,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
                         if (bs instanceof Sign) {
                             Sign sign = (Sign) bs;
-                            
                             text1 = sign.getLine(0);
                             text2 = sign.getLine(1);
                             text3 = sign.getLine(2);
@@ -461,7 +550,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
             } else if (livingentity instanceof ArmorStand) {
                 ArmorStand armorstand = (ArmorStand) livingentity;
-                
+
                 showarms = (byte) (armorstand.hasArms() ? 1 : 0);
                 nobaseplate = (byte) (armorstand.hasBasePlate() ? 0 : 1);
                 invisible = (byte) (armorstand.isVisible() ? 0 : 1);
@@ -506,7 +595,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 rightleg.add((float) rightlegpose.getZ());
 
                 pose = new Pose(body, head, leftarm, rightarm, leftleg, rightleg);
-                
+
             } else if (livingentity instanceof Guardian) {
                 Guardian guardian = (Guardian) livingentity;
                 elder = (byte) (guardian.isElder() ? 1 : 0);
@@ -582,7 +671,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 List<?> entitiesList = getChildTag(schematic, "Entities", ListTag.class, List.class);
 
                 if (entitiesList != null) {
-                    entities = new ArrayList<Entity>();
+                    entities = new ArrayList<>();
 
                     for (Object tag : entitiesList) {
                         if (tag instanceof CompoundTag) {                                          
@@ -595,7 +684,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 List<?> tileentitiesList = getChildTag(schematic, "TileEntities", ListTag.class, List.class);
 
                 if (tileentitiesList != null) {
-                    tileentities = new ArrayList<TileEntity>();
+                    tileentities = new ArrayList<>();
 
                     for (Object entityElement : tileentitiesList) {
                         if (entityElement instanceof CompoundTag) {
@@ -1154,9 +1243,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         
         Double pushx = getChildTag(entity, "PushX", DoubleTag.class, Double.class);
         Double pushz = getChildTag(entity, "PushZ", DoubleTag.class, Double.class);
-        
-        Entity riding = null;
-        
+
         Float falldistance = getChildTag(entity, "FallDistance", FloatTag.class, Float.class);
         Float absorptionamount = getChildTag(entity, "AbsorptionAmount", FloatTag.class, Float.class);
         Float healf = getChildTag(entity, "HealF", FloatTag.class, Float.class);
@@ -1167,7 +1254,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Integer tilex = getChildTag(entity, "TileX", IntTag.class, Integer.class);
         Integer tiley = getChildTag(entity, "TileY", IntTag.class, Integer.class);
         Integer tilez = getChildTag(entity, "TileZ", IntTag.class, Integer.class);
-        Integer age = null; //Handled lower
         Integer inlove = getChildTag(entity, "InLove", IntTag.class, Integer.class);
         Integer transfercooldown = getChildTag(entity, "TransferCooldown", IntTag.class, Integer.class);
         Integer tntfuse = getChildTag(entity, "TNTFuse", IntTag.class, Integer.class);
@@ -1176,13 +1262,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Integer morecarrotsticks = getChildTag(entity, "MoreCarrotTicks", IntTag.class, Integer.class);
         Integer rabbittype = getChildTag(entity, "RabbitType", IntTag.class, Integer.class);
         Integer disabledslots = getChildTag(entity, "DisabledSlots", IntTag.class, Integer.class);
-        
-        Item item = null;
-        
-        Leash leash = null;
-        
-        Pose pose = null;
-        
+
         Short air = getChildTag(entity, "Air", ShortTag.class, Short.class);
         Short fire = getChildTag(entity, "Fire", ShortTag.class, Short.class);
         Short attacktime = getChildTag(entity, "AttachTime", ShortTag.class, Short.class);
@@ -1217,6 +1297,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         
         List<Item> items = getItems(entity);
 
+        Integer age = null; //Handled lower
         try {
             age = getChildTag(entity, "Age", IntTag.class, Integer.class);
         }catch(IllegalArgumentException e) {
@@ -1227,18 +1308,22 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         }
 
         CompoundTag itemtag = getChildTag(entity, "Item", CompoundTag.class);
+        Item item = null;
         if (itemtag != null) {
             item = getItem(itemtag);
         }
-        
+
+        Entity riding = null;
         if (entity.containsKey("Riding")) {
             riding = getEntity(getChildTag(entity, "Riding", CompoundTag.class));
         }
 
+        Leash leash = null;
         if (entity.containsKey("Leash")) {
             leash = getLeash(getChildTag(entity, "Leash", CompoundTag.class));
         }
-        
+
+        Pose pose = null;
         if (entity.containsKey("Pose")) {
             pose = getPose(getChildTag(entity, "Pose", CompoundTag.class));
         }
@@ -1252,13 +1337,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
     }
     
     protected Pose getPose(CompoundTag poseelement) {
-        Map<String, Tag> pose = ((CompoundTag) poseelement).getValue();
+        Map<String, Tag> pose = poseelement.getValue();
         List<Float> body = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
-        List<Float> head = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
-        List<Float> leftarm = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
-        List<Float> rightarm = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
-        List<Float> leftleg = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
-        List<Float> rightleg = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
+        List<Float> head = convert(getChildTag(pose, "head", ListTag.class, List.class), Float.class);
+        List<Float> leftarm = convert(getChildTag(pose, "leftarm", ListTag.class, List.class), Float.class);
+        List<Float> rightarm = convert(getChildTag(pose, "rightarm", ListTag.class, List.class), Float.class);
+        List<Float> leftleg = convert(getChildTag(pose, "leftleg", ListTag.class, List.class), Float.class);
+        List<Float> rightleg = convert(getChildTag(pose, "rightleg", ListTag.class, List.class), Float.class);
         
         return new Pose(body, head, leftarm, rightarm, leftleg, rightleg);
     }

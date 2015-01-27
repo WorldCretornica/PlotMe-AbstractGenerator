@@ -1,23 +1,78 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit.v1_7;
 
-import java.io.*;
-import java.util.*;
-
-import org.bukkit.*;
-import org.bukkit.block.*;
+import com.worldcretornica.plotme_abstractgenerator.bukkit.AbstractSchematicUtil;
+import com.worldcretornica.schematic.Attribute;
+import com.worldcretornica.schematic.Display;
+import com.worldcretornica.schematic.Ench;
+import com.worldcretornica.schematic.Entity;
+import com.worldcretornica.schematic.Item;
+import com.worldcretornica.schematic.ItemTag;
+import com.worldcretornica.schematic.Leash;
+import com.worldcretornica.schematic.Modifier;
+import com.worldcretornica.schematic.RecordItem;
+import com.worldcretornica.schematic.Schematic;
+import com.worldcretornica.schematic.TileEntity;
+import com.worldcretornica.schematic.jnbt.ByteArrayTag;
+import com.worldcretornica.schematic.jnbt.ByteTag;
+import com.worldcretornica.schematic.jnbt.CompoundTag;
+import com.worldcretornica.schematic.jnbt.DoubleTag;
+import com.worldcretornica.schematic.jnbt.FloatTag;
+import com.worldcretornica.schematic.jnbt.IntTag;
+import com.worldcretornica.schematic.jnbt.ListTag;
+import com.worldcretornica.schematic.jnbt.NBTInputStream;
+import com.worldcretornica.schematic.jnbt.ShortTag;
+import com.worldcretornica.schematic.jnbt.StringTag;
+import com.worldcretornica.schematic.jnbt.Tag;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Rotation;
+import org.bukkit.SkullType;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Jukebox;
+import org.bukkit.block.NoteBlock;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LeashHitch;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.inventory.*;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import com.worldcretornica.plotme_abstractgenerator.bukkit.AbstractSchematicUtil;
-import com.worldcretornica.schematic.*;
-import com.worldcretornica.schematic.Entity;
-import com.worldcretornica.schematic.Item;
-import com.worldcretornica.schematic.jnbt.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SchematicUtil extends AbstractSchematicUtil {
     
@@ -440,7 +495,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot, 
                 color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, 
                 hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
-                itemheld, feetarmor, legarmor, chestarmor, headarmor,
+                itemheld, feetarmor, headarmor, chestarmor, legarmor,
                 skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse, 
                 itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
@@ -455,9 +510,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte count = (byte) is.getAmount();
         Short damage = (short) is.getData().getData();
         Short itemid = (short) is.getTypeId();
-        
+
         ItemTag itemtag = null;
-        
+
         if (is.hasItemMeta()) {
             String author = null;
             String title = null;
@@ -468,7 +523,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             List<Ench> enchants = null;
             
             ItemMeta im = is.getItemMeta();
-            
+
             Map<Enchantment, Integer> isEnchants = im.getEnchants();
             if (isEnchants != null) {
                 enchants = new ArrayList<>();
@@ -1231,7 +1286,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
     }
     
     protected Leash getLeash(CompoundTag leashelement) {
-        Map<String, Tag> leash = ((CompoundTag) leashelement).getValue();
+        Map<String, Tag> leash = leashelement.getValue();
         Integer x = getChildTag(leash, "X", IntTag.class, Integer.class);
         Integer y = getChildTag(leash, "Y", IntTag.class, Integer.class);
         Integer z = getChildTag(leash, "Z", IntTag.class, Integer.class);
@@ -1240,7 +1295,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
     }
     
     protected Modifier getModifier(CompoundTag modifierelement) {
-        Map<String, Tag> modifier = ((CompoundTag) modifierelement).getValue();
+        Map<String, Tag> modifier = modifierelement.getValue();
         Integer operation = getChildTag(modifier, "Operation", IntTag.class, Integer.class);
         Double amount = getChildTag(modifier, "Amount", DoubleTag.class, Double.class);
         String name = getChildTag(modifier, "Name", StringTag.class, String.class);
