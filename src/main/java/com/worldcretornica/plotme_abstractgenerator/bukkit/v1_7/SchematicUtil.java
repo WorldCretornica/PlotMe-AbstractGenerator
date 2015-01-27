@@ -331,7 +331,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
-        List<Equipment> equipments = null;
+        
+        Item itemheld = null;
+        Item feetarmor = null;
+        Item legarmor = null;
+        Item chestarmor = null;
+        Item headarmor = null;
+        
         List<Item> items = null;
         
         if (bukkitentity.getPassenger() != null) {
@@ -394,11 +400,29 @@ public class SchematicUtil extends AbstractSchematicUtil {
             EntityEquipment entityequipment = livingentity.getEquipment();
             
             if (entityequipment != null) {
-                equipments = new ArrayList<>();
+                ItemStack isHand = entityequipment.getItemInHand();
+                if (isHand != null) {
+                    itemheld = getItem(isHand, null);
+                }
                 
-                for(ItemStack is : entityequipment.getArmorContents()) {
-                    Item equipmentitem = getItem(is, null);
-                    equipments.add(new Equipment(equipmentitem.getCount(), equipmentitem.getDamage(), equipmentitem.getId(), equipmentitem.getTag()));
+                ItemStack isBoot = entityequipment.getBoots();
+                if (isBoot != null) {
+                    feetarmor = getItem(isBoot, null);
+                }
+                
+                ItemStack isLeg = entityequipment.getLeggings();
+                if (isLeg != null) {
+                    legarmor = getItem(isLeg, null);
+                }
+                
+                ItemStack isChest = entityequipment.getChestplate();
+                if (isChest != null) {
+                    chestarmor = getItem(isChest, null);
+                }
+                
+                ItemStack isHelm = entityequipment.getHelmet();
+                if (isHelm != null) {
+                    headarmor = getItem(isHelm, null);
                 }
             }
 
@@ -415,7 +439,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
         return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, 
                 tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot, 
                 color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, 
-                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances, equipments, 
+                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
+                itemheld, feetarmor, legarmor, chestarmor, headarmor,
                 skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse, 
                 itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
@@ -428,7 +453,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
     @SuppressWarnings("deprecation")
     protected Item getItem(ItemStack is, Byte slot) {
         Byte count = (byte) is.getAmount();
-        Short damage = is.getDurability();
+        Short damage = (short) is.getData().getData();
         Short itemid = (short) is.getTypeId();
         
         ItemTag itemtag = null;
@@ -677,7 +702,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 createEntity(e, loc, originX, originY, originZ);
             }
         } catch (Exception e) {
-            //plugin.getLogger().warning("err:" + e.getMessage());
             e.printStackTrace();
         }
 
@@ -803,7 +827,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
     @SuppressWarnings("deprecation")
     protected ItemStack getItemStack(Item item) {
-        ItemStack is = new ItemStack(item.getId(), item.getCount());
+        ItemStack is = new ItemStack(item.getId(), item.getCount(), item.getDamage(), item.getDamage().byteValue());
+        
         ItemTag itemtag = item.getTag();
 
         if (itemtag != null) {
@@ -919,7 +944,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
             List<Float> rotation = e.getRotation();
             List<Attribute> attributes = e.getAttributes();
             List<Float> dropchances = e.getDropChances();
-            List<Equipment> equipments = e.getEquipments();
+            
+            Item itemheld = e.getItemHeld();
+            Item feetarmor = e.getFeetArmor();
+            Item legarmor = e.getLegArmor();
+            Item chestarmor = e.getChestArmor();
+            Item headarmor = e.getHeadArmor();
+            
             List<Item> items = e.getItems();
             
             Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
@@ -1022,24 +1053,22 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 }
 
                 EntityEquipment entityequipment = livingentity.getEquipment();
-                Set<ItemStack> newitems = new HashSet<>();
                 
-                if (equipments != null && !equipments.isEmpty()) {
-                    for(Equipment equipitem : equipments) {
-                        if (equipitem != null && equipitem.getId() != null && equipitem.getCount() != null) {
-                            ItemStack is = new ItemStack(equipitem.getId(), equipitem.getCount());
-                            ItemTag itemtag = equipitem.getTag();
-    
-                            if (itemtag != null) {
-                                setTag(is, itemtag);
-                            }
-                            
-                            newitems.add(is);
-                        }
-                    }
+                if (itemheld != null) {
+                    entityequipment.setItemInHand(getItemStack(itemheld));
                 }
-
-                entityequipment.setArmorContents(newitems.toArray(new ItemStack[5]));               
+                if (feetarmor != null) {
+                    entityequipment.setBoots(getItemStack(feetarmor));
+                }
+                if (legarmor != null) {
+                    entityequipment.setLeggings(getItemStack(legarmor));
+                }
+                if (chestarmor != null) {
+                    entityequipment.setChestplate(getItemStack(chestarmor));
+                }
+                if (headarmor != null) { 
+                    entityequipment.setHelmet(getItemStack(headarmor));
+                }               
 
                 if (livingentity instanceof Skeleton && skeletontype != null) {
                     Skeleton skeleton = (Skeleton) livingentity;
@@ -1155,7 +1184,21 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<Float> rotation = convert(getChildTag(entity, "Rotation", ListTag.class, List.class), Float.class);
         List<Attribute> attributes = getAttributes(entity);
         List<Float> dropchances = convert(getChildTag(entity, "DropChances", ListTag.class, List.class), Float.class);
-        List<Equipment> equipments = getEquipment(entity);
+        List<Item> equipments = getEquipment(entity);
+        Item itemheld = null;
+        Item feetarmor = null;
+        Item legarmor = null;
+        Item chestarmor = null;
+        Item headarmor = null;
+        
+        if (equipments != null) {
+            itemheld = equipments.get(0);
+            feetarmor = equipments.get(1);
+            legarmor = equipments.get(2);
+            chestarmor = equipments.get(3);
+            headarmor = equipments.get(4);
+        }
+        
         List<Item> items = getItems(entity);
 
         try {
@@ -1182,7 +1225,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
                                   
         return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive, motion, pos, rotation,
                 canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime, age, inlove, absorptionamount,
-                healf, customname, attributes, dropchances, equipments, skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor, 
+                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
                 itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
     
@@ -1309,30 +1353,21 @@ public class SchematicUtil extends AbstractSchematicUtil {
         }
     }
     
-    protected Equipment getEquipment(CompoundTag equipmentelement) {
-        Map<String, Tag> equipment = equipmentelement.getValue();
-        Byte count = getChildTag(equipment, "Count", ByteTag.class, Byte.class);
-        Short damage = getChildTag(equipment, "Damage", ShortTag.class, Short.class);
-        Short id = getChildTag(equipment, "id", ShortTag.class, Short.class);
-        
-        ItemTag itemtag = getItemTag(equipment);
-        
-        return new Equipment(count, damage, id, itemtag);
-    }
-    
-    protected List<Equipment> getEquipment(Map<String, Tag> entity) {
+    protected List<Item> getEquipment(Map<String, Tag> entity) {
         List<?> equipmentlist = getChildTag(entity, "Equipment", ListTag.class, List.class);
 
         if (equipmentlist != null) {
-            List<Equipment> equipments = new ArrayList<Equipment>();
+            List<Item> items = new ArrayList<Item>();
 
             for (Object equipmentelement : equipmentlist) {
                 if (equipmentelement instanceof CompoundTag) {
-                    equipments.add(getEquipment((CompoundTag) equipmentelement));
+                    items.add(getItem((CompoundTag) equipmentelement));
+                } else {
+                    items.add(null);
                 }
             }
 
-            return equipments;
+            return items;
         } else {
             return null;
         }

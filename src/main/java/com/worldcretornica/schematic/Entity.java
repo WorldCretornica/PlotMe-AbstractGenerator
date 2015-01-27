@@ -62,7 +62,11 @@ public class Entity extends AbstractSchematicElement {
     private List<Float> rotation;
     private List<Attribute> attributes;
     private List<Float> dropchances;
-    private List<Equipment> equipments;
+    private Item itemheld;
+    private Item feetarmor;
+    private Item headarmor;
+    private Item chestarmor;
+    private Item legarmor;
     private List<Item> items;
     // END - PRE 1.8
     
@@ -89,7 +93,7 @@ public class Entity extends AbstractSchematicElement {
             Integer tiley, Integer tilez, Float falldistance, String id, String motive, List<Double> motion, List<Double> pos, List<Float> rotation,
             Byte canpickuploot, Byte color, Byte customnamevisible, Byte leashed, Byte persistencerequired, Byte sheared, Short attacktime, Short deathtime, 
             Short health, Short hurttime, Integer age, Integer inlove, Float absorptionamount, Float healf, String customname, List<Attribute> attributes, 
-            List<Float> dropchances, List<Equipment> equipments, Byte skeletontype, Entity riding, Leash leash, Item item, Byte isbaby,
+            List<Float> dropchances, Item itemheld, Item feetarmor, Item headarmor, Item chestarmor, Item legarmor, Byte skeletontype, Entity riding, Leash leash, Item item, Byte isbaby,
             List<Item> items, Integer transfercooldown, Short fuel, Double pushx, Double pushz, Integer tntfuse, Byte itemrotation,
             Float itemdropchance, Byte agelocked, Byte invisible, Byte nobaseplate, Byte nogravity, Byte showarms, Byte silent, Byte small,
             Byte elder, Integer forcedage, Integer hurtbytimestamp, Integer morecarrotsticks, Integer rabbittype, Integer disabledslots,
@@ -128,7 +132,11 @@ public class Entity extends AbstractSchematicElement {
         this.customname = customname;
         this.attributes = attributes;
         this.dropchances = dropchances;
-        this.equipments = equipments;
+        this.itemheld = itemheld;
+        this.headarmor = headarmor;
+        this.legarmor = legarmor;
+        this.chestarmor = chestarmor;
+        this.feetarmor = feetarmor;
         this.skeletontype = skeletontype;
         this.riding = riding;
         this.leash = leash;
@@ -155,6 +163,7 @@ public class Entity extends AbstractSchematicElement {
         this.morecarrotsticks = morecarrotsticks;
         this.rabbittype = rabbittype;
         this.disabledslots = disabledslots;
+        this.pose = pose;
     }
 
     public Byte getDir() { return dir; }
@@ -205,6 +214,12 @@ public class Entity extends AbstractSchematicElement {
     public Integer getDisabledSlots() { return disabledslots; }
 
     public Item getItem() { return item; }
+    
+    public Item getItemHeld() { return itemheld; }
+    public Item getFeetArmor() { return feetarmor; }
+    public Item getLegArmor() { return legarmor; }
+    public Item getHeadArmor() { return headarmor; }
+    public Item getChestArmor() { return chestarmor; }
 
     public Leash getLeash() { return leash; }
     
@@ -227,7 +242,6 @@ public class Entity extends AbstractSchematicElement {
     public List<Float> getRotation() { return rotation; }
     public List<Attribute> getAttributes() { return attributes; }
     public List<Float> getDropChances() { return dropchances; }
-    public List<Equipment> getEquipments() { return equipments; }
     public List<Item> getItems() { return items; }
     
     public String toString()
@@ -267,7 +281,11 @@ public class Entity extends AbstractSchematicElement {
                 ", customname=" + Sanitize(customname) + 
                 ", attributes=" + Sanitize(attributes) + 
                 ", dropchances=" + Sanitize(dropchances) + 
-                ", equipments=" + Sanitize(equipments) + 
+                ", itemheld=" + Sanitize(itemheld) +
+                ", headarmor=" + Sanitize(headarmor) +
+                ", chestarmor=" + Sanitize(chestarmor) +
+                ", legarmor=" + Sanitize(legarmor) +
+                ", feetarmor=" + Sanitize(feetarmor) +
                 ", skeletontype=" + Sanitize(skeletontype) +
                 ", riding=" + Sanitize(riding) + 
                 ", leash=" + Sanitize(leash) + 

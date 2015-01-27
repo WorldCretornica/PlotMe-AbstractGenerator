@@ -202,7 +202,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                                 items = new ArrayList<>();
                                 
                                 for (byte slot = 0; slot < inventory.getSize(); slot ++) {
-                                    
                                     ItemStack is = inventory.getItem(slot);
                                     if (is != null) {
                                         Item item = getItem(is, slot);
@@ -217,11 +216,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         if (bs instanceof Banner) {
                             Banner banner = (Banner) bs;
                             patterns = new ArrayList<>();
-                            base = banner.getBaseColor().ordinal();
+                            base = (int) banner.getBaseColor().getDyeData();
                             
                             for (org.bukkit.block.banner.Pattern pattern : banner.getPatterns()) {
-                                patterns.add(new Pattern(pattern.getColor().ordinal(), pattern.getPattern().getIdentifier()));
+                                patterns.add(new Pattern((int) pattern.getColor().getDyeData(), pattern.getPattern().getIdentifier()));
                             }
+                            
+                            isTileEntity = true;
                         }
                         
                         if (isTileEntity) {
@@ -236,10 +237,17 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             }
             
             for(org.bukkit.entity.Entity bukkitentity : world.getEntities()) {
-                entities.add(getEntity(bukkitentity, minX, minY, minZ));
+                Location entloc = bukkitentity.getLocation();
+                
+                if (entloc.getX() >= minX && entloc.getX() <= maxX &&
+                        entloc.getY() >= minY && entloc.getY() <= maxY &&
+                        entloc.getZ() >= minZ && entloc.getZ() <= maxZ &&
+                        !(bukkitentity instanceof Player)) {
+                    entities.add(getEntity(bukkitentity, minX, minY, minZ));
+                }
             }
                     
-            schem = new Schematic(blocks, blockData, biomes, "Alpha", width, length, height, entities, tileentities, "", minX, minY, minZ);
+            schem = new Schematic(blocks, blockData, biomes, "Alpha", width, length, height, entities, tileentities, "", 0, 0, 0);
         } else {
             schem = null;
         }
@@ -260,7 +268,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         positions.add(x);
         positions.add(y);
         positions.add(z);
-        
+                
         Byte dir = null;
         Byte direction = null;
         Byte invulnerable = null;
@@ -318,7 +326,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Short hurttime = null;
         Short fuel = null;
         
-        String id = "" + bukkitentity.getType().getTypeId();
+        String id = bukkitentity.getType().getName();
         String motive = null;
         String customname = null;
         
@@ -329,7 +337,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
-        List<Equipment> equipments = null;
+        
+        Item itemheld = null;
+        Item feetarmor = null;
+        Item legarmor = null;
+        Item chestarmor = null;
+        Item headarmor = null;
+        
         List<Item> items = null;
         
         if (bukkitentity.getPassenger() != null) {
@@ -395,11 +409,29 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             EntityEquipment entityequipment = livingentity.getEquipment();
             
             if (entityequipment != null) {
-                equipments = new ArrayList<>();
+                ItemStack isHand = entityequipment.getItemInHand();
+                if (isHand != null) {
+                    itemheld = getItem(isHand, null);
+                }
                 
-                for(ItemStack is : entityequipment.getArmorContents()) {
-                    Item equipmentitem = getItem(is, null);
-                    equipments.add(new Equipment(equipmentitem.getCount(), equipmentitem.getDamage(), equipmentitem.getId(), equipmentitem.getTag()));
+                ItemStack isBoot = entityequipment.getBoots();
+                if (isBoot != null) {
+                    feetarmor = getItem(isBoot, null);
+                }
+                
+                ItemStack isLeg = entityequipment.getLeggings();
+                if (isLeg != null) {
+                    legarmor = getItem(isLeg, null);
+                }
+                
+                ItemStack isChest = entityequipment.getChestplate();
+                if (isChest != null) {
+                    chestarmor = getItem(isChest, null);
+                }
+                
+                ItemStack isHelm = entityequipment.getHelmet();
+                if (isHelm != null) {
+                    headarmor = getItem(isHelm, null);
                 }
             }
             
@@ -488,7 +520,8 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, 
                 tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot, 
                 color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, 
-                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances, equipments, 
+                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
+                itemheld, feetarmor, legarmor, chestarmor, headarmor,
                 skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse, 
                 itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, null, small,
                 elder, forcedage, hurtbytimestamp, morecarrotsticks, rabbittype, disabledslots, pose);
@@ -636,7 +669,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
     @SuppressWarnings("deprecation")
     @Override
     protected void pasteSchematicEntities(Location loc, Schematic schematic) {
-        
         World world = loc.getWorld();
         
         List<Entity> entities = schematic.getEntities();
@@ -663,7 +695,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
             Block block = world.getBlockAt(te.getX() + loc.getBlockX(), te.getY() + loc.getBlockY(), te.getZ() + loc.getBlockZ());
             List<Item> items = te.getItems();
-
             // Commented are unused
             
             // Short maxnearbyentities = te.getMaxNearbyEntities();
@@ -686,7 +717,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             //Integer secondary = te.getSecondary();
 
             BlockState bs = block.getState();
-
+            
             if (bs instanceof Skull) {
                 Skull skull = (Skull) bs;
 
@@ -747,17 +778,17 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 nb.update(true, false);
             } else if (bs instanceof Banner) {
                 Banner banner = (Banner) bs;
+                banner.setBaseColor(DyeColor.getByDyeData(te.getBase().byteValue()));
                 for (Pattern pattern : te.getPatterns()) {
                     DyeColor dc = DyeColor.getByDyeData((pattern.getColor()).byteValue());
                     PatternType pt = PatternType.getByIdentifier(pattern.getPattern());
                     org.bukkit.block.banner.Pattern pat = new org.bukkit.block.banner.Pattern(dc, pt);
                     banner.addPattern(pat);
                 }
-                banner.setBaseColor(DyeColor.getByDyeData(te.getBase().byteValue()));
+                banner.update(true, false);
             }
 
             if (bs instanceof InventoryHolder && items != null && items.size() > 0) {
-                
                 InventoryHolder ih = (InventoryHolder) bs;
                 Inventory inventory = ih.getInventory();
 
@@ -777,205 +808,158 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Entity e, Location loc, int originX, int originY, int originZ) {
-        @SuppressWarnings("deprecation")
-        EntityType entitytype = EntityType.fromName(e.getId());
-        World world = loc.getWorld();
+        try {
+            @SuppressWarnings("deprecation")
+            EntityType entitytype = EntityType.fromName(e.getId());
+            World world = loc.getWorld();
+    
+            org.bukkit.entity.Entity ent = null;
 
-        org.bukkit.entity.Entity ent = null;
-        
-        if (entitytype != null && e.getPos() != null && e.getPos().size() == 3) {
-            List<Double> positions = e.getPos();
-            
-            double x = positions.get(0) - originX;
-            double y = positions.get(1) - originY;
-            double z = positions.get(2) - originZ;
-            
-            //Set properties, unused are commented out
-            
-            //Byte dir = e.getDir();
-            //Byte direction = e.getDirection();
-            //Byte invulnerable = e.getInvulnerable();
-            //Byte onground = e.getOnGround();
-            Byte canpickuploot = e.getCanPickupLoot();
-            Byte color = e.getColor();
-            Byte customnamevisible = e.getCustomNameVisible();
-            //Byte leashed = e.getLeashed();
-            Byte persistencerequired = e.getPersistenceRequired();
-            Byte sheared = e.getSheared();
-            Byte skeletontype = e.getSkeletonType();
-            Byte isbaby = e.getIsBaby();
-            Byte itemrotation = e.getItemRotation();
-            Byte agelocked = e.getAgeLocked();
-            Byte invisible = e.getInvisible();
-            Byte nobaseplate = e.getNoBasePlate();
-            Byte nogravity = e.getNoGravity();
-            Byte showarms = e.getShowArms();
-            //Byte silent = e.getSilent();
-            Byte small = e.getSmall();
-            Byte elder = e.getElder();
-            
-            //Double pushx = e.getPushX();
-            //Double pushz = e.getPushZ();
-            
-            Entity riding = e.getRiding();
-            
-            Float falldistance = e.getFallDistance();
-            //Float absorptionamount = e.getAbsorptionAmount();
-            Float healf = e.getHealF();
-            //Float itemdropchance = e.getItemDropChance();
-            
-            //Integer dimension = e.getDimension();
-            //Integer portalcooldown = e.getPortalCooldown();
-            //Integer tilex = e.getTileX();
-            //Integer tiley = e.getTileY();
-            //Integer tilez = e.getTileZ();
-            Integer age = e.getAge();
-            //Integer inlove = e.getInLove();
-            //Integer transfercooldown = e.getTransferCooldown();
-            //Integer tntfuse = e.getTNTFuse();
-            //Integer forcedage = e.getForcedAge();
-            Integer hurtbytimestamp = e.getHurtByTimestamp();
-            //Integer morecarrotsticks = e.getMoreCarrotSticks();
-            Integer rabbittype = e.getRabbitType();
-            //Integer disabledslots = e.getDisabledSlots();
-            
-            Item item = e.getItem();
-            
-            Leash leash = e.getLeash();
-            
-            Pose pose = e.getPose();
-            
-            Short air = e.getAir();
-            Short fire = e.getFire();
-            //Short attacktime = e.getAttackTime();
-            //Short deathtime = e.getDeathTime();
-            //Short health = e.getHealth();
-            //Short hurttime = e.getHurtTime();
-            //Short fuel = e.getFuel()
-            
-            //String id = e.getId();
-            //String motive = e.getMotive();
-            String customname = e.getCustomName();
-            
-            List<Double> motion = e.getMotion();
-            //List<Float> rotation = e.getRotation();
-            //List<Attribute> attributes = e.getAttributes();
-            //List<Float> dropchances = e.getDropChances();
-            List<Equipment> equipments = e.getEquipments();
-            List<Item> items = e.getItems();
-            
-            Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
-            
-            if (entitytype == EntityType.ITEM_FRAME) {
-                etloc.setX(Math.floor(etloc.getX()));
-                etloc.setY(Math.floor(etloc.getY()));
-                etloc.setZ(Math.floor(etloc.getZ()));
-                ent = world.spawnEntity(etloc, entitytype);
-            } else if (entitytype == EntityType.PAINTING) {
-                etloc.setX(Math.floor(etloc.getX()));
-                etloc.setY(Math.floor(etloc.getY()));
-                etloc.setZ(Math.floor(etloc.getZ()));
+            if (entitytype != null && e.getPos() != null && e.getPos().size() == 3) {
+                List<Double> positions = e.getPos();
                 
-                ent = world.spawnEntity(etloc, entitytype);
-            } else if (entitytype == EntityType.LEASH_HITCH) {                        
-                /*etloc.setX(Math.floor(etloc.getX()));
-                etloc.setY(Math.floor(etloc.getY()));
-                etloc.setZ(Math.floor(etloc.getZ()));
+                double x = positions.get(0) - originX;
+                double y = positions.get(1) - originY;
+                double z = positions.get(2) - originZ;
                 
-                ent = world.spawnEntity(etloc, entitytype);*/
-                return null;
-            } else if (entitytype == EntityType.DROPPED_ITEM) {
-                if (item == null) {
-                    return null;
-                } else {
-                    @SuppressWarnings("deprecation")
-                    ItemStack is = new ItemStack(item.getId(), item.getCount());
-                    ItemTag itemtag = item.getTag();
-
-                    if (itemtag != null) {
-                        setTag(is, itemtag);
-                    }
+                //Set properties, unused are commented out
+                
+                //Byte dir = e.getDir();
+                //Byte direction = e.getDirection();
+                //Byte invulnerable = e.getInvulnerable();
+                //Byte onground = e.getOnGround();
+                Byte canpickuploot = e.getCanPickupLoot();
+                Byte color = e.getColor();
+                Byte customnamevisible = e.getCustomNameVisible();
+                //Byte leashed = e.getLeashed();
+                Byte persistencerequired = e.getPersistenceRequired();
+                Byte sheared = e.getSheared();
+                Byte skeletontype = e.getSkeletonType();
+                Byte isbaby = e.getIsBaby();
+                Byte itemrotation = e.getItemRotation();
+                Byte agelocked = e.getAgeLocked();
+                Byte invisible = e.getInvisible();
+                Byte nobaseplate = e.getNoBasePlate();
+                Byte nogravity = e.getNoGravity();
+                Byte showarms = e.getShowArms();
+                //Byte silent = e.getSilent();
+                Byte small = e.getSmall();
+                Byte elder = e.getElder();
+                
+                //Double pushx = e.getPushX();
+                //Double pushz = e.getPushZ();
+                
+                Entity riding = e.getRiding();
+                
+                Float falldistance = e.getFallDistance();
+                //Float absorptionamount = e.getAbsorptionAmount();
+                Float healf = e.getHealF();
+                //Float itemdropchance = e.getItemDropChance();
+                
+                //Integer dimension = e.getDimension();
+                //Integer portalcooldown = e.getPortalCooldown();
+                //Integer tilex = e.getTileX();
+                //Integer tiley = e.getTileY();
+                //Integer tilez = e.getTileZ();
+                Integer age = e.getAge();
+                //Integer inlove = e.getInLove();
+                //Integer transfercooldown = e.getTransferCooldown();
+                //Integer tntfuse = e.getTNTFuse();
+                //Integer forcedage = e.getForcedAge();
+                Integer hurtbytimestamp = e.getHurtByTimestamp();
+                //Integer morecarrotsticks = e.getMoreCarrotSticks();
+                Integer rabbittype = e.getRabbitType();
+                //Integer disabledslots = e.getDisabledSlots();
+                
+                Item item = e.getItem();
+                
+                Leash leash = e.getLeash();
+                
+                Pose pose = e.getPose();
+                
+                Short air = e.getAir();
+                Short fire = e.getFire();
+                //Short attacktime = e.getAttackTime();
+                //Short deathtime = e.getDeathTime();
+                //Short health = e.getHealth();
+                //Short hurttime = e.getHurtTime();
+                //Short fuel = e.getFuel()
+                
+                //String id = e.getId();
+                //String motive = e.getMotive();
+                String customname = e.getCustomName();
+                
+                List<Double> motion = e.getMotion();
+                //List<Float> rotation = e.getRotation();
+                //List<Attribute> attributes = e.getAttributes();
+                //List<Float> dropchances = e.getDropChances();
+                
+                Item itemheld = e.getItemHeld();
+                Item feetarmor = e.getFeetArmor();
+                Item legarmor = e.getLegArmor();
+                Item chestarmor = e.getChestArmor();
+                Item headarmor = e.getHeadArmor();
+                
+                List<Item> items = e.getItems();
+                
+                Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
+                
+                if (entitytype == EntityType.ITEM_FRAME) {
+                    etloc.setX(Math.floor(etloc.getX()));
+                    etloc.setY(Math.floor(etloc.getY()));
+                    etloc.setZ(Math.floor(etloc.getZ()));
+                    ent = world.spawnEntity(etloc, entitytype);
+                } else if (entitytype == EntityType.PAINTING) {
+                    etloc.setX(Math.floor(etloc.getX()));
+                    etloc.setY(Math.floor(etloc.getY()));
+                    etloc.setZ(Math.floor(etloc.getZ()));
                     
-                    ent = world.dropItem(etloc, is);
-                }
-            } else {
-                ent = world.spawnEntity(etloc, entitytype);
-            }
-            
-            
-            if (riding != null)             ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
-            if (falldistance != null)       ent.setFallDistance(falldistance);
-            if (fire != null)               ent.setFireTicks(fire);
-            if (age != null && age >= 1)    ent.setTicksLived(age);
-            
-            if (motion != null && motion.size() == 3) {
-                Vector velocity = new Vector(motion.get(0), motion.get(1), motion.get(2));
-                ent.setVelocity(velocity);
-            }
-            
-            if (ent instanceof InventoryHolder) {
-                InventoryHolder ih = (InventoryHolder) ent;
-                
-                Set<ItemStack> newitems = new HashSet<>();
-                
-                if (items != null && !items.isEmpty()) {
-                    for (Item newitem : items) {
+                    ent = world.spawnEntity(etloc, entitytype);
+                } else if (entitytype == EntityType.LEASH_HITCH) {                        
+                    /*etloc.setX(Math.floor(etloc.getX()));
+                    etloc.setY(Math.floor(etloc.getY()));
+                    etloc.setZ(Math.floor(etloc.getZ()));
+                    
+                    ent = world.spawnEntity(etloc, entitytype);*/
+                    return null;
+                } else if (entitytype == EntityType.DROPPED_ITEM) {
+                    if (item == null) {
+                        return null;
+                    } else {
                         @SuppressWarnings("deprecation")
-                        ItemStack is = new ItemStack(newitem.getId(), newitem.getCount());
-                        ItemTag itemtag = newitem.getTag();
-
+                        ItemStack is = new ItemStack(item.getId(), item.getCount());
+                        ItemTag itemtag = item.getTag();
+    
                         if (itemtag != null) {
                             setTag(is, itemtag);
                         }
                         
-                        newitems.add(is);
+                        ent = world.dropItem(etloc, is);
                     }
+                } else {
+                    ent = world.spawnEntity(etloc, entitytype);
                 }
                 
-                ih.getInventory().setContents(newitems.toArray(new ItemStack[newitems.size()]));
-            }
-            
-            if (ent instanceof ItemFrame) {
-                ItemFrame itemframe = (ItemFrame) ent;
-                itemframe.setRotation(Rotation.values()[itemrotation]);
                 
-                @SuppressWarnings("deprecation")
-                ItemStack is = new ItemStack(item.getId(), item.getCount());
-                ItemTag itemtag = item.getTag();
-
-                if (itemtag != null) {
-                    setTag(is, itemtag);
+                if (riding != null)             ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
+                if (falldistance != null)       ent.setFallDistance(falldistance);
+                if (fire != null)               ent.setFireTicks(fire);
+                if (age != null && age >= 1)    ent.setTicksLived(age);
+                
+                if (motion != null && motion.size() == 3) {
+                    Vector velocity = new Vector(motion.get(0), motion.get(1), motion.get(2));
+                    ent.setVelocity(velocity);
                 }
                 
-                itemframe.setItem(is);
-            }
-            
-            if (ent instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity) ent;
-                
-                if (canpickuploot != null)      livingentity.setCanPickupItems(canpickuploot != 0);
-                if (customname != null)         livingentity.setCustomName(customname);
-                if (customnamevisible != null)  livingentity.setCustomNameVisible(customnamevisible != 0);
-                if (healf != null)             livingentity.setHealth(healf);
-                if (air != null)                livingentity.setRemainingAir(air);
-                if (persistencerequired != null) livingentity.setRemoveWhenFarAway(persistencerequired == 0);
-                if (leash != null) {
-                    org.bukkit.entity.Entity leashentity = getLeash(leash, loc, originX, originY, originZ);
-                    if (leashentity != null) {
-                        livingentity.setLeashHolder(leashentity);
-                    }
-                }
-                if (hurtbytimestamp != null) livingentity.setNoDamageTicks(hurtbytimestamp);
-
-                EntityEquipment entityequipment = livingentity.getEquipment();
-                Set<ItemStack> newitems = new HashSet<>();
-                
-                if (equipments != null && !equipments.isEmpty()) {
-                    for(Equipment equipitem : equipments) {
-                        if (equipitem != null && equipitem.getId() != null && equipitem.getCount() != null) {
-                            @SuppressWarnings("deprecation")
-                            ItemStack is = new ItemStack(equipitem.getId(), equipitem.getCount());
-                            ItemTag itemtag = equipitem.getTag();
+                if (ent instanceof InventoryHolder) {
+                    InventoryHolder ih = (InventoryHolder) ent;
+                    
+                    Set<ItemStack> newitems = new HashSet<>();
+                    
+                    if (items != null && !items.isEmpty()) {
+                        for (Item newitem : items) {
+                            ItemStack is = getItemStack(newitem);
+                            ItemTag itemtag = newitem.getTag();
     
                             if (itemtag != null) {
                                 setTag(is, itemtag);
@@ -984,108 +968,162 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                             newitems.add(is);
                         }
                     }
+                    
+                    ih.getInventory().setContents(newitems.toArray(new ItemStack[newitems.size()]));
                 }
-
-                entityequipment.setArmorContents(newitems.toArray(new ItemStack[5]));
                 
-                if (livingentity instanceof Ageable) {
-                    Ageable ageable = (Ageable) livingentity;
-                    if (age != null)        ageable.setAge(age);
-                    if (agelocked != null)  ageable.setAgeLock(agelocked != 0);
-                    if (isbaby != null) {
-                        if (isbaby == 0)
-                            ageable.setBaby();
-                        else
-                            ageable.setAdult();
-                    }
-                }        
-
-                if (livingentity instanceof Skeleton && skeletontype != null) {
-                    Skeleton skeleton = (Skeleton) livingentity;
-                    @SuppressWarnings("deprecation")
-                    SkeletonType st = SkeletonType.getType(skeletontype);
-                    skeleton.setSkeletonType(st);
-                } else if (livingentity instanceof Rabbit && rabbittype != null) {
-                    Rabbit rabbit = (Rabbit) livingentity;
+                if (ent instanceof ItemFrame) {
+                    ItemFrame itemframe = (ItemFrame) ent;
+                    itemframe.setRotation(Rotation.values()[itemrotation]);
                     
-                    switch (rabbittype) {
-                    case 0:
-                        rabbit.setRabbitType(Type.BROWN);
-                        break;
-                    case 1:
-                        rabbit.setRabbitType(Type.WHITE);
-                        break;
-                    case 2:
-                        rabbit.setRabbitType(Type.BLACK);
-                        break;
-                    case 3:
-                        rabbit.setRabbitType(Type.BLACK_AND_WHITE);
-                        break;
-                    case 4:
-                        rabbit.setRabbitType(Type.GOLD);
-                        break;
-                    case 5:
-                        rabbit.setRabbitType(Type.SALT_AND_PEPPER);
-                        break;
-                    case 99:
-                        rabbit.setRabbitType(Type.THE_KILLER_BUNNY);
-                        break;
+                    ItemStack is = getItemStack(item);
+                    ItemTag itemtag = item.getTag();
+    
+                    if (itemtag != null) {
+                        setTag(is, itemtag);
                     }
-                } else if (livingentity instanceof ArmorStand) {
-                    ArmorStand armorstand = (ArmorStand) livingentity;
-                    if (showarms != null) armorstand.setArms(showarms != 0);
-                    if (nobaseplate != null) armorstand.setBasePlate(nobaseplate == 0);
-                    if (invisible != null) armorstand.setVisible(invisible == 0);
-                    if (nogravity != null) armorstand.setGravity(nogravity == 0);
-                    if (small != null) armorstand.setSmall(small != 0);
                     
-                    if (pose != null) {
-                        List<Float> body = pose.getBody();
-                        List<Float> head = pose.getHead();
-                        List<Float> leftarm = pose.getLeftArm();
-                        List<Float> rightarm = pose.getRightArm();
-                        List<Float> leftleg = pose.getLeftLeg();
-                        List<Float> rightleg = pose.getRightLeg();
-                        
-                        if (body != null && body.size() == 3) {
-                            armorstand.setBodyPose(new EulerAngle(body.get(0), body.get(1), body.get(2)));
-                        }
-                        if (head != null && head.size() == 3) {
-                            armorstand.setHeadPose(new EulerAngle(head.get(0), head.get(1), head.get(2)));
-                        }
-                        if (leftarm != null && leftarm.size() == 3) {
-                            armorstand.setLeftArmPose(new EulerAngle(leftarm.get(0), leftarm.get(1), leftarm.get(2)));
-                        }
-                        if (rightarm != null && rightarm.size() == 3) {
-                            armorstand.setRightArmPose(new EulerAngle(rightarm.get(0), rightarm.get(1), rightarm.get(2)));
-                        }
-                        if (leftleg != null && leftleg.size() == 3) {
-                            armorstand.setLeftLegPose(new EulerAngle(leftleg.get(0), leftleg.get(1), leftleg.get(2)));
-                        }
-                        if (rightleg != null && rightleg.size() == 3) {
-                            armorstand.setRightLegPose(new EulerAngle(rightleg.get(0), rightleg.get(1), rightleg.get(2)));
+                    itemframe.setItem(is);
+                }
+                
+                if (ent instanceof LivingEntity) {
+                    LivingEntity livingentity = (LivingEntity) ent;
+                    
+                    if (canpickuploot != null)      livingentity.setCanPickupItems(canpickuploot != 0);
+                    if (customname != null)         livingentity.setCustomName(customname);
+                    if (customnamevisible != null)  livingentity.setCustomNameVisible(customnamevisible != 0);
+                    if (healf != null)             livingentity.setHealth(healf);
+                    if (air != null)                livingentity.setRemainingAir(air);
+                    if (persistencerequired != null) livingentity.setRemoveWhenFarAway(persistencerequired == 0);
+                    if (leash != null) {
+                        org.bukkit.entity.Entity leashentity = getLeash(leash, loc, originX, originY, originZ);
+                        if (leashentity != null) {
+                            livingentity.setLeashHolder(leashentity);
                         }
                     }
-                } else if (livingentity instanceof Guardian) {
-                    Guardian guardian = (Guardian) livingentity;
-                    if (elder != null) guardian.setElder(elder != 0);
-                } else if (livingentity instanceof Sheep) {
-                    Sheep sheep = (Sheep) livingentity;
-                    if (sheared != null) sheep.setSheared(sheared != 0);
-                    if (color != null) {
+                    if (hurtbytimestamp != null) livingentity.setNoDamageTicks(hurtbytimestamp);
+    
+                    EntityEquipment entityequipment = livingentity.getEquipment();
+    
+                    if (itemheld != null) {
+                        entityequipment.setItemInHand(getItemStack(itemheld));
+                    }
+                    if (feetarmor != null) {
+                        entityequipment.setBoots(getItemStack(feetarmor));
+                    }
+                    if (legarmor != null) {
+                        entityequipment.setLeggings(getItemStack(legarmor));
+                    }
+                    if (chestarmor != null) {
+                        entityequipment.setChestplate(getItemStack(chestarmor));
+                    }
+                    if (headarmor != null) { 
+                        entityequipment.setHelmet(getItemStack(headarmor));
+                    }
+                    
+                    if (livingentity instanceof Ageable) {
+                        Ageable ageable = (Ageable) livingentity;
+                        if (age != null)        ageable.setAge(age);
+                        if (agelocked != null)  ageable.setAgeLock(agelocked != 0);
+                        if (isbaby != null) {
+                            if (isbaby != 0)
+                                ageable.setBaby();
+                            else
+                                ageable.setAdult();
+                        }
+                    }        
+    
+                    if (livingentity instanceof Skeleton && skeletontype != null) {
+                        Skeleton skeleton = (Skeleton) livingentity;
                         @SuppressWarnings("deprecation")
-                        DyeColor dyecolor = DyeColor.getByWoolData(color);
-                        if (dyecolor != null) sheep.setColor(dyecolor);
+                        SkeletonType st = SkeletonType.getType(skeletontype);
+                        skeleton.setSkeletonType(st);
+                    } else if (livingentity instanceof Rabbit && rabbittype != null) {
+                        Rabbit rabbit = (Rabbit) livingentity;
+                        
+                        switch (rabbittype) {
+                        case 0:
+                            rabbit.setRabbitType(Type.BROWN);
+                            break;
+                        case 1:
+                            rabbit.setRabbitType(Type.WHITE);
+                            break;
+                        case 2:
+                            rabbit.setRabbitType(Type.BLACK);
+                            break;
+                        case 3:
+                            rabbit.setRabbitType(Type.BLACK_AND_WHITE);
+                            break;
+                        case 4:
+                            rabbit.setRabbitType(Type.GOLD);
+                            break;
+                        case 5:
+                            rabbit.setRabbitType(Type.SALT_AND_PEPPER);
+                            break;
+                        case 99:
+                            rabbit.setRabbitType(Type.THE_KILLER_BUNNY);
+                            break;
+                        }
+                    } else if (livingentity instanceof ArmorStand) {
+                        ArmorStand armorstand = (ArmorStand) livingentity;
+                        if (showarms != null) armorstand.setArms(showarms != 0);
+                        if (nobaseplate != null) armorstand.setBasePlate(nobaseplate == 0);
+                        if (invisible != null) armorstand.setVisible(invisible == 0);
+                        if (nogravity != null) armorstand.setGravity(nogravity == 0);
+                        if (small != null) armorstand.setSmall(small != 0);
+                        
+                        if (pose != null) {
+                            List<Float> body = pose.getBody();
+                            List<Float> head = pose.getHead();
+                            List<Float> leftarm = pose.getLeftArm();
+                            List<Float> rightarm = pose.getRightArm();
+                            List<Float> leftleg = pose.getLeftLeg();
+                            List<Float> rightleg = pose.getRightLeg();
+                            
+                            if (body != null && body.size() == 3) {
+                                armorstand.setBodyPose(new EulerAngle(body.get(0), body.get(1), body.get(2)));
+                            }
+                            if (head != null && head.size() == 3) {
+                                armorstand.setHeadPose(new EulerAngle(head.get(0), head.get(1), head.get(2)));
+                            }
+                            if (leftarm != null && leftarm.size() == 3) {
+                                armorstand.setLeftArmPose(new EulerAngle(leftarm.get(0), leftarm.get(1), leftarm.get(2)));
+                            }
+                            if (rightarm != null && rightarm.size() == 3) {
+                                armorstand.setRightArmPose(new EulerAngle(rightarm.get(0), rightarm.get(1), rightarm.get(2)));
+                            }
+                            if (leftleg != null && leftleg.size() == 3) {
+                                armorstand.setLeftLegPose(new EulerAngle(leftleg.get(0), leftleg.get(1), leftleg.get(2)));
+                            }
+                            if (rightleg != null && rightleg.size() == 3) {
+                                armorstand.setRightLegPose(new EulerAngle(rightleg.get(0), rightleg.get(1), rightleg.get(2)));
+                            }
+                        }
+                    } else if (livingentity instanceof Guardian) {
+                        Guardian guardian = (Guardian) livingentity;
+                        if (elder != null) guardian.setElder(elder != 0);
+                    } else if (livingentity instanceof Sheep) {
+                        Sheep sheep = (Sheep) livingentity;
+                        if (sheared != null) sheep.setSheared(sheared != 0);
+                        if (color != null) {
+                            @SuppressWarnings("deprecation")
+                            DyeColor dyecolor = DyeColor.getByWoolData(color);
+                            if (dyecolor != null) sheep.setColor(dyecolor);
+                        }
                     }
                 }
             }
+            
+            if (ent == null) {
+                plugin.getLogger().info("null entity");
+            }
+            
+            return ent;
+        } catch(Exception ex) {
+            plugin.getLogger().info("failed to create entity ");
+            ex.printStackTrace();
+            return null;
         }
-        
-        if (ent == null) {
-            plugin.getLogger().info("null entity");
-        }
-        
-        return ent;
     }
     
     @Override
@@ -1162,7 +1200,21 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         List<Float> rotation = convert(getChildTag(entity, "Rotation", ListTag.class, List.class), Float.class);
         List<Attribute> attributes = getAttributes(entity);
         List<Float> dropchances = convert(getChildTag(entity, "DropChances", ListTag.class, List.class), Float.class);
-        List<Equipment> equipments = getEquipment(entity);
+        List<Item> equipments = getEquipment(entity);
+        Item itemheld = null;
+        Item feetarmor = null;
+        Item legarmor = null;
+        Item chestarmor = null;
+        Item headarmor = null;
+        
+        if (equipments != null) {
+            itemheld = equipments.get(0);
+            feetarmor = equipments.get(1);
+            legarmor = equipments.get(2);
+            chestarmor = equipments.get(3);
+            headarmor = equipments.get(4);
+        }
+        
         List<Item> items = getItems(entity);
 
         try {
@@ -1193,7 +1245,8 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                                   
         return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive, motion, pos, rotation,
                 canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime, age, inlove, absorptionamount,
-                healf, customname, attributes, dropchances, equipments, skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor, 
+                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
                 itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, silent, small, elder, forcedage, hurtbytimestamp,
                 morecarrotsticks, rabbittype, disabledslots, pose);
     }
