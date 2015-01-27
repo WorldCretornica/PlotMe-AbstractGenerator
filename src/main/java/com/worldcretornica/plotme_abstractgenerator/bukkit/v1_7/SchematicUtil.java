@@ -1,73 +1,21 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit.v1_7;
 
 import com.worldcretornica.plotme_abstractgenerator.bukkit.AbstractSchematicUtil;
-import com.worldcretornica.schematic.Attribute;
-import com.worldcretornica.schematic.Display;
-import com.worldcretornica.schematic.Ench;
+import com.worldcretornica.schematic.*;
 import com.worldcretornica.schematic.Entity;
 import com.worldcretornica.schematic.Item;
-import com.worldcretornica.schematic.ItemTag;
-import com.worldcretornica.schematic.Leash;
-import com.worldcretornica.schematic.Modifier;
-import com.worldcretornica.schematic.RecordItem;
-import com.worldcretornica.schematic.Schematic;
-import com.worldcretornica.schematic.TileEntity;
-import com.worldcretornica.schematic.jnbt.ByteArrayTag;
-import com.worldcretornica.schematic.jnbt.ByteTag;
-import com.worldcretornica.schematic.jnbt.CompoundTag;
-import com.worldcretornica.schematic.jnbt.DoubleTag;
-import com.worldcretornica.schematic.jnbt.FloatTag;
-import com.worldcretornica.schematic.jnbt.IntTag;
-import com.worldcretornica.schematic.jnbt.ListTag;
-import com.worldcretornica.schematic.jnbt.NBTInputStream;
-import com.worldcretornica.schematic.jnbt.ShortTag;
-import com.worldcretornica.schematic.jnbt.StringTag;
-import com.worldcretornica.schematic.jnbt.Tag;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
-import org.bukkit.SkullType;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Jukebox;
-import org.bukkit.block.NoteBlock;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LeashHitch;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
+import com.worldcretornica.schematic.jnbt.*;
+import org.bukkit.*;
+import org.bukkit.block.*;
+import org.bukkit.enchantments.*;
+import org.bukkit.entity.*;
+import org.bukkit.entity.Skeleton.*;
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.plugin.*;
+import org.bukkit.util.*;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -75,9 +23,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class SchematicUtil extends AbstractSchematicUtil {
-    
+
     protected Plugin plugin;
-    
+
     public SchematicUtil(Plugin instance) {
         this.plugin = instance;
     }
@@ -85,15 +33,15 @@ public class SchematicUtil extends AbstractSchematicUtil {
     @Override
     public Schematic loadCompiledSchematic(String file) {
         Schematic schem = null;
-        
+
         File pluginsFolder = plugin.getDataFolder().getParentFile();
         File coreFolder = new File(pluginsFolder, "PlotMe\\PlotSchematic");
         coreFolder.mkdirs();
-        
+
         String filename = coreFolder.getAbsolutePath() + "\\" + file + ".plotschematic";
-        
+
         File f = new File(filename);
-        
+
         if (f.exists()) {
             try (ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 schem = (Schematic) input.readObject();
@@ -105,7 +53,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         } else {
             plugin.getLogger().severe("File '" + file + ".plotschematic' does not exist");
         }
-        
+
         return schem;
     }
 
@@ -114,7 +62,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
     public Schematic createCompiledSchematic(Location loc1, Location loc2) {
 
         Schematic schem;
-        
+
         if (loc1.getWorld().equals(loc2.getWorld())) {
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
@@ -122,33 +70,33 @@ public class SchematicUtil extends AbstractSchematicUtil {
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
             int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-            
+
             Short length = (short) (maxZ - minZ);
             Short width = (short) (maxX - minX);
             Short height = (short) (maxY - minY);
-            
+
             World world = loc1.getWorld();
             int[] blocks = new int[length * width * height];
             byte[] blockData = new byte[length * width * height];
             byte[] biomes = null;
-            
+
             List<Entity> entities = new ArrayList<>();
             List<TileEntity> tileentities = new ArrayList<>();
-            
+
             for (int x = 0; x < width; ++x) {
                 for (int z = 0; z < length; ++z) {
                     for (int y = 0; y < height; ++y) {
                         int index = y * width * length + z * width + x;
-                        
+
                         Block block = world.getBlockAt(x + minX, y + minY, z + minZ);
-                        
+
                         blocks[index] = block.getTypeId();
                         blockData[index] = block.getData();
-                        
+
                         boolean isTileEntity = false;
-                        
+
                         BlockState bs = block.getState();
-                        
+
                         TileEntity te = null;
 
                         Byte rot = null;
@@ -185,153 +133,175 @@ public class SchematicUtil extends AbstractSchematicUtil {
                         String command = null;
 
                         List<Item> items = new ArrayList<>();
-                        
+
                         if (bs instanceof Skull) {
                             Skull skull = (Skull) bs;
 
-                            switch(skull.getRotation()) {
-                            case NORTH: rot = 0; break;
-                            case NORTH_NORTH_EAST: rot = 1; break;
-                            case NORTH_EAST: rot = 2; break;
-                            case EAST_NORTH_EAST: rot = 3; break;
-                            case EAST: rot = 4; break;
-                            case EAST_SOUTH_EAST: rot = 5;
-                            case SOUTH_EAST: rot = 6;
-                            case SOUTH_SOUTH_EAST: rot = 7;
-                            case SOUTH: rot = 8;
-                            case SOUTH_SOUTH_WEST: rot = 9;
-                            case SOUTH_WEST: rot = 10;
-                            case WEST_SOUTH_WEST: rot = 11;
-                            case WEST: rot = 12;
-                            case WEST_NORTH_WEST: rot = 13;
-                            case NORTH_WEST: rot = 14;
-                            case NORTH_NORTH_WEST: rot = 15;
-                            default: rot = 0;
+                            switch (skull.getRotation()) {
+                                case NORTH:
+                                    rot = 0;
+                                    break;
+                                case NORTH_NORTH_EAST:
+                                    rot = 1;
+                                    break;
+                                case NORTH_EAST:
+                                    rot = 2;
+                                    break;
+                                case EAST_NORTH_EAST:
+                                    rot = 3;
+                                    break;
+                                case EAST:
+                                    rot = 4;
+                                    break;
+                                case EAST_SOUTH_EAST:
+                                    rot = 5;
+                                case SOUTH_EAST:
+                                    rot = 6;
+                                case SOUTH_SOUTH_EAST:
+                                    rot = 7;
+                                case SOUTH:
+                                    rot = 8;
+                                case SOUTH_SOUTH_WEST:
+                                    rot = 9;
+                                case SOUTH_WEST:
+                                    rot = 10;
+                                case WEST_SOUTH_WEST:
+                                    rot = 11;
+                                case WEST:
+                                    rot = 12;
+                                case WEST_NORTH_WEST:
+                                    rot = 13;
+                                case NORTH_WEST:
+                                    rot = 14;
+                                case NORTH_NORTH_WEST:
+                                    rot = 15;
+                                default:
+                                    rot = 0;
                             }
-                            
+
                             skulltype = (byte) skull.getSkullType().ordinal();
-                            
+
                             isTileEntity = true;
                         }
-                        
+
                         if (bs instanceof CreatureSpawner) {
                             CreatureSpawner spawner = (CreatureSpawner) bs;
-                            
+
                             entityid = spawner.getCreatureTypeName();
                             delay = (short) spawner.getDelay();
 
                             isTileEntity = true;
                         }
-                        
+
                         if (bs instanceof Furnace) {
                             Furnace furnace = (Furnace) bs;
-                            
+
                             burntime = furnace.getBurnTime();
                             cooktime = furnace.getCookTime();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof Sign) {
                             Sign sign = (Sign) bs;
-                            
+
                             text1 = sign.getLine(0);
                             text2 = sign.getLine(1);
                             text3 = sign.getLine(2);
                             text4 = sign.getLine(3);
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof CommandBlock) {
                             CommandBlock cb = (CommandBlock) bs;
-                            
+
                             command = cb.getCommand();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof BrewingStand) {
                             BrewingStand brew = (BrewingStand) bs;
-                            
+
                             brewtime = (short) brew.getBrewingTime();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof Jukebox) {
                             Jukebox jb = (Jukebox) bs;
-                            
+
                             record = jb.getPlaying().getId();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof NoteBlock) {
                             NoteBlock nb = (NoteBlock) bs;
-                            
+
                             note = nb.getRawNote();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof InventoryHolder) {
-                            
+
                             InventoryHolder ih = (InventoryHolder) bs;
                             Inventory inventory = ih.getInventory();
 
                             if (inventory.getSize() > 0) {
-                                for (byte slot = 0; slot < inventory.getSize(); slot ++) {
-                                    
+                                for (byte slot = 0; slot < inventory.getSize(); slot++) {
+
                                     ItemStack is = inventory.getItem(slot);
                                     if (is != null) {
                                         Item item = getItem(is, slot);
-                                        
+
                                         items.add(item);
                                     }
                                 }
                             }
-                            
+
                             isTileEntity = true;
                         }
-                        
+
                         if (isTileEntity) {
-                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay, 
-                                    minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime, 
-                                    text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal, 
-                                    transfercooldown, levels, primary, secondary, null, null);
+                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
+                                                minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
+                                                text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                transfercooldown, levels, primary, secondary, null, null);
                             tileentities.add(te);
                         }
                     }
                 }
             }
-            
-            for(org.bukkit.entity.Entity bukkitentity : world.getEntities()) {
+
+            for (org.bukkit.entity.Entity bukkitentity : world.getEntities()) {
                 entities.add(getEntity(bukkitentity, minX, minY, minZ));
             }
-                    
+
             schem = new Schematic(blocks, blockData, biomes, "Alpha", width, length, height, entities, tileentities, "", 0, 0, 0);
         } else {
             schem = null;
         }
-        
+
         return schem;
     }
 
     @SuppressWarnings("deprecation")
     protected Entity getEntity(org.bukkit.entity.Entity bukkitentity, int minX, int minY, int minZ) {
-        
+
         Location entLoc = bukkitentity.getLocation();
         double x = entLoc.getX() - minX;
         double y = entLoc.getY() - minY;
         double z = entLoc.getZ() - minZ;
-        
+
         List<Double> positions = new ArrayList<>();
-        
+
         positions.add(x);
         positions.add(y);
         positions.add(z);
-        
+
         Byte dir = null;
         Byte direction = null;
         Byte invulnerable = null;
@@ -345,14 +315,14 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte isbaby = null;
         Byte itemrotation = null;
         Byte leashed = null;
-        
+
         Entity riding = null;
-        
+
         Float falldistance = null;
         Float absorptionamount = null;
         Float healf = null;
         Float itemdropchance = null;
-        
+
         Integer dimension = null;
         Integer portalcooldown = null;
         Integer tilex = null;
@@ -362,11 +332,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Integer inlove = null;
         Integer transfercooldown = null;
         Integer tntfuse = null;
-        
+
         Item item = null;
-        
+
         Leash leash = null;
-        
+
         Short air = null;
         Short fire = null;
         Short attacktime = null;
@@ -374,76 +344,75 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Short health = null;
         Short hurttime = null;
         Short fuel = null;
-        
+
         String id = "" + bukkitentity.getType().getTypeId();
         String motive = null;
         String customname = null;
-        
+
         Double pushx = null;
         Double pushz = null;
-        
+
         List<Double> motion = null;
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
-        
+
         Item itemheld = null;
         Item feetarmor = null;
         Item legarmor = null;
         Item chestarmor = null;
         Item headarmor = null;
-        
+
         List<Item> items = null;
-        
+
         if (bukkitentity.getPassenger() != null) {
             riding = getEntity(bukkitentity.getPassenger(), minX, minY, minZ);
         }
-        
+
         falldistance = bukkitentity.getFallDistance();
         fire = (short) bukkitentity.getFireTicks();
         age = bukkitentity.getTicksLived();
 
-        
         Vector velocity = bukkitentity.getVelocity();
         motion = new ArrayList<>();
         motion.add(velocity.getX());
         motion.add(velocity.getY());
         motion.add(velocity.getZ());
-        
+
         if (bukkitentity instanceof Item) {
             Item entityitem = (Item) bukkitentity;
-            
+
             item = new Item(entityitem.getCount(), entityitem.getSlot(), entityitem.getDamage(), entityitem.getId(), null);
         }
-        
+
         if (bukkitentity instanceof InventoryHolder) {
             InventoryHolder ih = (InventoryHolder) bukkitentity;
-            Inventory inventory = ih.getInventory();            
+            Inventory inventory = ih.getInventory();
             items = new ArrayList<>();
-            
+
             if (inventory.getSize() > 0) {
-                for (byte slot = 0; slot < inventory.getSize(); slot ++) {
-                    
+                for (byte slot = 0; slot < inventory.getSize(); slot++) {
+
                     ItemStack is = inventory.getItem(slot);
                     if (is != null) {
                         Item inventoryitem = getItem(is, slot);
-                        
+
                         items.add(inventoryitem);
                     }
                 }
             }
         }
-        
+
         if (bukkitentity instanceof ItemFrame) {
-            ItemFrame itemframe = (ItemFrame) bukkitentity;            
+            ItemFrame itemframe = (ItemFrame) bukkitentity;
             itemrotation = (byte) itemframe.getRotation().ordinal();
             item = getItem(itemframe.getItem(), null);
         }
-        
+
         if (bukkitentity instanceof LivingEntity) {
             LivingEntity livingentity = (LivingEntity) bukkitentity;
-            
-            canpickuploot = (byte) (livingentity.getCanPickupItems() ? 1 : 0) ;
+
+            canpickuploot = (byte) (livingentity.getCanPickupItems() ? 1 : 0);
             customname = livingentity.getCustomName();
             customnamevisible = (byte) (livingentity.isCustomNameVisible() ? 1 : 0);
             health = (short) livingentity.getHealth();
@@ -453,28 +422,28 @@ public class SchematicUtil extends AbstractSchematicUtil {
             leash = getLeash(livingentity.getLeashHolder());
 
             EntityEquipment entityequipment = livingentity.getEquipment();
-            
+
             if (entityequipment != null) {
                 ItemStack isHand = entityequipment.getItemInHand();
                 if (isHand != null) {
                     itemheld = getItem(isHand, null);
                 }
-                
+
                 ItemStack isBoot = entityequipment.getBoots();
                 if (isBoot != null) {
                     feetarmor = getItem(isBoot, null);
                 }
-                
+
                 ItemStack isLeg = entityequipment.getLeggings();
                 if (isLeg != null) {
                     legarmor = getItem(isLeg, null);
                 }
-                
+
                 ItemStack isChest = entityequipment.getChestplate();
                 if (isChest != null) {
                     chestarmor = getItem(isChest, null);
                 }
-                
+
                 ItemStack isHelm = entityequipment.getHelmet();
                 if (isHelm != null) {
                     headarmor = getItem(isHelm, null);
@@ -490,14 +459,14 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 color = sheep.getColor().getWoolData();
             }
         }
-        
-        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, 
-                tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot, 
-                color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, 
-                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
-                itemheld, feetarmor, headarmor, chestarmor, legarmor,
-                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse, 
-                itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown,
+                          tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot,
+                          color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health,
+                          hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
+                          itemheld, feetarmor, headarmor, chestarmor, legarmor,
+                          skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     protected Leash getLeash(org.bukkit.entity.Entity leashHolder) {
@@ -521,43 +490,43 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Display display = null;
             List<String> pages = null;
             List<Ench> enchants = null;
-            
+
             ItemMeta im = is.getItemMeta();
 
             Map<Enchantment, Integer> isEnchants = im.getEnchants();
             if (isEnchants != null) {
                 enchants = new ArrayList<>();
-                for(Enchantment ench : isEnchants.keySet()) {
+                for (Enchantment ench : isEnchants.keySet()) {
                     enchants.add(new Ench((short) ench.getId(), isEnchants.get(ench).shortValue()));
                 }
             }
-            
+
             lore = im.getLore();
             name = im.getDisplayName();
             display = new Display(name, lore);
-            
+
             if (im instanceof BookMeta) {
                 BookMeta bm = (BookMeta) im;
                 author = bm.getAuthor();
                 title = bm.getTitle();
                 pages = bm.getPages();
             }
-            
+
             itemtag = new ItemTag(0, enchants, display, author, title, pages);
         }
-        
+
         return new Item(count, slot, damage, itemid, itemtag);
     }
 
     @Override
     public void saveCompiledSchematic(Schematic schem, String file) {
-        
+
         File pluginsFolder = plugin.getDataFolder().getParentFile();
         File coreFolder = new File(pluginsFolder, "PlotMe\\PlotSchematic");
         coreFolder.mkdirs();
-        
+
         String filename = coreFolder.getAbsolutePath() + "\\" + file + ".plotschematic";
-        
+
         try (ObjectOutput output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
             output.writeObject(schem);
         } catch (IOException ex) {
@@ -565,10 +534,10 @@ public class SchematicUtil extends AbstractSchematicUtil {
             ex.printStackTrace();
         }
     }
-    
+
     @Override
     public Schematic loadSchematic(File file) throws IOException, IllegalArgumentException {
-        
+
         Schematic schem = loadCompiledSchematic(file.getName());
 
         if (schem == null) {
@@ -589,7 +558,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 short length = getChildTag(schematic, "Length", ShortTag.class, Short.class);
                 short height = getChildTag(schematic, "Height", ShortTag.class, Short.class);
                 String roomauthor = getChildTag(schematic, "RoomAuthor", StringTag.class, String.class);
-                
+
                 Integer originx = getChildTag(schematic, "WEOriginX", IntTag.class, Integer.class);
                 Integer originy = getChildTag(schematic, "WEOriginY", IntTag.class, Integer.class);
                 Integer originz = getChildTag(schematic, "WEOriginZ", IntTag.class, Integer.class);
@@ -601,16 +570,15 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
                 byte[] rawblocks = getChildTag(schematic, "Blocks", ByteArrayTag.class, byte[].class);
                 int[] blocks = new int[rawblocks.length];
-                
-                for(int ctr = 0; ctr < rawblocks.length; ctr++) {
+
+                for (int ctr = 0; ctr < rawblocks.length; ctr++) {
                     int blockid = rawblocks[ctr] & 0xff;
-                    
+
                     //if(blockid < 0) blockid = 256 + blockid;
-                    
+
                     blocks[ctr] = blockid;
                 }
-                
-                
+
                 byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class, byte[].class);
                 byte[] blockBiomes = getChildTag(schematic, "Biomes", ByteArrayTag.class, byte[].class);
 
@@ -624,7 +592,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                     entities = new ArrayList<Entity>();
 
                     for (Object tag : entitiesList) {
-                        if (tag instanceof CompoundTag) {                                          
+                        if (tag instanceof CompoundTag) {
                             entities.add(getEntity((CompoundTag) tag));
                         }
                     }
@@ -686,29 +654,32 @@ public class SchematicUtil extends AbstractSchematicUtil {
                                 recorditem = new RecordItem(count, damage, recorditemid);
                             }
 
-                            tileentities.add(new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, 
-                                    maxspawndelay, minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime, 
-                                    text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
-                                    transfercooldown, levels, primary, secondary, null, null));
+                            tileentities.add(new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities,
+                                                            maxspawndelay, minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid,
+                                                            burntime, cooktime,
+                                                            text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                            transfercooldown, levels, primary, secondary, null, null));
                         }
                     }
                 }
 
-                schem = new Schematic(blocks, blockData, blockBiomes, materials, width, length, height, entities, tileentities, roomauthor, originx, originy, originz);
+                schem =
+                        new Schematic(blocks, blockData, blockBiomes, materials, width, length, height, entities, tileentities, roomauthor, originx,
+                                      originy, originz);
 
                 saveCompiledSchematic(schem, file.getName());
             }
         }
-        
+
         return schem;
     }
-        
+
     @Override
     public void pasteSchematic(Location loc, Schematic schem) {
         pasteSchematicBlocks(loc, schem, true);
         pasteSchematicEntities(loc, schem);
     }
-    
+
     @SuppressWarnings("deprecation")
     protected void pasteSchematicBlocks(Location loc, Schematic schematic, boolean setBlock) {
         World world = loc.getWorld();
@@ -718,17 +689,18 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Short length = schematic.getLength();
         Short width = schematic.getWidth();
         Short height = schematic.getHeight();
-        
+
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
                     int index = y * width * length + z * width + x;
-                    
+
                     Block block = world.getBlockAt(x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
-                    
+
                     try {
-                        if (setBlock)
+                        if (setBlock) {
                             block.setTypeIdAndData(blocks[index], blockData[index], false);
+                        }
                         block.setData(blockData[index], false);
                     } catch (NullPointerException e) {
                         plugin.getLogger().info("Error pasting block : " + blocks[index] + " of data " + blockData[index]);
@@ -737,20 +709,26 @@ public class SchematicUtil extends AbstractSchematicUtil {
             }
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     protected void pasteSchematicEntities(Location loc, Schematic schematic) {
         World world = loc.getWorld();
-        
+
         List<Entity> entities = schematic.getEntities();
         List<TileEntity> tileentities = schematic.getTileEntities();
         Integer originX = schematic.getOriginX();
         Integer originY = schematic.getOriginY();
         Integer originZ = schematic.getOriginZ();
-        
-        if (originX == null) originX = 0;
-        if (originY == null) originY = 0;
-        if (originZ == null) originZ = 0;
+
+        if (originX == null) {
+            originX = 0;
+        }
+        if (originY == null) {
+            originY = 0;
+        }
+        if (originZ == null) {
+            originZ = 0;
+        }
 
         try {
             for (Entity e : entities) {
@@ -760,7 +738,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
             e.printStackTrace();
         }
 
-        
         for (TileEntity te : tileentities) {
 
             Block block = world.getBlockAt(te.getX() + loc.getBlockX(), te.getY() + loc.getBlockY(), te.getZ() + loc.getBlockZ());
@@ -773,13 +750,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
             // Short spawncount = te.getSpawnCount();
             // Short spawnrange = te.getSpawnRange();
             // String customname = te.getCustomName();
-            
+
             // Comparator
             // Integer outputsignal = te.getOutputSignal();
-            
+
             // Hopper
             // Integer transfercooldown = te.getTransferCooldown();
-            
+
             // Beacon
             // Integer levels = te.getLevels();
             // Integer primary = te.getPrimary();
@@ -792,35 +769,52 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
                 BlockFace bf = BlockFace.NORTH;
                 Byte rot = te.getRot();
-                if (rot == 0) bf = BlockFace.NORTH;
-                else if (rot == 1) bf = BlockFace.NORTH_NORTH_EAST;
-                else if (rot == 2) bf = BlockFace.NORTH_EAST;
-                else if (rot == 3) bf = BlockFace.EAST_NORTH_EAST;
-                else if (rot == 4) bf = BlockFace.EAST;
-                else if (rot == 5) bf = BlockFace.EAST_SOUTH_EAST;
-                else if (rot == 6) bf = BlockFace.SOUTH_EAST;
-                else if (rot == 7) bf = BlockFace.SOUTH_SOUTH_EAST;
-                else if (rot == 8) bf = BlockFace.SOUTH;
-                else if (rot == 9) bf = BlockFace.SOUTH_SOUTH_WEST;
-                else if (rot == 10) bf = BlockFace.SOUTH_WEST;
-                else if (rot == 11) bf = BlockFace.WEST_SOUTH_WEST;
-                else if (rot == 12) bf = BlockFace.WEST;
-                else if (rot == 13) bf = BlockFace.WEST_NORTH_WEST;
-                else if (rot == 14) bf = BlockFace.NORTH_WEST;
-                else if (rot == 15) bf = BlockFace.NORTH_NORTH_WEST;
+                if (rot == 0) {
+                    bf = BlockFace.NORTH;
+                } else if (rot == 1) {
+                    bf = BlockFace.NORTH_NORTH_EAST;
+                } else if (rot == 2) {
+                    bf = BlockFace.NORTH_EAST;
+                } else if (rot == 3) {
+                    bf = BlockFace.EAST_NORTH_EAST;
+                } else if (rot == 4) {
+                    bf = BlockFace.EAST;
+                } else if (rot == 5) {
+                    bf = BlockFace.EAST_SOUTH_EAST;
+                } else if (rot == 6) {
+                    bf = BlockFace.SOUTH_EAST;
+                } else if (rot == 7) {
+                    bf = BlockFace.SOUTH_SOUTH_EAST;
+                } else if (rot == 8) {
+                    bf = BlockFace.SOUTH;
+                } else if (rot == 9) {
+                    bf = BlockFace.SOUTH_SOUTH_WEST;
+                } else if (rot == 10) {
+                    bf = BlockFace.SOUTH_WEST;
+                } else if (rot == 11) {
+                    bf = BlockFace.WEST_SOUTH_WEST;
+                } else if (rot == 12) {
+                    bf = BlockFace.WEST;
+                } else if (rot == 13) {
+                    bf = BlockFace.WEST_NORTH_WEST;
+                } else if (rot == 14) {
+                    bf = BlockFace.NORTH_WEST;
+                } else if (rot == 15) {
+                    bf = BlockFace.NORTH_NORTH_WEST;
+                }
 
                 skull.setSkullType(SkullType.values()[te.getSkullType()]);
                 skull.setRotation(bf);
                 skull.update(true, false);
             }
-            
+
             if (bs instanceof CreatureSpawner) {
                 CreatureSpawner spawner = (CreatureSpawner) bs;
                 spawner.setCreatureTypeByName(te.getEntityId());
                 spawner.setDelay(te.getDelay());
                 spawner.update(true, false);
             }
-            
+
             if (bs instanceof Furnace) {
                 Furnace furnace = (Furnace) bs;
                 furnace.setBurnTime(te.getBurnTime());
@@ -862,7 +856,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             }
 
             if (bs instanceof InventoryHolder && items != null && items.size() > 0) {
-                
+
                 InventoryHolder ih = (InventoryHolder) bs;
                 Inventory inventory = ih.getInventory();
 
@@ -883,13 +877,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
     @SuppressWarnings("deprecation")
     protected ItemStack getItemStack(Item item) {
         ItemStack is = new ItemStack(item.getId(), item.getCount(), item.getDamage(), item.getDamage().byteValue());
-        
+
         ItemTag itemtag = item.getTag();
 
         if (itemtag != null) {
             setTag(is, itemtag);
         }
-        
+
         return is;
     }
 
@@ -901,49 +895,49 @@ public class SchematicUtil extends AbstractSchematicUtil {
         String author = itemtag.getAuthor();
         String title = itemtag.getTitle();
         Display display = itemtag.getDisplay();
-        
+
         ItemMeta itemmeta = is.getItemMeta();
-        
+
         if (display != null) {
             List<String> lores = display.getLore();
             String name = display.getName();
-            
+
             itemmeta.setLore(lores);
             itemmeta.setDisplayName(name);
         }
-        
+
         if (itemmeta instanceof BookMeta) {
             BookMeta bookmeta = (BookMeta) itemmeta;
             bookmeta.setAuthor(author);
             bookmeta.setTitle(title);
             bookmeta.setPages(pages);
         }
-        
+
         if (itemmeta instanceof EnchantmentStorageMeta) {
             EnchantmentStorageMeta enchantmentstoragemeta = (EnchantmentStorageMeta) itemmeta;
-            
+
             for (Ench enchant : enchants) {
                 enchantmentstoragemeta.addEnchant(Enchantment.getById(enchant.getId()), enchant.getLvl(), true);
             }
         }
-        
+
         is.setItemMeta(itemmeta);
     }
 
-    @SuppressWarnings({ "deprecation", "unused" })
+    @SuppressWarnings({"deprecation", "unused"})
     protected org.bukkit.entity.Entity createEntity(Entity e, Location loc, int originX, int originY, int originZ) {
         EntityType entitytype = EntityType.fromName(e.getId());
         World world = loc.getWorld();
 
         org.bukkit.entity.Entity ent = null;
-        
+
         if (entitytype != null && e.getPos() != null && e.getPos().size() == 3) {
             List<Double> positions = e.getPos();
-            
+
             double x = positions.get(0) - originX;
             double y = positions.get(1) - originY;
             double z = positions.get(2) - originZ;
-            
+
             //Set properties
             Byte dir = e.getDir();
             Byte direction = e.getDirection();
@@ -958,17 +952,17 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Byte skeletontype = e.getSkeletonType();
             Byte isbaby = e.getIsBaby();
             Byte itemrotation = e.getItemRotation();
-            
+
             //Double pushx = e.getPushX();
             //Double pushz = e.getPushZ();
-            
+
             Entity riding = e.getRiding();
-            
+
             Float falldistance = e.getFallDistance();
             Float absorptionamount = e.getAbsorptionAmount();
             Float healf = e.getHealF();
             Float itemdropchance = e.getItemDropChance();
-            
+
             Integer dimension = e.getDimension();
             Integer portalcooldown = e.getPortalCooldown();
             Integer tilex = e.getTileX();
@@ -978,11 +972,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Integer inlove = e.getInLove();
             //Integer transfercooldown = e.getTransferCooldown();
             //Integer tntfuse = e.getTNTFuse();
-            
+
             Item item = e.getItem();
-            
+
             Leash leash = e.getLeash();
-            
+
             Short air = e.getAir();
             Short fire = e.getFire();
             Short attacktime = e.getAttackTime();
@@ -990,26 +984,26 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Short health = e.getHealth();
             Short hurttime = e.getHurtTime();
             //Short fuel = e.getFuel()
-            
+
             String id = e.getId();
             String motive = e.getMotive();
             String customname = e.getCustomName();
-            
+
             List<Double> motion = e.getMotion();
             List<Float> rotation = e.getRotation();
             List<Attribute> attributes = e.getAttributes();
             List<Float> dropchances = e.getDropChances();
-            
+
             Item itemheld = e.getItemHeld();
             Item feetarmor = e.getFeetArmor();
             Item legarmor = e.getLegArmor();
             Item chestarmor = e.getChestArmor();
             Item headarmor = e.getHeadArmor();
-            
+
             List<Item> items = e.getItems();
-            
+
             Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
-            
+
             if (entitytype == EntityType.ITEM_FRAME) {
                 etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
@@ -1019,7 +1013,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
                 etloc.setZ(Math.floor(etloc.getZ()));
-                
+
                 ent = world.spawnEntity(etloc, entitytype);
             } else if (entitytype == EntityType.LEASH_HITCH) {                        
                 /*etloc.setX(Math.floor(etloc.getX()));
@@ -1038,29 +1032,36 @@ public class SchematicUtil extends AbstractSchematicUtil {
                     if (itemtag != null) {
                         setTag(is, itemtag);
                     }
-                    
+
                     ent = world.dropItem(etloc, is);
                 }
             } else {
                 ent = world.spawnEntity(etloc, entitytype);
             }
-            
-            
-            if (riding != null)             ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
-            if (falldistance != null)       ent.setFallDistance(falldistance);
-            if (fire != null)               ent.setFireTicks(fire);
-            if (age != null && age >= 1)    ent.setTicksLived(age);
-            
+
+            if (riding != null) {
+                ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
+            }
+            if (falldistance != null) {
+                ent.setFallDistance(falldistance);
+            }
+            if (fire != null) {
+                ent.setFireTicks(fire);
+            }
+            if (age != null && age >= 1) {
+                ent.setTicksLived(age);
+            }
+
             if (motion != null && motion.size() == 3) {
                 Vector velocity = new Vector(motion.get(0), motion.get(1), motion.get(2));
                 ent.setVelocity(velocity);
             }
-            
+
             if (ent instanceof InventoryHolder) {
                 InventoryHolder ih = (InventoryHolder) ent;
-                
+
                 Set<ItemStack> newitems = new HashSet<>();
-                
+
                 if (items != null && !items.isEmpty()) {
                     for (Item newitem : items) {
                         ItemStack is = new ItemStack(newitem.getId(), newitem.getCount());
@@ -1069,37 +1070,49 @@ public class SchematicUtil extends AbstractSchematicUtil {
                         if (itemtag != null) {
                             setTag(is, itemtag);
                         }
-                        
+
                         newitems.add(is);
                     }
                 }
-                
+
                 ih.getInventory().setContents(newitems.toArray(new ItemStack[newitems.size()]));
             }
-            
+
             if (ent instanceof ItemFrame) {
                 ItemFrame itemframe = (ItemFrame) ent;
                 itemframe.setRotation(Rotation.values()[itemrotation]);
-                
+
                 ItemStack is = new ItemStack(item.getId(), item.getCount());
                 ItemTag itemtag = item.getTag();
 
                 if (itemtag != null) {
                     setTag(is, itemtag);
                 }
-                
+
                 itemframe.setItem(is);
             }
-            
+
             if (ent instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity) ent;
-                
-                if (canpickuploot != null)      livingentity.setCanPickupItems(canpickuploot != 0);
-                if (customname != null)         livingentity.setCustomName(customname);
-                if (customnamevisible != null)  livingentity.setCustomNameVisible(customnamevisible != 0);
-                if (healf != null)              livingentity.setHealth(healf);
-                if (air != null)                livingentity.setRemainingAir(air);
-                if (persistencerequired != null) livingentity.setRemoveWhenFarAway(persistencerequired == 0);
+
+                if (canpickuploot != null) {
+                    livingentity.setCanPickupItems(canpickuploot != 0);
+                }
+                if (customname != null) {
+                    livingentity.setCustomName(customname);
+                }
+                if (customnamevisible != null) {
+                    livingentity.setCustomNameVisible(customnamevisible != 0);
+                }
+                if (healf != null) {
+                    livingentity.setHealth(healf);
+                }
+                if (air != null) {
+                    livingentity.setRemainingAir(air);
+                }
+                if (persistencerequired != null) {
+                    livingentity.setRemoveWhenFarAway(persistencerequired == 0);
+                }
                 if (leash != null) {
                     org.bukkit.entity.Entity leashentity = getLeash(leash, loc, originX, originY, originZ);
                     if (leashentity != null) {
@@ -1108,7 +1121,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 }
 
                 EntityEquipment entityequipment = livingentity.getEquipment();
-                
+
                 if (itemheld != null) {
                     entityequipment.setItemInHand(getItemStack(itemheld));
                 }
@@ -1121,54 +1134,58 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 if (chestarmor != null) {
                     entityequipment.setChestplate(getItemStack(chestarmor));
                 }
-                if (headarmor != null) { 
+                if (headarmor != null) {
                     entityequipment.setHelmet(getItemStack(headarmor));
-                }               
+                }
 
                 if (livingentity instanceof Skeleton && skeletontype != null) {
                     Skeleton skeleton = (Skeleton) livingentity;
                     SkeletonType st = SkeletonType.getType(skeletontype);
                     skeleton.setSkeletonType(st);
-                }  else if (livingentity instanceof Sheep) {
+                } else if (livingentity instanceof Sheep) {
                     Sheep sheep = (Sheep) livingentity;
-                    if (sheared != null) sheep.setSheared(sheared != 0);
+                    if (sheared != null) {
+                        sheep.setSheared(sheared != 0);
+                    }
                     if (color != null) {
                         DyeColor dyecolor = DyeColor.getByWoolData(color);
-                        if (dyecolor != null) sheep.setColor(dyecolor);
+                        if (dyecolor != null) {
+                            sheep.setColor(dyecolor);
+                        }
                     }
                 }
             }
         }
-        
+
         if (ent == null) {
             plugin.getLogger().info("null entity");
         }
-        
+
         return ent;
     }
-    
+
     protected org.bukkit.entity.Entity getLeash(Leash leash, Location loc, int originX, int originY, int originZ) {
         org.bukkit.entity.Entity ent = null;
         World world = loc.getWorld();
-        
+
         int x = leash.getX() - originX;
         int y = leash.getY() - originY;
         int z = leash.getZ() - originZ;
-        
+
         Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
-        
+
         Block block = world.getBlockAt(etloc);
-        
+
         if (block.getType() == Material.FENCE || block.getType() == Material.NETHER_FENCE) {
             etloc.setX(Math.floor(etloc.getX()));
             etloc.setY(Math.floor(etloc.getY()));
             etloc.setZ(Math.floor(etloc.getZ()));
-            
+
             ent = world.spawnEntity(etloc, EntityType.LEASH_HITCH);
-            
+
             List<org.bukkit.entity.Entity> nearbyentities = ent.getNearbyEntities(1, 1, 1);
-            
-            for(org.bukkit.entity.Entity nearby : nearbyentities) {
+
+            for (org.bukkit.entity.Entity nearby : nearbyentities) {
                 if (nearby instanceof LeashHitch) {
                     if (nearby.getLocation().distance(ent.getLocation()) == 0) {
                         ent.remove();
@@ -1177,13 +1194,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 }
             }
         }
-        
+
         return ent;
     }
-    
+
     protected Entity getEntity(CompoundTag tag) {
         Map<String, Tag> entity = tag.getValue();
-        
+
         Byte dir = getChildTag(entity, "Dir", ByteTag.class, Byte.class);
         Byte direction = getChildTag(entity, "Direction", ByteTag.class, Byte.class);
         Byte invulnerable = getChildTag(entity, "Invulnerable", ByteTag.class, Byte.class);
@@ -1197,17 +1214,17 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte skeletontype = getChildTag(entity, "SkeletonType", ByteTag.class, Byte.class);
         Byte isbaby = getChildTag(entity, "IsBaby", ByteTag.class, Byte.class);
         Byte itemrotation = getChildTag(entity, "ItemRotation", ByteTag.class, Byte.class);
-        
+
         Double pushx = getChildTag(entity, "PushX", DoubleTag.class, Double.class);
         Double pushz = getChildTag(entity, "PushZ", DoubleTag.class, Double.class);
-        
+
         Entity riding = null;
-        
+
         Float falldistance = getChildTag(entity, "FallDistance", FloatTag.class, Float.class);
         Float absorptionamount = getChildTag(entity, "AbsorptionAmount", FloatTag.class, Float.class);
         Float healf = getChildTag(entity, "HealF", FloatTag.class, Float.class);
         Float itemdropchance = getChildTag(entity, "ItemDropChance", FloatTag.class, Float.class);
-        
+
         Integer dimension = getChildTag(entity, "Dimension", IntTag.class, Integer.class);
         Integer portalcooldown = getChildTag(entity, "PortalCooldown", IntTag.class, Integer.class);
         Integer tilex = getChildTag(entity, "TileX", IntTag.class, Integer.class);
@@ -1217,11 +1234,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Integer inlove = getChildTag(entity, "InLove", IntTag.class, Integer.class);
         Integer transfercooldown = getChildTag(entity, "TransferCooldown", IntTag.class, Integer.class);
         Integer tntfuse = getChildTag(entity, "TNTFuse", IntTag.class, Integer.class);
-        
+
         Item item = null;
-        
+
         Leash leash = null;
-        
+
         Short air = getChildTag(entity, "Air", ShortTag.class, Short.class);
         Short fire = getChildTag(entity, "Fire", ShortTag.class, Short.class);
         Short attacktime = getChildTag(entity, "AttachTime", ShortTag.class, Short.class);
@@ -1229,11 +1246,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Short health = getChildTag(entity, "Health", ShortTag.class, Short.class);
         Short hurttime = getChildTag(entity, "HurtTime", ShortTag.class, Short.class);
         Short fuel = getChildTag(entity, "Fuel", ShortTag.class, Short.class);
-        
+
         String id = getChildTag(entity, "id", StringTag.class, String.class);
         String motive = getChildTag(entity, "Motive", StringTag.class, String.class);
         String customname = getChildTag(entity, "CustomName", StringTag.class, String.class);
-        
+
         List<Double> motion = convert(getChildTag(entity, "Motion", ListTag.class, List.class), Double.class);
         List<Double> pos = convert(getChildTag(entity, "Pos", ListTag.class, List.class), Double.class);
         List<Float> rotation = convert(getChildTag(entity, "Rotation", ListTag.class, List.class), Float.class);
@@ -1245,7 +1262,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Item legarmor = null;
         Item chestarmor = null;
         Item headarmor = null;
-        
+
         if (equipments != null) {
             itemheld = equipments.get(0);
             feetarmor = equipments.get(1);
@@ -1253,23 +1270,24 @@ public class SchematicUtil extends AbstractSchematicUtil {
             chestarmor = equipments.get(3);
             headarmor = equipments.get(4);
         }
-        
+
         List<Item> items = getItems(entity);
 
         try {
             age = getChildTag(entity, "Age", IntTag.class, Integer.class);
-        }catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Short shortAge = getChildTag(entity, "Age", ShortTag.class, Short.class);
-            
-            if (shortAge != null)
-            age = shortAge.intValue();
+
+            if (shortAge != null) {
+                age = shortAge.intValue();
+            }
         }
 
         CompoundTag itemtag = getChildTag(entity, "Item", CompoundTag.class);
         if (itemtag != null) {
             item = getItem(itemtag);
         }
-        
+
         if (entity.containsKey("Riding")) {
             riding = getEntity(getChildTag(entity, "Riding", CompoundTag.class));
         }
@@ -1277,32 +1295,34 @@ public class SchematicUtil extends AbstractSchematicUtil {
         if (entity.containsKey("Leash")) {
             leash = getLeash(getChildTag(entity, "Leash", CompoundTag.class));
         }
-                                  
-        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive, motion, pos, rotation,
-                canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime, age, inlove, absorptionamount,
-                healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor, 
-                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
-                itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive,
+                          motion, pos, rotation,
+                          canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime,
+                          age, inlove, absorptionamount,
+                          healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor,
+                          skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
-    
+
     protected Leash getLeash(CompoundTag leashelement) {
         Map<String, Tag> leash = leashelement.getValue();
         Integer x = getChildTag(leash, "X", IntTag.class, Integer.class);
         Integer y = getChildTag(leash, "Y", IntTag.class, Integer.class);
         Integer z = getChildTag(leash, "Z", IntTag.class, Integer.class);
-        
+
         return new Leash(x, y, z);
     }
-    
+
     protected Modifier getModifier(CompoundTag modifierelement) {
         Map<String, Tag> modifier = modifierelement.getValue();
         Integer operation = getChildTag(modifier, "Operation", IntTag.class, Integer.class);
         Double amount = getChildTag(modifier, "Amount", DoubleTag.class, Double.class);
         String name = getChildTag(modifier, "Name", StringTag.class, String.class);
-        
+
         return new Modifier(operation, amount, name);
     }
-    
+
     protected List<Modifier> getModifiers(Map<String, Tag> attribute) {
         List<?> modifierlist = getChildTag(attribute, "Modifiers", ListTag.class, List.class);
 
@@ -1310,7 +1330,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             List<Modifier> modifiers = new ArrayList<Modifier>();
 
             for (Object modifierelement : modifierlist) {
-                if (modifierelement instanceof CompoundTag) {                    
+                if (modifierelement instanceof CompoundTag) {
                     modifiers.add(getModifier((CompoundTag) modifierelement));
                 }
             }
@@ -1320,7 +1340,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected Item getItem(CompoundTag itemElement) {
         Map<String, Tag> item = itemElement.getValue();
         Byte count = getChildTag(item, "Count", ByteTag.class, Byte.class);
@@ -1329,10 +1349,10 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Short itemid = getChildTag(item, "id", ShortTag.class, Short.class);
 
         ItemTag tag = getItemTag(item);
-        
+
         return new Item(count, slot, damage, itemid, tag);
     }
-    
+
     protected List<Item> getItems(Map<String, Tag> entity) {
         List<?> itemsList = getChildTag(entity, "Items", ListTag.class, List.class);
 
@@ -1350,7 +1370,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected ItemTag getItemTag(Map<String, Tag> item) {
         CompoundTag itemtagElement = getChildTag(item, "tag", CompoundTag.class);
 
@@ -1368,7 +1388,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected Display getDisplay(Map<String, Tag> itemtag) {
         CompoundTag displayElement = getChildTag(itemtag, "display", CompoundTag.class);
 
@@ -1382,14 +1402,14 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected Ench getEnchant(CompoundTag enchantelement) {
         Map<String, Tag> enchant = enchantelement.getValue();
         Short id = getChildTag(enchant, "id", ShortTag.class, Short.class);
         Short lvl = getChildTag(enchant, "lvl", ShortTag.class, Short.class);
         return new Ench(id, lvl);
     }
-    
+
     protected List<Ench> getEnchant(Map<String, Tag> enchanttag) {
         List<?> enchantList = getChildTag(enchanttag, "ench", ListTag.class, List.class);
 
@@ -1407,7 +1427,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected List<Item> getEquipment(Map<String, Tag> entity) {
         List<?> equipmentlist = getChildTag(entity, "Equipment", ListTag.class, List.class);
 
@@ -1427,12 +1447,12 @@ public class SchematicUtil extends AbstractSchematicUtil {
             return null;
         }
     }
-    
+
     protected Attribute getAttribute(CompoundTag attributeelement) {
         Map<String, Tag> attribute = attributeelement.getValue();
         Double base = getChildTag(attribute, "Base", DoubleTag.class, Double.class);
         String name = getChildTag(attribute, "Name", StringTag.class, String.class);
-        List<Modifier> modifiers = getModifiers(attribute);      
+        List<Modifier> modifiers = getModifiers(attribute);
         return new Attribute(base, name, modifiers);
     }
 

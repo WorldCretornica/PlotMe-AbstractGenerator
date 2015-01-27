@@ -1,68 +1,21 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit.v1_8;
 
-import com.worldcretornica.schematic.Attribute;
+import com.worldcretornica.schematic.*;
 import com.worldcretornica.schematic.Entity;
 import com.worldcretornica.schematic.Item;
-import com.worldcretornica.schematic.ItemTag;
-import com.worldcretornica.schematic.Leash;
 import com.worldcretornica.schematic.Pattern;
-import com.worldcretornica.schematic.Pose;
-import com.worldcretornica.schematic.RecordItem;
-import com.worldcretornica.schematic.Schematic;
-import com.worldcretornica.schematic.TileEntity;
-import com.worldcretornica.schematic.jnbt.ByteArrayTag;
-import com.worldcretornica.schematic.jnbt.ByteTag;
-import com.worldcretornica.schematic.jnbt.CompoundTag;
-import com.worldcretornica.schematic.jnbt.DoubleTag;
-import com.worldcretornica.schematic.jnbt.FloatTag;
-import com.worldcretornica.schematic.jnbt.IntTag;
-import com.worldcretornica.schematic.jnbt.ListTag;
-import com.worldcretornica.schematic.jnbt.NBTInputStream;
-import com.worldcretornica.schematic.jnbt.ShortTag;
-import com.worldcretornica.schematic.jnbt.StringTag;
-import com.worldcretornica.schematic.jnbt.Tag;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
-import org.bukkit.SkullType;
-import org.bukkit.World;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Jukebox;
-import org.bukkit.block.NoteBlock;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
-import org.bukkit.block.banner.PatternType;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Rabbit.Type;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
+import com.worldcretornica.schematic.jnbt.*;
+import org.bukkit.*;
+import org.bukkit.block.*;
+import org.bukkit.block.banner.*;
+import org.bukkit.entity.*;
+import org.bukkit.entity.Rabbit.*;
+import org.bukkit.entity.Skeleton.*;
+import org.bukkit.inventory.*;
+import org.bukkit.plugin.*;
+import org.bukkit.util.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,17 +23,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.bukkit.v1_7.SchematicUtil {
-        
+
     public SchematicUtil(Plugin instance) {
         super(instance);
     }
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public Schematic createCompiledSchematic(Location loc1, Location loc2) {
 
         Schematic schem;
-        
+
         if (loc1.getWorld().equals(loc2.getWorld())) {
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
@@ -88,33 +41,33 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
             int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-            
+
             Short length = (short) (maxZ - minZ + 1);
             Short width = (short) (maxX - minX + 1);
             Short height = (short) (maxY - minY + 1);
-            
+
             World world = loc1.getWorld();
             int[] blocks = new int[length * width * height];
             byte[] blockData = new byte[length * width * height];
             byte[] biomes = null;
-            
+
             List<Entity> entities = new ArrayList<>();
             List<TileEntity> tileentities = new ArrayList<>();
-            
+
             for (int x = 0; x < width; ++x) {
                 for (int z = 0; z < length; ++z) {
                     for (int y = 0; y < height; ++y) {
                         int index = y * width * length + z * width + x;
-                        
+
                         Block block = world.getBlockAt(x + minX, y + minY, z + minZ);
-                        
+
                         blocks[index] = block.getTypeId();
                         blockData[index] = block.getData();
-                        
+
                         boolean isTileEntity = false;
-                        
+
                         BlockState bs = block.getState();
-                        
+
                         TileEntity te = null;
 
                         Byte rot = null;
@@ -153,7 +106,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
                         List<Item> items = null;
                         List<Pattern> patterns = null;
-                        
+
                         if (bs instanceof Skull) {
                             Skull skull = (Skull) bs;
 
@@ -218,25 +171,25 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                             }
 
                             skulltype = (byte) skull.getSkullType().ordinal();
-                            
+
                             isTileEntity = true;
                         }
-                        
+
                         if (bs instanceof CreatureSpawner) {
                             CreatureSpawner spawner = (CreatureSpawner) bs;
-                            
+
                             entityid = spawner.getCreatureTypeName();
                             delay = (short) spawner.getDelay();
 
                             isTileEntity = true;
                         }
-                        
+
                         if (bs instanceof Furnace) {
                             Furnace furnace = (Furnace) bs;
-                            
+
                             burntime = furnace.getBurnTime();
                             cooktime = furnace.getCookTime();
-                            
+
                             isTileEntity = true;
                         }
 
@@ -246,51 +199,51 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                             text2 = sign.getLine(1);
                             text3 = sign.getLine(2);
                             text4 = sign.getLine(3);
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof CommandBlock) {
                             CommandBlock cb = (CommandBlock) bs;
-                            
+
                             command = cb.getCommand();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof BrewingStand) {
                             BrewingStand brew = (BrewingStand) bs;
-                            
+
                             brewtime = (short) brew.getBrewingTime();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof Jukebox) {
                             Jukebox jb = (Jukebox) bs;
-                            
+
                             record = jb.getPlaying().getId();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof NoteBlock) {
                             NoteBlock nb = (NoteBlock) bs;
-                            
+
                             note = nb.getRawNote();
-                            
+
                             isTileEntity = true;
                         }
 
                         if (bs instanceof InventoryHolder) {
-                            
+
                             InventoryHolder ih = (InventoryHolder) bs;
                             Inventory inventory = ih.getInventory();
 
                             if (inventory.getSize() > 0) {
                                 items = new ArrayList<>();
-                                
-                                for (byte slot = 0; slot < inventory.getSize(); slot ++) {
+
+                                for (byte slot = 0; slot < inventory.getSize(); slot++) {
                                     ItemStack is = inventory.getItem(slot);
                                     if (is != null) {
                                         Item item = getItem(is, slot);
@@ -298,66 +251,66 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                                     }
                                 }
                             }
-                            
+
                             isTileEntity = true;
                         }
-                        
+
                         if (bs instanceof Banner) {
                             Banner banner = (Banner) bs;
                             patterns = new ArrayList<>();
                             base = (int) banner.getBaseColor().getDyeData();
-                            
+
                             for (org.bukkit.block.banner.Pattern pattern : banner.getPatterns()) {
                                 patterns.add(new Pattern((int) pattern.getColor().getDyeData(), pattern.getPattern().getIdentifier()));
                             }
-                            
+
                             isTileEntity = true;
                         }
-                        
+
                         if (isTileEntity) {
-                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay, 
-                                    minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime, 
-                                    text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal, 
-                                    transfercooldown, levels, primary, secondary, patterns, base);
+                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
+                                                minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
+                                                text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                transfercooldown, levels, primary, secondary, patterns, base);
                             tileentities.add(te);
                         }
                     }
                 }
             }
-            
-            for(org.bukkit.entity.Entity bukkitentity : world.getEntities()) {
+
+            for (org.bukkit.entity.Entity bukkitentity : world.getEntities()) {
                 Location entloc = bukkitentity.getLocation();
-                
+
                 if (entloc.getX() >= minX && entloc.getX() <= maxX &&
-                        entloc.getY() >= minY && entloc.getY() <= maxY &&
-                        entloc.getZ() >= minZ && entloc.getZ() <= maxZ &&
-                        !(bukkitentity instanceof Player)) {
+                    entloc.getY() >= minY && entloc.getY() <= maxY &&
+                    entloc.getZ() >= minZ && entloc.getZ() <= maxZ &&
+                    !(bukkitentity instanceof Player)) {
                     entities.add(getEntity(bukkitentity, minX, minY, minZ));
                 }
             }
-                    
+
             schem = new Schematic(blocks, blockData, biomes, "Alpha", width, length, height, entities, tileentities, "", 0, 0, 0);
         } else {
             schem = null;
         }
-        
+
         return schem;
     }
-    
+
     @SuppressWarnings("deprecation")
     protected Entity getEntity(org.bukkit.entity.Entity bukkitentity, int minX, int minY, int minZ) {
-        
+
         Location entLoc = bukkitentity.getLocation();
         double x = entLoc.getX() - minX;
         double y = entLoc.getY() - minY;
         double z = entLoc.getZ() - minZ;
-        
+
         List<Double> positions = new ArrayList<>();
-        
+
         positions.add(x);
         positions.add(y);
         positions.add(z);
-                
+
         Byte dir = null;
         Byte direction = null;
         Byte invulnerable = null;
@@ -378,14 +331,14 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Byte showarms = null;
         Byte small = null;
         Byte elder = null;
-        
+
         Entity riding = null;
-        
+
         Float falldistance = null;
         Float absorptionamount = null;
         Float healf = null;
         Float itemdropchance = null;
-        
+
         Integer dimension = null;
         Integer portalcooldown = null;
         Integer tilex = null;
@@ -400,13 +353,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Integer morecarrotsticks = null;
         Integer rabbittype = null;
         Integer disabledslots = null;
-        
+
         Item item = null;
-        
+
         Leash leash = null;
-        
+
         Pose pose = null;
-        
+
         Short air = null;
         Short fire = null;
         Short attacktime = null;
@@ -414,76 +367,75 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Short health = null;
         Short hurttime = null;
         Short fuel = null;
-        
+
         String id = bukkitentity.getType().getName();
         String motive = null;
         String customname = null;
-        
+
         Double pushx = null;
         Double pushz = null;
-        
+
         List<Double> motion = null;
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
-        
+
         Item itemheld = null;
         Item feetarmor = null;
         Item legarmor = null;
         Item chestarmor = null;
         Item headarmor = null;
-        
+
         List<Item> items = null;
-        
+
         if (bukkitentity.getPassenger() != null) {
             riding = getEntity(bukkitentity.getPassenger(), minX, minY, minZ);
         }
-        
+
         falldistance = bukkitentity.getFallDistance();
         fire = (short) bukkitentity.getFireTicks();
         age = bukkitentity.getTicksLived();
 
-        
         Vector velocity = bukkitentity.getVelocity();
         motion = new ArrayList<>();
         motion.add(velocity.getX());
         motion.add(velocity.getY());
         motion.add(velocity.getZ());
-        
+
         if (bukkitentity instanceof Item) {
             Item entityitem = (Item) bukkitentity;
-            
+
             item = new Item(entityitem.getCount(), entityitem.getSlot(), entityitem.getDamage(), entityitem.getId(), null);
         }
-        
+
         if (bukkitentity instanceof InventoryHolder) {
             InventoryHolder ih = (InventoryHolder) bukkitentity;
-            Inventory inventory = ih.getInventory();            
+            Inventory inventory = ih.getInventory();
             items = new ArrayList<>();
-            
+
             if (inventory.getSize() > 0) {
-                for (byte slot = 0; slot < inventory.getSize(); slot ++) {
-                    
+                for (byte slot = 0; slot < inventory.getSize(); slot++) {
+
                     ItemStack is = inventory.getItem(slot);
                     if (is != null) {
                         Item inventoryitem = getItem(is, slot);
-                        
+
                         items.add(inventoryitem);
                     }
                 }
             }
         }
-        
+
         if (bukkitentity instanceof ItemFrame) {
-            ItemFrame itemframe = (ItemFrame) bukkitentity;            
+            ItemFrame itemframe = (ItemFrame) bukkitentity;
             itemrotation = (byte) itemframe.getRotation().ordinal();
             item = getItem(itemframe.getItem(), null);
         }
-        
+
         if (bukkitentity instanceof LivingEntity) {
             LivingEntity livingentity = (LivingEntity) bukkitentity;
-            
-            canpickuploot = (byte) (livingentity.getCanPickupItems() ? 1 : 0) ;
+
+            canpickuploot = (byte) (livingentity.getCanPickupItems() ? 1 : 0);
             customname = livingentity.getCustomName();
             customnamevisible = (byte) (livingentity.isCustomNameVisible() ? 1 : 0);
             health = (short) livingentity.getHealth();
@@ -496,56 +448,70 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             }
 
             EntityEquipment entityequipment = livingentity.getEquipment();
-            
+
             if (entityequipment != null) {
                 ItemStack isHand = entityequipment.getItemInHand();
                 if (isHand != null) {
                     itemheld = getItem(isHand, null);
                 }
-                
+
                 ItemStack isBoot = entityequipment.getBoots();
                 if (isBoot != null) {
                     feetarmor = getItem(isBoot, null);
                 }
-                
+
                 ItemStack isLeg = entityequipment.getLeggings();
                 if (isLeg != null) {
                     legarmor = getItem(isLeg, null);
                 }
-                
+
                 ItemStack isChest = entityequipment.getChestplate();
                 if (isChest != null) {
                     chestarmor = getItem(isChest, null);
                 }
-                
+
                 ItemStack isHelm = entityequipment.getHelmet();
                 if (isHelm != null) {
                     headarmor = getItem(isHelm, null);
                 }
             }
-            
+
             if (livingentity instanceof Ageable) {
                 Ageable ageable = (Ageable) livingentity;
-                
+
                 age = ageable.getAge();
                 agelocked = (byte) (ageable.getAgeLock() ? 1 : 0);
                 isbaby = (byte) (ageable.isAdult() ? 0 : 1);
-            }        
+            }
 
             if (livingentity instanceof Skeleton) {
                 Skeleton skeleton = (Skeleton) livingentity;
                 skeletontype = (byte) skeleton.getType().ordinal();
-            }else if (livingentity instanceof Rabbit) {
+            } else if (livingentity instanceof Rabbit) {
                 Rabbit rabbit = (Rabbit) livingentity;
-                
-                switch(rabbit.getRabbitType()) {
-                case BROWN: rabbittype = 0; break;
-                case WHITE: rabbittype = 1; break;
-                case BLACK: rabbittype = 2; break;
-                case BLACK_AND_WHITE: rabbittype = 3; break;
-                case GOLD: rabbittype = 4; break;
-                case SALT_AND_PEPPER: rabbittype = 5; break;
-                case THE_KILLER_BUNNY: rabbittype = 99; break;
+
+                switch (rabbit.getRabbitType()) {
+                    case BROWN:
+                        rabbittype = 0;
+                        break;
+                    case WHITE:
+                        rabbittype = 1;
+                        break;
+                    case BLACK:
+                        rabbittype = 2;
+                        break;
+                    case BLACK_AND_WHITE:
+                        rabbittype = 3;
+                        break;
+                    case GOLD:
+                        rabbittype = 4;
+                        break;
+                    case SALT_AND_PEPPER:
+                        rabbittype = 5;
+                        break;
+                    case THE_KILLER_BUNNY:
+                        rabbittype = 99;
+                        break;
                 }
 
             } else if (livingentity instanceof ArmorStand) {
@@ -556,24 +522,24 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 invisible = (byte) (armorstand.isVisible() ? 0 : 1);
                 nogravity = (byte) (armorstand.hasGravity() ? 0 : 1);
                 small = (byte) (armorstand.isSmall() ? 1 : 0);
-                
+
                 List<Float> body = new ArrayList<>();
                 List<Float> head = new ArrayList<>();
                 List<Float> leftarm = new ArrayList<>();
                 List<Float> rightarm = new ArrayList<>();
                 List<Float> leftleg = new ArrayList<>();
                 List<Float> rightleg = new ArrayList<>();
-                    
+
                 EulerAngle bodypose = armorstand.getBodyPose();
                 body.add((float) bodypose.getX());
                 body.add((float) bodypose.getY());
                 body.add((float) bodypose.getZ());
-                
+
                 EulerAngle headpose = armorstand.getHeadPose();
                 head.add((float) headpose.getX());
                 head.add((float) headpose.getY());
                 head.add((float) headpose.getZ());
-                
+
                 EulerAngle leftarmpose = armorstand.getLeftArmPose();
                 leftarm.add((float) leftarmpose.getX());
                 leftarm.add((float) leftarmpose.getY());
@@ -583,12 +549,12 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 rightarm.add((float) rightarmpose.getX());
                 rightarm.add((float) rightarmpose.getY());
                 rightarm.add((float) rightarmpose.getZ());
-                
+
                 EulerAngle leftlegpose = armorstand.getLeftLegPose();
                 leftleg.add((float) leftlegpose.getX());
                 leftleg.add((float) leftlegpose.getY());
                 leftleg.add((float) leftlegpose.getZ());
-                
+
                 EulerAngle rightlegpose = armorstand.getRightLegPose();
                 rightleg.add((float) rightlegpose.getX());
                 rightleg.add((float) rightlegpose.getY());
@@ -605,17 +571,17 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 color = sheep.getColor().getWoolData();
             }
         }
-        
-        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, 
-                tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot, 
-                color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, 
-                hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
-                itemheld, feetarmor, legarmor, chestarmor, headarmor,
-                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse, 
-                itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, null, small,
-                elder, forcedage, hurtbytimestamp, morecarrotsticks, rabbittype, disabledslots, pose);
+
+        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown,
+                          tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot,
+                          color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health,
+                          hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
+                          itemheld, feetarmor, legarmor, chestarmor, headarmor,
+                          skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                          itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, null, small,
+                          elder, forcedage, hurtbytimestamp, morecarrotsticks, rabbittype, disabledslots, pose);
     }
-    
+
     @Override
     public Schematic loadSchematic(File file) throws IOException, IllegalArgumentException {
 
@@ -639,7 +605,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 short length = getChildTag(schematic, "Length", ShortTag.class, Short.class);
                 short height = getChildTag(schematic, "Height", ShortTag.class, Short.class);
                 String roomauthor = getChildTag(schematic, "RoomAuthor", StringTag.class, String.class);
-                
+
                 Integer originx = getChildTag(schematic, "WEOriginX", IntTag.class, Integer.class);
                 Integer originy = getChildTag(schematic, "WEOriginY", IntTag.class, Integer.class);
                 Integer originz = getChildTag(schematic, "WEOriginZ", IntTag.class, Integer.class);
@@ -651,16 +617,15 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
                 byte[] rawblocks = getChildTag(schematic, "Blocks", ByteArrayTag.class, byte[].class);
                 int[] blocks = new int[rawblocks.length];
-                
-                for(int ctr = 0; ctr < rawblocks.length; ctr++) {
+
+                for (int ctr = 0; ctr < rawblocks.length; ctr++) {
                     int blockid = rawblocks[ctr] & 0xff;
-                    
+
                     //if(blockid < 0) blockid = 256 + blockid;
-                    
+
                     blocks[ctr] = blockid;
                 }
-                
-                
+
                 byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class, byte[].class);
                 byte[] blockBiomes = getChildTag(schematic, "Biomes", ByteArrayTag.class, byte[].class);
 
@@ -674,7 +639,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                     entities = new ArrayList<>();
 
                     for (Object tag : entitiesList) {
-                        if (tag instanceof CompoundTag) {                                          
+                        if (tag instanceof CompoundTag) {
                             entities.add(getEntity((CompoundTag) tag));
                         }
                     }
@@ -738,37 +703,46 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                                 recorditem = new RecordItem(count, damage, recorditemid);
                             }
 
-                            tileentities.add(new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, 
-                                    maxspawndelay, minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime, 
-                                    text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
-                                    transfercooldown, levels, primary, secondary, patterns, base));
+                            tileentities.add(new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities,
+                                                            maxspawndelay, minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid,
+                                                            burntime, cooktime,
+                                                            text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                            transfercooldown, levels, primary, secondary, patterns, base));
                         }
                     }
                 }
 
-                schem = new Schematic(blocks, blockData, blockBiomes, materials, width, length, height, entities, tileentities, roomauthor, originx, originy, originz);
+                schem =
+                        new Schematic(blocks, blockData, blockBiomes, materials, width, length, height, entities, tileentities, roomauthor, originx,
+                                      originy, originz);
 
                 saveCompiledSchematic(schem, file.getName());
             }
         }
-        
+
         return schem;
     }
-        
+
     @SuppressWarnings("deprecation")
     @Override
     protected void pasteSchematicEntities(Location loc, Schematic schematic) {
         World world = loc.getWorld();
-        
+
         List<Entity> entities = schematic.getEntities();
         List<TileEntity> tileentities = schematic.getTileEntities();
         Integer originX = schematic.getOriginX();
         Integer originY = schematic.getOriginY();
         Integer originZ = schematic.getOriginZ();
-        
-        if (originX == null) originX = 0;
-        if (originY == null) originY = 0;
-        if (originZ == null) originZ = 0;
+
+        if (originX == null) {
+            originX = 0;
+        }
+        if (originY == null) {
+            originY = 0;
+        }
+        if (originZ == null) {
+            originZ = 0;
+        }
 
         try {
             for (Entity e : entities) {
@@ -779,13 +753,12 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             e.printStackTrace();
         }
 
-        
         for (TileEntity te : tileentities) {
 
             Block block = world.getBlockAt(te.getX() + loc.getBlockX(), te.getY() + loc.getBlockY(), te.getZ() + loc.getBlockZ());
             List<Item> items = te.getItems();
             // Commented are unused
-            
+
             // Short maxnearbyentities = te.getMaxNearbyEntities();
             // Short maxspawndelay = te.getMaxSpawnDelay();
             // Short minspawndelay = te.getMinSpawnDelay();
@@ -793,41 +766,58 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             // Short spawncount = te.getSpawnCount();
             // Short spawnrange = te.getSpawnRange();
             // String customname = te.getCustomName();
-            
+
             // Comparator
             // Integer outputsignal = te.getOutputSignal();
-            
+
             // Hopper
             // Integer transfercooldown = te.getTransferCooldown();
-            
+
             // Beacon
             //Integer levels = te.getLevels();
             //Integer primary = te.getPrimary();
             //Integer secondary = te.getSecondary();
 
             BlockState bs = block.getState();
-            
+
             if (bs instanceof Skull) {
                 Skull skull = (Skull) bs;
 
                 BlockFace bf = BlockFace.NORTH;
                 Byte rot = te.getRot();
-                if (rot == 0) bf = BlockFace.NORTH;
-                else if (rot == 1) bf = BlockFace.NORTH_NORTH_EAST;
-                else if (rot == 2) bf = BlockFace.NORTH_EAST;
-                else if (rot == 3) bf = BlockFace.EAST_NORTH_EAST;
-                else if (rot == 4) bf = BlockFace.EAST;
-                else if (rot == 5) bf = BlockFace.EAST_SOUTH_EAST;
-                else if (rot == 6) bf = BlockFace.SOUTH_EAST;
-                else if (rot == 7) bf = BlockFace.SOUTH_SOUTH_EAST;
-                else if (rot == 8) bf = BlockFace.SOUTH;
-                else if (rot == 9) bf = BlockFace.SOUTH_SOUTH_WEST;
-                else if (rot == 10) bf = BlockFace.SOUTH_WEST;
-                else if (rot == 11) bf = BlockFace.WEST_SOUTH_WEST;
-                else if (rot == 12) bf = BlockFace.WEST;
-                else if (rot == 13) bf = BlockFace.WEST_NORTH_WEST;
-                else if (rot == 14) bf = BlockFace.NORTH_WEST;
-                else if (rot == 15) bf = BlockFace.NORTH_NORTH_WEST;
+                if (rot == 0) {
+                    bf = BlockFace.NORTH;
+                } else if (rot == 1) {
+                    bf = BlockFace.NORTH_NORTH_EAST;
+                } else if (rot == 2) {
+                    bf = BlockFace.NORTH_EAST;
+                } else if (rot == 3) {
+                    bf = BlockFace.EAST_NORTH_EAST;
+                } else if (rot == 4) {
+                    bf = BlockFace.EAST;
+                } else if (rot == 5) {
+                    bf = BlockFace.EAST_SOUTH_EAST;
+                } else if (rot == 6) {
+                    bf = BlockFace.SOUTH_EAST;
+                } else if (rot == 7) {
+                    bf = BlockFace.SOUTH_SOUTH_EAST;
+                } else if (rot == 8) {
+                    bf = BlockFace.SOUTH;
+                } else if (rot == 9) {
+                    bf = BlockFace.SOUTH_SOUTH_WEST;
+                } else if (rot == 10) {
+                    bf = BlockFace.SOUTH_WEST;
+                } else if (rot == 11) {
+                    bf = BlockFace.WEST_SOUTH_WEST;
+                } else if (rot == 12) {
+                    bf = BlockFace.WEST;
+                } else if (rot == 13) {
+                    bf = BlockFace.WEST_NORTH_WEST;
+                } else if (rot == 14) {
+                    bf = BlockFace.NORTH_WEST;
+                } else if (rot == 15) {
+                    bf = BlockFace.NORTH_NORTH_WEST;
+                }
 
                 skull.setSkullType(SkullType.values()[te.getSkullType()]);
                 skull.setRotation(bf);
@@ -884,7 +874,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 for (Item item : items) {
 
                     ItemStack is = getItemStack(item);
-                    
+
                     if (item.getSlot() != null) {
                         inventory.setItem(item.getSlot(), is);
                     } else {
@@ -901,18 +891,18 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             @SuppressWarnings("deprecation")
             EntityType entitytype = EntityType.fromName(e.getId());
             World world = loc.getWorld();
-    
+
             org.bukkit.entity.Entity ent = null;
 
             if (entitytype != null && e.getPos() != null && e.getPos().size() == 3) {
                 List<Double> positions = e.getPos();
-                
+
                 double x = positions.get(0) - originX;
                 double y = positions.get(1) - originY;
                 double z = positions.get(2) - originZ;
-                
+
                 //Set properties, unused are commented out
-                
+
                 //Byte dir = e.getDir();
                 //Byte direction = e.getDirection();
                 //Byte invulnerable = e.getInvulnerable();
@@ -934,17 +924,17 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 //Byte silent = e.getSilent();
                 Byte small = e.getSmall();
                 Byte elder = e.getElder();
-                
+
                 //Double pushx = e.getPushX();
                 //Double pushz = e.getPushZ();
-                
+
                 Entity riding = e.getRiding();
-                
+
                 Float falldistance = e.getFallDistance();
                 //Float absorptionamount = e.getAbsorptionAmount();
                 Float healf = e.getHealF();
                 //Float itemdropchance = e.getItemDropChance();
-                
+
                 //Integer dimension = e.getDimension();
                 //Integer portalcooldown = e.getPortalCooldown();
                 //Integer tilex = e.getTileX();
@@ -959,13 +949,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 //Integer morecarrotsticks = e.getMoreCarrotSticks();
                 Integer rabbittype = e.getRabbitType();
                 //Integer disabledslots = e.getDisabledSlots();
-                
+
                 Item item = e.getItem();
-                
+
                 Leash leash = e.getLeash();
-                
+
                 Pose pose = e.getPose();
-                
+
                 Short air = e.getAir();
                 Short fire = e.getFire();
                 //Short attacktime = e.getAttackTime();
@@ -973,26 +963,26 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 //Short health = e.getHealth();
                 //Short hurttime = e.getHurtTime();
                 //Short fuel = e.getFuel()
-                
+
                 //String id = e.getId();
                 //String motive = e.getMotive();
                 String customname = e.getCustomName();
-                
+
                 List<Double> motion = e.getMotion();
                 //List<Float> rotation = e.getRotation();
                 //List<Attribute> attributes = e.getAttributes();
                 //List<Float> dropchances = e.getDropChances();
-                
+
                 Item itemheld = e.getItemHeld();
                 Item feetarmor = e.getFeetArmor();
                 Item legarmor = e.getLegArmor();
                 Item chestarmor = e.getChestArmor();
                 Item headarmor = e.getHeadArmor();
-                
+
                 List<Item> items = e.getItems();
-                
+
                 Location etloc = new Location(world, x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
-                
+
                 if (entitytype == EntityType.ITEM_FRAME) {
                     etloc.setX(Math.floor(etloc.getX()));
                     etloc.setY(Math.floor(etloc.getY()));
@@ -1002,7 +992,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                     etloc.setX(Math.floor(etloc.getX()));
                     etloc.setY(Math.floor(etloc.getY()));
                     etloc.setZ(Math.floor(etloc.getZ()));
-                    
+
                     ent = world.spawnEntity(etloc, entitytype);
                 } else if (entitytype == EntityType.LEASH_HITCH) {                        
                     /*etloc.setX(Math.floor(etloc.getX()));
@@ -1018,82 +1008,103 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         @SuppressWarnings("deprecation")
                         ItemStack is = new ItemStack(item.getId(), item.getCount());
                         ItemTag itemtag = item.getTag();
-    
+
                         if (itemtag != null) {
                             setTag(is, itemtag);
                         }
-                        
+
                         ent = world.dropItem(etloc, is);
                     }
                 } else {
                     ent = world.spawnEntity(etloc, entitytype);
                 }
-                
-                
-                if (riding != null)             ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
-                if (falldistance != null)       ent.setFallDistance(falldistance);
-                if (fire != null)               ent.setFireTicks(fire);
-                if (age != null && age >= 1)    ent.setTicksLived(age);
-                
+
+                if (riding != null) {
+                    ent.setPassenger(createEntity(riding, loc, originX, originY, originZ));
+                }
+                if (falldistance != null) {
+                    ent.setFallDistance(falldistance);
+                }
+                if (fire != null) {
+                    ent.setFireTicks(fire);
+                }
+                if (age != null && age >= 1) {
+                    ent.setTicksLived(age);
+                }
+
                 if (motion != null && motion.size() == 3) {
                     Vector velocity = new Vector(motion.get(0), motion.get(1), motion.get(2));
                     ent.setVelocity(velocity);
                 }
-                
+
                 if (ent instanceof InventoryHolder) {
                     InventoryHolder ih = (InventoryHolder) ent;
-                    
+
                     Set<ItemStack> newitems = new HashSet<>();
-                    
+
                     if (items != null && !items.isEmpty()) {
                         for (Item newitem : items) {
                             ItemStack is = getItemStack(newitem);
                             ItemTag itemtag = newitem.getTag();
-    
+
                             if (itemtag != null) {
                                 setTag(is, itemtag);
                             }
-                            
+
                             newitems.add(is);
                         }
                     }
-                    
+
                     ih.getInventory().setContents(newitems.toArray(new ItemStack[newitems.size()]));
                 }
-                
+
                 if (ent instanceof ItemFrame) {
                     ItemFrame itemframe = (ItemFrame) ent;
                     itemframe.setRotation(Rotation.values()[itemrotation]);
-                    
+
                     ItemStack is = getItemStack(item);
                     ItemTag itemtag = item.getTag();
-    
+
                     if (itemtag != null) {
                         setTag(is, itemtag);
                     }
-                    
+
                     itemframe.setItem(is);
                 }
-                
+
                 if (ent instanceof LivingEntity) {
                     LivingEntity livingentity = (LivingEntity) ent;
-                    
-                    if (canpickuploot != null)      livingentity.setCanPickupItems(canpickuploot != 0);
-                    if (customname != null)         livingentity.setCustomName(customname);
-                    if (customnamevisible != null)  livingentity.setCustomNameVisible(customnamevisible != 0);
-                    if (healf != null)             livingentity.setHealth(healf);
-                    if (air != null)                livingentity.setRemainingAir(air);
-                    if (persistencerequired != null) livingentity.setRemoveWhenFarAway(persistencerequired == 0);
+
+                    if (canpickuploot != null) {
+                        livingentity.setCanPickupItems(canpickuploot != 0);
+                    }
+                    if (customname != null) {
+                        livingentity.setCustomName(customname);
+                    }
+                    if (customnamevisible != null) {
+                        livingentity.setCustomNameVisible(customnamevisible != 0);
+                    }
+                    if (healf != null) {
+                        livingentity.setHealth(healf);
+                    }
+                    if (air != null) {
+                        livingentity.setRemainingAir(air);
+                    }
+                    if (persistencerequired != null) {
+                        livingentity.setRemoveWhenFarAway(persistencerequired == 0);
+                    }
                     if (leash != null) {
                         org.bukkit.entity.Entity leashentity = getLeash(leash, loc, originX, originY, originZ);
                         if (leashentity != null) {
                             livingentity.setLeashHolder(leashentity);
                         }
                     }
-                    if (hurtbytimestamp != null) livingentity.setNoDamageTicks(hurtbytimestamp);
-    
+                    if (hurtbytimestamp != null) {
+                        livingentity.setNoDamageTicks(hurtbytimestamp);
+                    }
+
                     EntityEquipment entityequipment = livingentity.getEquipment();
-    
+
                     if (itemheld != null) {
                         entityequipment.setItemInHand(getItemStack(itemheld));
                     }
@@ -1106,22 +1117,27 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                     if (chestarmor != null) {
                         entityequipment.setChestplate(getItemStack(chestarmor));
                     }
-                    if (headarmor != null) { 
+                    if (headarmor != null) {
                         entityequipment.setHelmet(getItemStack(headarmor));
                     }
-                    
+
                     if (livingentity instanceof Ageable) {
                         Ageable ageable = (Ageable) livingentity;
-                        if (age != null)        ageable.setAge(age);
-                        if (agelocked != null)  ageable.setAgeLock(agelocked != 0);
-                        if (isbaby != null) {
-                            if (isbaby != 0)
-                                ageable.setBaby();
-                            else
-                                ageable.setAdult();
+                        if (age != null) {
+                            ageable.setAge(age);
                         }
-                    }        
-    
+                        if (agelocked != null) {
+                            ageable.setAgeLock(agelocked != 0);
+                        }
+                        if (isbaby != null) {
+                            if (isbaby != 0) {
+                                ageable.setBaby();
+                            } else {
+                                ageable.setAdult();
+                            }
+                        }
+                    }
+
                     if (livingentity instanceof Skeleton && skeletontype != null) {
                         Skeleton skeleton = (Skeleton) livingentity;
                         @SuppressWarnings("deprecation")
@@ -1129,38 +1145,48 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         skeleton.setSkeletonType(st);
                     } else if (livingentity instanceof Rabbit && rabbittype != null) {
                         Rabbit rabbit = (Rabbit) livingentity;
-                        
+
                         switch (rabbittype) {
-                        case 0:
-                            rabbit.setRabbitType(Type.BROWN);
-                            break;
-                        case 1:
-                            rabbit.setRabbitType(Type.WHITE);
-                            break;
-                        case 2:
-                            rabbit.setRabbitType(Type.BLACK);
-                            break;
-                        case 3:
-                            rabbit.setRabbitType(Type.BLACK_AND_WHITE);
-                            break;
-                        case 4:
-                            rabbit.setRabbitType(Type.GOLD);
-                            break;
-                        case 5:
-                            rabbit.setRabbitType(Type.SALT_AND_PEPPER);
-                            break;
-                        case 99:
-                            rabbit.setRabbitType(Type.THE_KILLER_BUNNY);
-                            break;
+                            case 0:
+                                rabbit.setRabbitType(Type.BROWN);
+                                break;
+                            case 1:
+                                rabbit.setRabbitType(Type.WHITE);
+                                break;
+                            case 2:
+                                rabbit.setRabbitType(Type.BLACK);
+                                break;
+                            case 3:
+                                rabbit.setRabbitType(Type.BLACK_AND_WHITE);
+                                break;
+                            case 4:
+                                rabbit.setRabbitType(Type.GOLD);
+                                break;
+                            case 5:
+                                rabbit.setRabbitType(Type.SALT_AND_PEPPER);
+                                break;
+                            case 99:
+                                rabbit.setRabbitType(Type.THE_KILLER_BUNNY);
+                                break;
                         }
                     } else if (livingentity instanceof ArmorStand) {
                         ArmorStand armorstand = (ArmorStand) livingentity;
-                        if (showarms != null) armorstand.setArms(showarms != 0);
-                        if (nobaseplate != null) armorstand.setBasePlate(nobaseplate == 0);
-                        if (invisible != null) armorstand.setVisible(invisible == 0);
-                        if (nogravity != null) armorstand.setGravity(nogravity == 0);
-                        if (small != null) armorstand.setSmall(small != 0);
-                        
+                        if (showarms != null) {
+                            armorstand.setArms(showarms != 0);
+                        }
+                        if (nobaseplate != null) {
+                            armorstand.setBasePlate(nobaseplate == 0);
+                        }
+                        if (invisible != null) {
+                            armorstand.setVisible(invisible == 0);
+                        }
+                        if (nogravity != null) {
+                            armorstand.setGravity(nogravity == 0);
+                        }
+                        if (small != null) {
+                            armorstand.setSmall(small != 0);
+                        }
+
                         if (pose != null) {
                             List<Float> body = pose.getBody();
                             List<Float> head = pose.getHead();
@@ -1168,7 +1194,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                             List<Float> rightarm = pose.getRightArm();
                             List<Float> leftleg = pose.getLeftLeg();
                             List<Float> rightleg = pose.getRightLeg();
-                            
+
                             if (body != null && body.size() == 3) {
                                 armorstand.setBodyPose(new EulerAngle(body.get(0), body.get(1), body.get(2)));
                             }
@@ -1190,35 +1216,41 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         }
                     } else if (livingentity instanceof Guardian) {
                         Guardian guardian = (Guardian) livingentity;
-                        if (elder != null) guardian.setElder(elder != 0);
+                        if (elder != null) {
+                            guardian.setElder(elder != 0);
+                        }
                     } else if (livingentity instanceof Sheep) {
                         Sheep sheep = (Sheep) livingentity;
-                        if (sheared != null) sheep.setSheared(sheared != 0);
+                        if (sheared != null) {
+                            sheep.setSheared(sheared != 0);
+                        }
                         if (color != null) {
                             @SuppressWarnings("deprecation")
                             DyeColor dyecolor = DyeColor.getByWoolData(color);
-                            if (dyecolor != null) sheep.setColor(dyecolor);
+                            if (dyecolor != null) {
+                                sheep.setColor(dyecolor);
+                            }
                         }
                     }
                 }
             }
-            
+
             if (ent == null) {
                 plugin.getLogger().info("null entity");
             }
-            
+
             return ent;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             plugin.getLogger().info("failed to create entity ");
             ex.printStackTrace();
             return null;
         }
     }
-    
+
     @Override
     protected Entity getEntity(CompoundTag tag) {
         Map<String, Tag> entity = tag.getValue();
-        
+
         Byte dir = getChildTag(entity, "Dir", ByteTag.class, Byte.class);
         Byte direction = getChildTag(entity, "Direction", ByteTag.class, Byte.class);
         Byte invulnerable = getChildTag(entity, "Invulnerable", ByteTag.class, Byte.class);
@@ -1240,7 +1272,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Byte silent = getChildTag(entity, "Silent", ByteTag.class, Byte.class);
         Byte small = getChildTag(entity, "Small", ByteTag.class, Byte.class);
         Byte elder = getChildTag(entity, "Elder", ByteTag.class, Byte.class);
-        
+
         Double pushx = getChildTag(entity, "PushX", DoubleTag.class, Double.class);
         Double pushz = getChildTag(entity, "PushZ", DoubleTag.class, Double.class);
 
@@ -1248,7 +1280,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Float absorptionamount = getChildTag(entity, "AbsorptionAmount", FloatTag.class, Float.class);
         Float healf = getChildTag(entity, "HealF", FloatTag.class, Float.class);
         Float itemdropchance = getChildTag(entity, "ItemDropChance", FloatTag.class, Float.class);
-        
+
         Integer dimension = getChildTag(entity, "Dimension", IntTag.class, Integer.class);
         Integer portalcooldown = getChildTag(entity, "PortalCooldown", IntTag.class, Integer.class);
         Integer tilex = getChildTag(entity, "TileX", IntTag.class, Integer.class);
@@ -1270,11 +1302,11 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Short health = getChildTag(entity, "Health", ShortTag.class, Short.class);
         Short hurttime = getChildTag(entity, "HurtTime", ShortTag.class, Short.class);
         Short fuel = getChildTag(entity, "Fuel", ShortTag.class, Short.class);
-        
+
         String id = getChildTag(entity, "id", StringTag.class, String.class);
         String motive = getChildTag(entity, "Motive", StringTag.class, String.class);
         String customname = getChildTag(entity, "CustomName", StringTag.class, String.class);
-        
+
         List<Double> motion = convert(getChildTag(entity, "Motion", ListTag.class, List.class), Double.class);
         List<Double> pos = convert(getChildTag(entity, "Pos", ListTag.class, List.class), Double.class);
         List<Float> rotation = convert(getChildTag(entity, "Rotation", ListTag.class, List.class), Float.class);
@@ -1286,7 +1318,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Item legarmor = null;
         Item chestarmor = null;
         Item headarmor = null;
-        
+
         if (equipments != null) {
             itemheld = equipments.get(0);
             feetarmor = equipments.get(1);
@@ -1294,17 +1326,18 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             chestarmor = equipments.get(3);
             headarmor = equipments.get(4);
         }
-        
+
         List<Item> items = getItems(entity);
 
         Integer age = null; //Handled lower
         try {
             age = getChildTag(entity, "Age", IntTag.class, Integer.class);
-        }catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Short shortAge = getChildTag(entity, "Age", ShortTag.class, Short.class);
-            
-            if (shortAge != null)
-            age = shortAge.intValue();
+
+            if (shortAge != null) {
+                age = shortAge.intValue();
+            }
         }
 
         CompoundTag itemtag = getChildTag(entity, "Item", CompoundTag.class);
@@ -1327,15 +1360,18 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         if (entity.containsKey("Pose")) {
             pose = getPose(getChildTag(entity, "Pose", CompoundTag.class));
         }
-                                  
-        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive, motion, pos, rotation,
-                canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime, age, inlove, absorptionamount,
-                healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor, 
-                skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
-                itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, silent, small, elder, forcedage, hurtbytimestamp,
-                morecarrotsticks, rabbittype, disabledslots, pose);
+
+        return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown, tilex, tiley, tilez, falldistance, id, motive,
+                          motion, pos, rotation,
+                          canpickuploot, color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health, hurttime,
+                          age, inlove, absorptionamount,
+                          healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor,
+                          skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
+                          itemrotation, itemdropchance, agelocked, invisible, nobaseplate, nogravity, showarms, silent, small, elder, forcedage,
+                          hurtbytimestamp,
+                          morecarrotsticks, rabbittype, disabledslots, pose);
     }
-    
+
     protected Pose getPose(CompoundTag poseelement) {
         Map<String, Tag> pose = poseelement.getValue();
         List<Float> body = convert(getChildTag(pose, "body", ListTag.class, List.class), Float.class);
@@ -1344,33 +1380,33 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         List<Float> rightarm = convert(getChildTag(pose, "rightarm", ListTag.class, List.class), Float.class);
         List<Float> leftleg = convert(getChildTag(pose, "leftleg", ListTag.class, List.class), Float.class);
         List<Float> rightleg = convert(getChildTag(pose, "rightleg", ListTag.class, List.class), Float.class);
-        
+
         return new Pose(body, head, leftarm, rightarm, leftleg, rightleg);
     }
-    
+
     protected List<Pattern> getPatterns(Map<String, Tag> entity) {
         List<?> patternsList = getChildTag(entity, "Patterns", ListTag.class, List.class);
-        
+
         if (patternsList != null) {
             List<Pattern> patterns = new ArrayList<Pattern>();
-            
+
             for (Object patternElement : patternsList) {
                 if (patternElement instanceof CompoundTag) {
                     patterns.add(getPattern((CompoundTag) patternElement));
                 }
             }
-            
+
             return patterns;
         } else {
             return null;
         }
     }
-    
+
     protected Pattern getPattern(CompoundTag patternElement) {
         Map<String, Tag> patternmap = patternElement.getValue();
         Integer color = getChildTag(patternmap, "Color", IntTag.class, Integer.class);
         String pattern = getChildTag(patternmap, "Pattern", StringTag.class, String.class);
-        
+
         return new Pattern(color, pattern);
     }
 }
