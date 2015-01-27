@@ -94,10 +94,10 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     public static void clearEntities(Location bottom, Location top) {
-        int bottomX = bottom.getBlockX();
-        int topX = top.getBlockX();
-        int bottomZ = bottom.getBlockZ();
-        int topZ = top.getBlockZ();
+        double bottomX = bottom.getBlockX();
+        double topX = top.getBlockX();
+        double bottomZ = bottom.getBlockZ();
+        double topZ = top.getBlockZ();
 
         World world = bottom.getWorld();
 
