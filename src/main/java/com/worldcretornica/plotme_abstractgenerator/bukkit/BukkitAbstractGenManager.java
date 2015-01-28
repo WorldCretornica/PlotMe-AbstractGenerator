@@ -214,10 +214,10 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
     @Override
     public void refreshPlotChunks(World world, String id) {
-        int bottomX = bottomX(id, world);
-        int topX = topX(id, world);
-        int bottomZ = bottomZ(id, world);
-        int topZ = topZ(id, world);
+        double bottomX = bottomX(id, world);
+        double topX = topX(id, world);
+        double bottomZ = bottomZ(id, world);
+        double topZ = topZ(id, world);
 
         int minChunkX = (int) Math.floor(bottomX / 16);
         int maxChunkX = (int) Math.floor(topX / 16);
