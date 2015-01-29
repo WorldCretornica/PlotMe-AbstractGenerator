@@ -5,12 +5,12 @@ import java.util.List;
 public class ItemTag extends AbstractSchematicElement {
 
     private static final long serialVersionUID = -5311803454526138463L;
-    private Integer repaircost;
-    private List<Ench> enchants;
-    private Display display;
-    private String author;
-    private String title;
-    private List<String> pages;
+    private final Integer repaircost;
+    private final List<Ench> enchants;
+    private final Display display;
+    private final String author;
+    private final String title;
+    private final List<String> pages;
 
     public ItemTag(Integer repaircost, List<Ench> enchants, Display display, String author, String title, List<String> pages) {
         this.repaircost = repaircost;

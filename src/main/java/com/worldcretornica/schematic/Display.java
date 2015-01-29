@@ -5,8 +5,8 @@ import java.util.List;
 public class Display extends AbstractSchematicElement {
 
     private static final long serialVersionUID = 8415661672242271183L;
-    private String name;
-    private List<String> lore;
+    private final String name;
+    private final List<String> lore;
  
     
     public Display(String name, List<String> lore) {

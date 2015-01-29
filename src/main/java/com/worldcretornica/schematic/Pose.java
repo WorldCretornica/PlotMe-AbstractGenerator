@@ -6,12 +6,12 @@ public class Pose extends AbstractSchematicElement {
 
     private static final long serialVersionUID = 3379214820104525045L;
 
-    private List<Float> body;
-    private List<Float> head;
-    private List<Float> leftarm;
-    private List<Float> rightarm;
-    private List<Float> leftleg;
-    private List<Float> rightleg;
+    private final List<Float> body;
+    private final List<Float> head;
+    private final List<Float> leftarm;
+    private final List<Float> rightarm;
+    private final List<Float> leftleg;
+    private final List<Float> rightleg;
     
     public Pose(List<Float> body, List<Float> head, List<Float> leftarm, List<Float> rightarm, List<Float> leftleg, List<Float> rightleg) {
         this.body = body;

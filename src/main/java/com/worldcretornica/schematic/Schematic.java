@@ -5,20 +5,20 @@ import java.util.List;
 public class Schematic extends AbstractSchematicElement {
  
     private static final long serialVersionUID = 8966082365181590943L;
-    
-    private int[] blocks;
-    private byte[] data;
-    private byte[] biomes;
-    private String materials;
-    private Short width;
-    private Short length;
-    private Short height;
-    private List<Entity> entities;
-    private List<TileEntity> tileentities;
-    private String roomauthor;
-    private Integer originx;
-    private Integer originy;
-    private Integer originz;
+
+    private final int[] blocks;
+    private final byte[] data;
+    private final byte[] biomes;
+    private final String materials;
+    private final Short width;
+    private final Short length;
+    private final Short height;
+    private final List<Entity> entities;
+    private final List<TileEntity> tileentities;
+    private final String roomauthor;
+    private final Integer originx;
+    private final Integer originy;
+    private final Integer originz;
  
     public Schematic(int[] blocks, byte[] data, byte[] biomes, String materials, Short width, Short length, Short height, List<Entity> entities, List<TileEntity> tileentities, String roomauthor, Integer originx, Integer originy, Integer originz) {
         this.blocks = blocks;

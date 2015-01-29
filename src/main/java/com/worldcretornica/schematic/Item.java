@@ -4,11 +4,11 @@ package com.worldcretornica.schematic;
 public class Item extends AbstractSchematicElement {
 
     private static final long serialVersionUID = 8615036231087494336L;
-    private Byte count;
-    private Byte slot;
-    private Short damage;
-    private Short id;
-    private ItemTag tag;
+    private final Byte count;
+    private final Byte slot;
+    private final Short damage;
+    private final Short id;
+    private final ItemTag tag;
     
     public Item(Byte count, Byte slot, Short damage, Short id, ItemTag tag) {
         this.count = count;

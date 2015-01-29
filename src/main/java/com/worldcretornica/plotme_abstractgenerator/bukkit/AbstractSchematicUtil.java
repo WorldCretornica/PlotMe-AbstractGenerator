@@ -1,14 +1,13 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import java.io.File;
-import java.io.IOException;
+import com.worldcretornica.schematic.*;
+import com.worldcretornica.schematic.jnbt.*;
+import org.bukkit.*;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Location;
-
-import com.worldcretornica.schematic.Schematic;
-import com.worldcretornica.schematic.jnbt.Tag;
 
 public abstract class AbstractSchematicUtil {
         
@@ -24,7 +23,8 @@ public abstract class AbstractSchematicUtil {
         }
         Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
-            throw new IllegalArgumentException(tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag.toString());
+            throw new IllegalArgumentException(
+                    tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag);
         }
         Object obj = expected.cast(tag).getValue();
         if (!result.isInstance(obj)) {
@@ -39,7 +39,8 @@ public abstract class AbstractSchematicUtil {
         }
         Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
-            throw new IllegalArgumentException(tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag.toString());
+            throw new IllegalArgumentException(
+                    tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag);
         }
         return expected.cast(tag);
     }
@@ -52,7 +53,8 @@ public abstract class AbstractSchematicUtil {
             Tag tag = (Tag) obj;
 
             if (!expected.isInstance(tag.getValue())) {
-                throw new IllegalArgumentException(tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag.toString());
+                throw new IllegalArgumentException(
+                        tag.getName() + " tag is not of tag type " + expected.getName() + System.lineSeparator() + "tag is: " + tag);
             }
 
             return expected.cast(tag.getValue());
@@ -61,7 +63,7 @@ public abstract class AbstractSchematicUtil {
     
     protected <T> List<T> convert(List<?> tagList, Class<T> expected) {
         if (tagList != null) {
-            List<T> newlist = new ArrayList<T>();
+            List<T> newlist = new ArrayList<>();
             for (Object tag : tagList) {
                 newlist.add(convert(tag, expected));
             }

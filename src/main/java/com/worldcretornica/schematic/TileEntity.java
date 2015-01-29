@@ -7,48 +7,48 @@ public class TileEntity extends AbstractSchematicElement {
     private static final long serialVersionUID = -2080234794735672945L;
 
     // START - PRE 1.8
-    private Byte rot;
-    private Byte skulltype;
-    private Byte note;
+    private final Byte rot;
+    private final Byte skulltype;
+    private final Byte note;
 
-    private Integer x;
-    private Integer y;
-    private Integer z;
-    private Integer record;
-    private Integer outputsignal;
-    private Integer transfercooldown;
-    private Integer levels;
-    private Integer primary;
-    private Integer secondary;
+    private final Integer x;
+    private final Integer y;
+    private final Integer z;
+    private final Integer record;
+    private final Integer outputsignal;
+    private final Integer transfercooldown;
+    private final Integer levels;
+    private final Integer primary;
+    private final Integer secondary;
 
-    private RecordItem recorditem;
+    private final RecordItem recorditem;
 
-    private Short brewtime;
-    private Short delay;
-    private Short maxnearbyentities;
-    private Short maxspawndelay;
-    private Short minspawndelay;
-    private Short requiredplayerrange;
-    private Short spawncount;
-    private Short spawnrange;
-    private Short burntime;
-    private Short cooktime;
+    private final Short brewtime;
+    private final Short delay;
+    private final Short maxnearbyentities;
+    private final Short maxspawndelay;
+    private final Short minspawndelay;
+    private final Short requiredplayerrange;
+    private final Short spawncount;
+    private final Short spawnrange;
+    private final Short burntime;
+    private final Short cooktime;
 
-    private String command;    
-    private String customname;
-    private String id;
-    private String entityid;
-    private String text1;
-    private String text2;
-    private String text3;
-    private String text4;
+    private final String command;
+    private final String customname;
+    private final String id;
+    private final String entityid;
+    private final String text1;
+    private final String text2;
+    private final String text3;
+    private final String text4;
 
-    private List<Item> items;
+    private final List<Item> items;
     // END - PRE 1.8
     
     // START - 1.8
-    private Integer base;
-    private List<Pattern> patterns;
+    private final Integer base;
+    private final List<Pattern> patterns;
     // END - 1.8
 
     public TileEntity(Integer x, Integer y, Integer z, String customname, String id, List<Item> items, Byte rot, 

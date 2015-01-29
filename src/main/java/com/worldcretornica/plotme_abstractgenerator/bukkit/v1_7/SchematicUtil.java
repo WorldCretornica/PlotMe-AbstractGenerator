@@ -97,8 +97,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
                         BlockState bs = block.getState();
 
-                        TileEntity te = null;
-
                         Byte rot = null;
                         Byte skulltype = null;
                         Byte note = null;
@@ -266,10 +264,10 @@ public class SchematicUtil extends AbstractSchematicUtil {
                         }
 
                         if (isTileEntity) {
-                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
-                                                minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
-                                                text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
-                                                transfercooldown, levels, primary, secondary, null, null);
+                            TileEntity te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
+                                                           minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
+                                                           text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                           transfercooldown, levels, primary, secondary, null, null);
                             tileentities.add(te);
                         }
                     }
@@ -318,7 +316,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
         Entity riding = null;
 
-        Float falldistance = null;
         Float absorptionamount = null;
         Float healf = null;
         Float itemdropchance = null;
@@ -328,7 +325,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Integer tilex = null;
         Integer tiley = null;
         Integer tilez = null;
-        Integer age = null;
         Integer inlove = null;
         Integer transfercooldown = null;
         Integer tntfuse = null;
@@ -338,7 +334,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Leash leash = null;
 
         Short air = null;
-        Short fire = null;
         Short attacktime = null;
         Short deathtime = null;
         Short health = null;
@@ -352,7 +347,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Double pushx = null;
         Double pushz = null;
 
-        List<Double> motion = null;
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
@@ -369,12 +363,12 @@ public class SchematicUtil extends AbstractSchematicUtil {
             riding = getEntity(bukkitentity.getPassenger(), minX, minY, minZ);
         }
 
-        falldistance = bukkitentity.getFallDistance();
-        fire = (short) bukkitentity.getFireTicks();
-        age = bukkitentity.getTicksLived();
+        Float falldistance = bukkitentity.getFallDistance();
+        Short fire = (short) bukkitentity.getFireTicks();
+        Integer age = bukkitentity.getTicksLived();
 
         Vector velocity = bukkitentity.getVelocity();
-        motion = new ArrayList<>();
+        List<Double> motion = new ArrayList<>();
         motion.add(velocity.getX());
         motion.add(velocity.getY());
         motion.add(velocity.getZ());
@@ -485,9 +479,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
         if (is.hasItemMeta()) {
             String author = null;
             String title = null;
-            String name = null;
-            List<String> lore = null;
-            Display display = null;
             List<String> pages = null;
             List<Ench> enchants = null;
 
@@ -501,9 +492,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 }
             }
 
-            lore = im.getLore();
-            name = im.getDisplayName();
-            display = new Display(name, lore);
+            List<String> lore = im.getLore();
+            String name = im.getDisplayName();
+            Display display = new Display(name, lore);
 
             if (im instanceof BookMeta) {
                 BookMeta bm = (BookMeta) im;
@@ -545,7 +536,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             try (NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(file))) {
 
                 CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
-                if (!schematicTag.getName().equals("Schematic")) {
+                if (!"Schematic".equals(schematicTag.getName())) {
                     throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
                 }
 
@@ -564,7 +555,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 Integer originz = getChildTag(schematic, "WEOriginZ", IntTag.class, Integer.class);
 
                 String materials = getChildTag(schematic, "Materials", StringTag.class, String.class);
-                if (!materials.equals("Alpha")) {
+                if (!"Alpha".equals(materials)) {
                     throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
                 }
 
@@ -589,7 +580,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 List<?> entitiesList = getChildTag(schematic, "Entities", ListTag.class, List.class);
 
                 if (entitiesList != null) {
-                    entities = new ArrayList<Entity>();
+                    entities = new ArrayList<>();
 
                     for (Object tag : entitiesList) {
                         if (tag instanceof CompoundTag) {
@@ -602,7 +593,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 List<?> tileentitiesList = getChildTag(schematic, "TileEntities", ListTag.class, List.class);
 
                 if (tileentitiesList != null) {
-                    tileentities = new ArrayList<TileEntity>();
+                    tileentities = new ArrayList<>();
 
                     for (Object entityElement : tileentitiesList) {
                         if (entityElement instanceof CompoundTag) {
@@ -855,7 +846,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 nb.update(true, false);
             }
 
-            if (bs instanceof InventoryHolder && items != null && items.size() > 0) {
+            if (bs instanceof InventoryHolder && items != null && !items.isEmpty()) {
 
                 InventoryHolder ih = (InventoryHolder) bs;
                 Inventory inventory = ih.getInventory();
@@ -1008,13 +999,13 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
                 etloc.setZ(Math.floor(etloc.getZ()));
-                ent = world.spawnEntity(etloc, entitytype);
+                ent = world.spawnEntity(etloc, EntityType.ITEM_FRAME);
             } else if (entitytype == EntityType.PAINTING) {
                 etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
                 etloc.setZ(Math.floor(etloc.getZ()));
 
-                ent = world.spawnEntity(etloc, entitytype);
+                ent = world.spawnEntity(etloc, EntityType.PAINTING);
             } else if (entitytype == EntityType.LEASH_HITCH) {                        
                 /*etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
@@ -1327,7 +1318,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<?> modifierlist = getChildTag(attribute, "Modifiers", ListTag.class, List.class);
 
         if (modifierlist != null) {
-            List<Modifier> modifiers = new ArrayList<Modifier>();
+            List<Modifier> modifiers = new ArrayList<>();
 
             for (Object modifierelement : modifierlist) {
                 if (modifierelement instanceof CompoundTag) {
@@ -1357,7 +1348,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<?> itemsList = getChildTag(entity, "Items", ListTag.class, List.class);
 
         if (itemsList != null) {
-            List<Item> items = new ArrayList<Item>();
+            List<Item> items = new ArrayList<>();
 
             for (Object itemElement : itemsList) {
                 if (itemElement instanceof CompoundTag) {
@@ -1414,7 +1405,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<?> enchantList = getChildTag(enchanttag, "ench", ListTag.class, List.class);
 
         if (enchantList != null) {
-            List<Ench> enchants = new ArrayList<Ench>();
+            List<Ench> enchants = new ArrayList<>();
 
             for (Object enchantelement : enchantList) {
                 if (enchantelement instanceof CompoundTag) {
@@ -1432,7 +1423,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<?> equipmentlist = getChildTag(entity, "Equipment", ListTag.class, List.class);
 
         if (equipmentlist != null) {
-            List<Item> items = new ArrayList<Item>();
+            List<Item> items = new ArrayList<>();
 
             for (Object equipmentelement : equipmentlist) {
                 if (equipmentelement instanceof CompoundTag) {
@@ -1460,7 +1451,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         List<?> attributelist = getChildTag(entity, "Attributes", ListTag.class, List.class);
 
         if (attributelist != null) {
-            List<Attribute> attributes = new ArrayList<Attribute>();
+            List<Attribute> attributes = new ArrayList<>();
 
             for (Object attributeelement : attributelist) {
                 if (attributeelement instanceof CompoundTag) {

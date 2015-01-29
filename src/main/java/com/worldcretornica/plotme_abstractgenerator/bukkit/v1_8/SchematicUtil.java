@@ -68,8 +68,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
                         BlockState bs = block.getState();
 
-                        TileEntity te = null;
-
                         Byte rot = null;
                         Byte skulltype = null;
                         Byte note = null;
@@ -268,10 +266,10 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                         }
 
                         if (isTileEntity) {
-                            te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
-                                                minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
-                                                text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
-                                                transfercooldown, levels, primary, secondary, patterns, base);
+                            TileEntity te = new TileEntity(x, y, z, customname, id, items, rot, skulltype, delay, maxnearbyentities, maxspawndelay,
+                                                           minspawndelay, requiredplayerrange, spawncount, spawnrange, entityid, burntime, cooktime,
+                                                           text1, text2, text3, text4, note, record, recorditem, brewtime, command, outputsignal,
+                                                           transfercooldown, levels, primary, secondary, patterns, base);
                             tileentities.add(te);
                         }
                     }
@@ -334,7 +332,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
         Entity riding = null;
 
-        Float falldistance = null;
         Float absorptionamount = null;
         Float healf = null;
         Float itemdropchance = null;
@@ -344,7 +341,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Integer tilex = null;
         Integer tiley = null;
         Integer tilez = null;
-        Integer age = null;
         Integer inlove = null;
         Integer transfercooldown = null;
         Integer tntfuse = null;
@@ -361,7 +357,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Pose pose = null;
 
         Short air = null;
-        Short fire = null;
         Short attacktime = null;
         Short deathtime = null;
         Short health = null;
@@ -375,7 +370,6 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         Double pushx = null;
         Double pushz = null;
 
-        List<Double> motion = null;
         List<Float> rotation = null;
         List<Attribute> attributes = null;
         List<Float> dropchances = null;
@@ -392,12 +386,12 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             riding = getEntity(bukkitentity.getPassenger(), minX, minY, minZ);
         }
 
-        falldistance = bukkitentity.getFallDistance();
-        fire = (short) bukkitentity.getFireTicks();
-        age = bukkitentity.getTicksLived();
+        Float falldistance = bukkitentity.getFallDistance();
+        Short fire = (short) bukkitentity.getFireTicks();
+        Integer age = bukkitentity.getTicksLived();
 
         Vector velocity = bukkitentity.getVelocity();
-        motion = new ArrayList<>();
+        List<Double> motion = new ArrayList<>();
         motion.add(velocity.getX());
         motion.add(velocity.getY());
         motion.add(velocity.getZ());
@@ -592,7 +586,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
             try (NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(file))) {
 
                 CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
-                if (!schematicTag.getName().equals("Schematic")) {
+                if (!"Schematic".equals(schematicTag.getName())) {
                     throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
                 }
 
@@ -611,7 +605,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 Integer originz = getChildTag(schematic, "WEOriginZ", IntTag.class, Integer.class);
 
                 String materials = getChildTag(schematic, "Materials", StringTag.class, String.class);
-                if (!materials.equals("Alpha")) {
+                if (!"Alpha".equals(materials)) {
                     throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
                 }
 
@@ -867,7 +861,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                 banner.update(true, false);
             }
 
-            if (bs instanceof InventoryHolder && items != null && items.size() > 0) {
+            if (bs instanceof InventoryHolder && items != null && !items.isEmpty()) {
                 InventoryHolder ih = (InventoryHolder) bs;
                 Inventory inventory = ih.getInventory();
 
@@ -987,13 +981,13 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
                     etloc.setX(Math.floor(etloc.getX()));
                     etloc.setY(Math.floor(etloc.getY()));
                     etloc.setZ(Math.floor(etloc.getZ()));
-                    ent = world.spawnEntity(etloc, entitytype);
+                    ent = world.spawnEntity(etloc, EntityType.ITEM_FRAME);
                 } else if (entitytype == EntityType.PAINTING) {
                     etloc.setX(Math.floor(etloc.getX()));
                     etloc.setY(Math.floor(etloc.getY()));
                     etloc.setZ(Math.floor(etloc.getZ()));
 
-                    ent = world.spawnEntity(etloc, entitytype);
+                    ent = world.spawnEntity(etloc, EntityType.PAINTING);
                 } else if (entitytype == EntityType.LEASH_HITCH) {                        
                     /*etloc.setX(Math.floor(etloc.getX()));
                     etloc.setY(Math.floor(etloc.getY()));
@@ -1388,7 +1382,7 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
         List<?> patternsList = getChildTag(entity, "Patterns", ListTag.class, List.class);
 
         if (patternsList != null) {
-            List<Pattern> patterns = new ArrayList<Pattern>();
+            List<Pattern> patterns = new ArrayList<>();
 
             for (Object patternElement : patternsList) {
                 if (patternElement instanceof CompoundTag) {

@@ -4,9 +4,9 @@ package com.worldcretornica.schematic;
 public class Leash extends AbstractSchematicElement {
 
     private static final long serialVersionUID = 5212830225976155819L;
-    private Integer x;
-    private Integer y;
-    private Integer z;
+    private final Integer x;
+    private final Integer y;
+    private final Integer z;
     
     public Leash(Integer x, Integer y, Integer z) {
         this.x = x;

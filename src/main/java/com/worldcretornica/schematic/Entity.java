@@ -7,86 +7,86 @@ public class Entity extends AbstractSchematicElement {
     private static final long serialVersionUID = 3315103410018232693L;
 
     // START - PRE 1.8
-    private Byte dir;
-    private Byte direction;
-    private Byte invulnerable;
-    private Byte onground;
-    private Byte canpickuploot;
-    private Byte color;
-    private Byte customnamevisible;
-    private Byte leashed;
-    private Byte persistencerequired;
-    private Byte sheared;
-    private Byte skeletontype;
-    private Byte isbaby;
-    private Byte itemrotation;
+    private final Byte dir;
+    private final Byte direction;
+    private final Byte invulnerable;
+    private final Byte onground;
+    private final Byte canpickuploot;
+    private final Byte color;
+    private final Byte customnamevisible;
+    private final Byte leashed;
+    private final Byte persistencerequired;
+    private final Byte sheared;
+    private final Byte skeletontype;
+    private final Byte isbaby;
+    private final Byte itemrotation;
 
-    private Double pushx;
-    private Double pushz;
+    private final Double pushx;
+    private final Double pushz;
 
-    private Entity riding;
+    private final Entity riding;
 
-    private Float falldistance;
-    private Float absorptionamount;
-    private Float healf;
-    private Float itemdropchance;
+    private final Float falldistance;
+    private final Float absorptionamount;
+    private final Float healf;
+    private final Float itemdropchance;
 
-    private Integer dimension;
-    private Integer portalcooldown;
-    private Integer tilex;
-    private Integer tiley;
-    private Integer tilez;
-    private Integer transfercooldown;
-    private Integer age;
-    private Integer inlove;
-    private Integer tntfuse;
+    private final Integer dimension;
+    private final Integer portalcooldown;
+    private final Integer tilex;
+    private final Integer tiley;
+    private final Integer tilez;
+    private final Integer transfercooldown;
+    private final Integer age;
+    private final Integer inlove;
+    private final Integer tntfuse;
 
-    private Item item;
+    private final Item item;
 
-    private Leash leash;
+    private final Leash leash;
 
-    private Short attacktime;
-    private Short deathtime;
-    private Short health;
-    private Short hurttime;
-    private Short air;
-    private Short fire;
-    private Short fuel;
+    private final Short attacktime;
+    private final Short deathtime;
+    private final Short health;
+    private final Short hurttime;
+    private final Short air;
+    private final Short fire;
+    private final Short fuel;
 
-    private String id;
-    private String motive;
-    private String customname;
+    private final String id;
+    private final String motive;
+    private final String customname;
 
-    private List<Double> motion;
-    private List<Double> pos;
-    private List<Float> rotation;
-    private List<Attribute> attributes;
-    private List<Float> dropchances;
-    private Item itemheld;
-    private Item feetarmor;
-    private Item headarmor;
-    private Item chestarmor;
-    private Item legarmor;
-    private List<Item> items;
+    private final List<Double> motion;
+    private final List<Double> pos;
+    private final List<Float> rotation;
+    private final List<Attribute> attributes;
+    private final List<Float> dropchances;
+    private final Item itemheld;
+    private final Item feetarmor;
+    private final Item headarmor;
+    private final Item chestarmor;
+    private final Item legarmor;
+    private final List<Item> items;
     // END - PRE 1.8
     
     // START - 1.8
-    private Byte agelocked;
-    private Byte invisible;
-    private Byte nobaseplate;
-    private Byte nogravity;
-    private Byte showarms;
-    private Byte silent;
-    private Byte small;
-    private Byte elder;
-    
-    private Integer forcedage;
-    private Integer hurtbytimestamp;
-    private Integer morecarrotsticks;
-    private Integer rabbittype;
-    private Integer disabledslots;
-    
-    private Pose pose;
+    private final Byte agelocked;
+    private final Byte invisible;
+    private final Byte nobaseplate;
+    private final Byte nogravity;
+    private final Byte showarms;
+    private final Byte silent;
+    private final Byte small;
+    private final Byte elder;
+
+    private final Integer forcedage;
+    private final Integer hurtbytimestamp;
+    private final Integer morecarrotsticks;
+    private final Integer rabbittype;
+    private final Integer disabledslots;
+
+    private final Pose pose;
     // END - 1.8
 
     public Entity(Byte dir, Byte direction, Byte invulnerable, Byte onground, Short air, Short fire, Integer dimension, Integer portalcooldown, Integer tilex, 
