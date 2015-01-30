@@ -93,7 +93,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         blockPlacedLast.add(Material.ACTIVATOR_RAIL.getId());
     }
 
-    public static void clearEntities(Location bottom, Location top) {
+    public void clearEntities(Location bottom, Location top) {
         double bottomX = bottom.getBlockX();
         double topX = top.getBlockX();
         double bottomZ = bottom.getBlockZ();
