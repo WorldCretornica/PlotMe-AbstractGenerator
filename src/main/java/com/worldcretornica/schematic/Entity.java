@@ -6,7 +6,6 @@ public class Entity extends AbstractSchematicElement {
 
     private static final long serialVersionUID = 3315103410018232693L;
 
-    // START - PRE 1.8
     private final Byte dir;
     private final Byte direction;
     private final Byte invulnerable;
@@ -20,6 +19,19 @@ public class Entity extends AbstractSchematicElement {
     private final Byte skeletontype;
     private final Byte isbaby;
     private final Byte itemrotation;
+    private final Byte agelocked;
+    private final Byte invisible;
+    private final Byte nobaseplate;
+    private final Byte nogravity;
+    private final Byte showarms;
+    private final Byte silent;
+    private final Byte small;
+    private final Byte elder;
+    private final Byte bred;
+    private final Byte chestedhorse;
+    private final Byte eatinghaystack;
+    private final Byte hasreproduced;
+    private final Byte tame;
 
     private final Double pushx;
     private final Double pushz;
@@ -40,6 +52,14 @@ public class Entity extends AbstractSchematicElement {
     private final Integer age;
     private final Integer inlove;
     private final Integer tntfuse;
+    private final Integer forcedage;
+    private final Integer hurtbytimestamp;
+    private final Integer morecarrotsticks;
+    private final Integer rabbittype;
+    private final Integer disabledslots;
+    private final Integer temper;
+    private final Integer type;
+    private final Integer variant;
 
     private final Item item;
 
@@ -56,6 +76,7 @@ public class Entity extends AbstractSchematicElement {
     private final String id;
     private final String motive;
     private final String customname;
+    private final String owneruuid;
 
     private final List<Double> motion;
     private final List<Double> pos;
@@ -68,36 +89,19 @@ public class Entity extends AbstractSchematicElement {
     private final Item chestarmor;
     private final Item legarmor;
     private final List<Item> items;
-    // END - PRE 1.8
-    
-    // START - 1.8
-    private final Byte agelocked;
-    private final Byte invisible;
-    private final Byte nobaseplate;
-    private final Byte nogravity;
-    private final Byte showarms;
-    private final Byte silent;
-    private final Byte small;
-    private final Byte elder;
-
-    private final Integer forcedage;
-    private final Integer hurtbytimestamp;
-    private final Integer morecarrotsticks;
-    private final Integer rabbittype;
-    private final Integer disabledslots;
 
     private final Pose pose;
-    // END - 1.8
 
     public Entity(Byte dir, Byte direction, Byte invulnerable, Byte onground, Short air, Short fire, Integer dimension, Integer portalcooldown, Integer tilex, 
             Integer tiley, Integer tilez, Float falldistance, String id, String motive, List<Double> motion, List<Double> pos, List<Float> rotation,
             Byte canpickuploot, Byte color, Byte customnamevisible, Byte leashed, Byte persistencerequired, Byte sheared, Short attacktime, Short deathtime, 
             Short health, Short hurttime, Integer age, Integer inlove, Float absorptionamount, Float healf, String customname, List<Attribute> attributes, 
-            List<Float> dropchances, Item itemheld, Item feetarmor, Item headarmor, Item chestarmor, Item legarmor, Byte skeletontype, Entity riding, Leash leash, Item item, Byte isbaby,
-            List<Item> items, Integer transfercooldown, Short fuel, Double pushx, Double pushz, Integer tntfuse, Byte itemrotation,
+            List<Float> dropchances, Item itemheld, Item feetarmor, Item headarmor, Item chestarmor, Item legarmor, Byte skeletontype, Entity riding, Leash leash, 
+            Item item, Byte isbaby, List<Item> items, Integer transfercooldown, Short fuel, Double pushx, Double pushz, Integer tntfuse, Byte itemrotation,
             Float itemdropchance, Byte agelocked, Byte invisible, Byte nobaseplate, Byte nogravity, Byte showarms, Byte silent, Byte small,
             Byte elder, Integer forcedage, Integer hurtbytimestamp, Integer morecarrotsticks, Integer rabbittype, Integer disabledslots,
-            Pose pose) {
+            Pose pose, Byte bred, Byte chestedhorse, Byte eatinghaystack, Byte hasreproduced, Byte tame, Integer temper, Integer type, Integer variant,
+            String owneruuid) {
         this.dir = dir;
         this.direction = direction;
         this.invulnerable = invulnerable;
@@ -164,6 +168,15 @@ public class Entity extends AbstractSchematicElement {
         this.rabbittype = rabbittype;
         this.disabledslots = disabledslots;
         this.pose = pose;
+        this.bred = bred;
+        this.chestedhorse = chestedhorse;
+        this.eatinghaystack = eatinghaystack;
+        this.hasreproduced = hasreproduced;
+        this.tame = tame;
+        this.temper = temper;
+        this.type = type;
+        this.variant = variant;
+        this.owneruuid = owneruuid;
     }
 
     public Byte getDir() { return dir; }
@@ -187,6 +200,11 @@ public class Entity extends AbstractSchematicElement {
     public Byte getSilent() { return silent; }
     public Byte getSmall() { return small; }
     public Byte getElder() { return elder; }
+    public Byte getBred() { return bred; }
+    public Byte getChestedHorse() { return chestedhorse; }
+    public Byte getEatingHaystack() { return eatinghaystack; }
+    public Byte getHasReproduced() { return hasreproduced; }
+    public Byte getTame() { return tame; }
 
     public Double getPushX() { return pushx; }
     public Double getPushZ() { return pushz; }
@@ -212,6 +230,9 @@ public class Entity extends AbstractSchematicElement {
     public Integer getMoreCarrotSticks() { return morecarrotsticks; }
     public Integer getRabbitType() { return rabbittype; }
     public Integer getDisabledSlots() { return disabledslots; }
+    public Integer getTemper() { return temper; }
+    public Integer getType() { return type; }
+    public Integer getVariant() { return variant; }
 
     public Item getItem() { return item; }
     
@@ -236,6 +257,7 @@ public class Entity extends AbstractSchematicElement {
     public String getId() { return id; }
     public String getMotive() { return motive; }
     public String getCustomName() { return customname; }
+    public String getOwnerUUID() { return owneruuid; }
 
     public List<Double> getMotion() { return motion; }
     public List<Double> getPos() { return pos; }
@@ -312,6 +334,15 @@ public class Entity extends AbstractSchematicElement {
                 ", morecarrotsticks=" + Sanitize(morecarrotsticks) + 
                 ", rabbittype=" + Sanitize(rabbittype) + 
                 ", disabledslots=" + Sanitize(disabledslots) + 
-                ", pose=" + Sanitize(pose) + "}";
+                ", pose=" + Sanitize(pose) + 
+                ", bred=" + Sanitize(bred) + 
+                ", chestedhorse=" + Sanitize(chestedhorse) + 
+                ", eatinghaystack=" + Sanitize(eatinghaystack) + 
+                ", hasreproduced=" + Sanitize(hasreproduced) + 
+                ", tame=" + Sanitize(tame) + 
+                ", temper=" + Sanitize(temper) + 
+                ", type=" + Sanitize(type) + 
+                ", variant=" + Sanitize(variant) + 
+                ", owneruuid=" + Sanitize(owneruuid) + "}";
     }
 }

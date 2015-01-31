@@ -10,6 +10,8 @@ import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.enchantments.*;
 import org.bukkit.entity.*;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Skeleton.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.*;
@@ -20,9 +22,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class SchematicUtil extends AbstractSchematicUtil {
 
@@ -365,6 +370,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte isbaby = null;
         Byte itemrotation = null;
         Byte leashed = null;
+        Byte bred = null;
+        Byte chestedhorse = null;
+        Byte eatinghaystack = null;
+        Byte hasreproduced = null;
+        Byte tame = null;
 
         Entity riding = null;
 
@@ -380,6 +390,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Integer inlove = null;
         Integer transfercooldown = null;
         Integer tntfuse = null;
+        Integer temper = null;
+        Integer type = null;
+        Integer variant = null;
 
         Item item = null;
 
@@ -395,6 +408,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         String id = "" + bukkitentity.getType().getTypeId();
         String motive = null;
         String customname = null;
+        String owneruuid = null;
 
         Double pushx = null;
         Double pushz = null;
@@ -495,6 +509,12 @@ public class SchematicUtil extends AbstractSchematicUtil {
                     headarmor = getItem(isHelm, null);
                 }
             }
+            
+            if (livingentity instanceof Tameable) {
+                Tameable tameable = (Tameable) livingentity;
+                owneruuid = tameable.getOwner().getUniqueId().toString();
+                tame = (byte) (tameable.isTamed() ? 1 : 0);
+            }
 
             if (livingentity instanceof Skeleton) {
                 Skeleton skeleton = (Skeleton) livingentity;
@@ -511,6 +531,40 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 Sheep sheep = (Sheep) livingentity;
                 sheared = (byte) (sheep.isSheared() ? 1 : 0);
                 color = sheep.getColor().getWoolData();
+            } else if (livingentity instanceof Horse) {
+                Horse horse = (Horse) livingentity;
+                
+                attributes = new ArrayList<>();
+                attributes.add(new Attribute(horse.getJumpStrength(), "horse.jumpStrength", null));
+                
+                temper = horse.getDomestication();
+                
+                switch(horse.getVariant()) {
+                    case HORSE: variant = 0; break;
+                    case DONKEY: variant = 1; break;
+                    case MULE: variant = 2; break;
+                    case UNDEAD_HORSE: variant = 3; break;
+                    case SKELETON_HORSE: variant = 4; break;
+                }
+                
+                switch(horse.getStyle()) {
+                    case NONE: type = 0; break;
+                    case WHITE: type = 256; break;
+                    case WHITEFIELD: type = 512; break;
+                    case WHITE_DOTS: type = 768; break;
+                    case BLACK_DOTS: type = 1024; break;
+                }
+                
+                switch(horse.getColor()) {
+                    case CREAMY: type += 1; break;
+                    case CHESTNUT: type += 2; break;
+                    case BROWN: type += 3; break;
+                    case BLACK: type += 4; break;
+                    case GRAY: type += 5; break;
+                    case DARK_BROWN: type += 6; break;
+                    default: break;
+                }
+                
             }
         }
 
@@ -520,7 +574,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
                           hurttime, age, inlove, absorptionamount, healf, customname, attributes, dropchances,
                           itemheld, feetarmor, headarmor, chestarmor, legarmor,
                           skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
-                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid);
     }
 
     protected Leash getLeash(org.bukkit.entity.Entity leashHolder) {
@@ -1036,6 +1091,12 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Byte skeletontype = e.getSkeletonType();
             Byte isbaby = e.getIsBaby();
             Byte itemrotation = e.getItemRotation();
+            Byte agelocked = e.getAgeLocked();
+            Byte bred = e.getBred();
+            Byte chestedhorse = e.getChestedHorse();
+            Byte eatinghaystack = e.getEatingHaystack();
+            Byte hasreproduced = e.getHasReproduced();
+            Byte tame = e.getTame();
 
             //Double pushx = e.getPushX();
             //Double pushz = e.getPushZ();
@@ -1056,6 +1117,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Integer inlove = e.getInLove();
             //Integer transfercooldown = e.getTransferCooldown();
             //Integer tntfuse = e.getTNTFuse();
+            Integer temper = e.getTemper();
+            Integer type = e.getType();
+            Integer variant = e.getVariant();
 
             Item item = e.getItem();
 
@@ -1072,6 +1136,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             String id = e.getId();
             String motive = e.getMotive();
             String customname = e.getCustomName();
+            String owneruuid = e.getOwnerUUID();
 
             List<Double> motion = e.getMotion();
             List<Float> rotation = e.getRotation();
@@ -1189,6 +1254,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
                     livingentity.setCustomNameVisible(customnamevisible != 0);
                 }
                 if (healf != null) {
+                    if (livingentity.getMaxHealth() < healf) {
+                        livingentity.setMaxHealth(healf);
+                    }
                     livingentity.setHealth(healf);
                 }
                 if (air != null) {
@@ -1221,6 +1289,29 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 if (headarmor != null) {
                     entityequipment.setHelmet(getItemStack(headarmor));
                 }
+                
+                if (livingentity instanceof Ageable) {
+                    Ageable ageable = (Ageable) livingentity;
+                    if (age != null) {
+                        ageable.setAge(age);
+                    }
+                    if (agelocked != null) {
+                        ageable.setAgeLock(agelocked != 0);
+                    }
+                    if (isbaby != null) {
+                        if (isbaby != 0) {
+                            ageable.setBaby();
+                        } else {
+                            ageable.setAdult();
+                        }
+                    }
+                }
+                
+                if (livingentity instanceof Tameable) {
+                    Tameable tameable = (Tameable) livingentity;
+                    if (owneruuid != null) tameable.setOwner(Bukkit.getOfflinePlayer(UUID.fromString(owneruuid)));
+                    if (tame != null) tameable.setTamed(tame != 0);
+                }
 
                 if (livingentity instanceof Skeleton && skeletontype != null) {
                     Skeleton skeleton = (Skeleton) livingentity;
@@ -1236,6 +1327,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
                     }
                     
                     skeleton.setSkeletonType(st);
+                    
                 } else if (livingentity instanceof Sheep) {
                     Sheep sheep = (Sheep) livingentity;
                     if (sheared != null) {
@@ -1245,6 +1337,54 @@ public class SchematicUtil extends AbstractSchematicUtil {
                         DyeColor dyecolor = DyeColor.getByWoolData(color);
                         if (dyecolor != null) {
                             sheep.setColor(dyecolor);
+                        }
+                    }
+                    
+                } else if (livingentity instanceof Horse) {
+                    Horse horse = (Horse) livingentity;
+                    
+                    if (attributes != null) {
+                        for (Attribute attribute : attributes) {
+                            if ("horse.jumpStrength".equalsIgnoreCase(attribute.getName())) {
+                                horse.setJumpStrength(attribute.getBase());
+                            }
+                        }
+                    }
+                    
+                    if (chestedhorse != null) horse.setCarryingChest(chestedhorse != 0);
+                    if (temper != null) horse.setDomestication(temper);
+                    
+                    if (variant != null) {
+                        switch(variant) {
+                            case 0: horse.setVariant(Variant.HORSE); break;
+                            case 1: horse.setVariant(Variant.DONKEY); break;
+                            case 2: horse.setVariant(Variant.MULE); break;
+                            case 3: horse.setVariant(Variant.UNDEAD_HORSE); break;
+                            case 4: horse.setVariant(Variant.SKELETON_HORSE); break;
+                        }
+                    }
+                    
+                    if (type != null) {
+                        if (type < 256) {
+                            horse.setStyle(Style.NONE);
+                        } else if (type < 512) {
+                            horse.setStyle(Style.WHITE);
+                        } else if (type < 768) {
+                            horse.setStyle(Style.WHITEFIELD);
+                        } else if (type < 1024) {
+                            horse.setStyle(Style.WHITE_DOTS);
+                        } else {
+                            horse.setStyle(Style.BLACK_DOTS);
+                        }
+                        
+                        switch((int) ((double) type) % 256) {
+                            case 0 : horse.setColor(org.bukkit.entity.Horse.Color.WHITE); break;
+                            case 1 : horse.setColor(org.bukkit.entity.Horse.Color.CREAMY); break;
+                            case 2 : horse.setColor(org.bukkit.entity.Horse.Color.CHESTNUT); break;
+                            case 3 : horse.setColor(org.bukkit.entity.Horse.Color.BROWN); break;
+                            case 4 : horse.setColor(org.bukkit.entity.Horse.Color.BLACK); break;
+                            case 5 : horse.setColor(org.bukkit.entity.Horse.Color.GRAY); break;
+                            case 6 : horse.setColor(org.bukkit.entity.Horse.Color.DARK_BROWN); break;
                         }
                     }
                 }
@@ -1308,6 +1448,11 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte skeletontype = getChildTag(entity, "SkeletonType", ByteTag.class, Byte.class);
         Byte isbaby = getChildTag(entity, "IsBaby", ByteTag.class, Byte.class);
         Byte itemrotation = getChildTag(entity, "ItemRotation", ByteTag.class, Byte.class);
+        Byte bred = getChildTag(entity, "Bred", ByteTag.class, Byte.class);
+        Byte chestedhorse = getChildTag(entity, "ChestHorse", ByteTag.class, Byte.class);
+        Byte eatinghaystack = getChildTag(entity, "EatingHaystack", ByteTag.class, Byte.class);
+        Byte hasreproduced = getChildTag(entity, "HasReproduced", ByteTag.class, Byte.class);
+        Byte tame = getChildTag(entity, "Tame", ByteTag.class, Byte.class);
 
         Double pushx = getChildTag(entity, "PushX", DoubleTag.class, Double.class);
         Double pushz = getChildTag(entity, "PushZ", DoubleTag.class, Double.class);
@@ -1328,6 +1473,9 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Integer inlove = getChildTag(entity, "InLove", IntTag.class, Integer.class);
         Integer transfercooldown = getChildTag(entity, "TransferCooldown", IntTag.class, Integer.class);
         Integer tntfuse = getChildTag(entity, "TNTFuse", IntTag.class, Integer.class);
+        Integer temper = getChildTag(entity, "Temper", IntTag.class, Integer.class);
+        Integer type = getChildTag(entity, "Type", IntTag.class, Integer.class);
+        Integer variant = getChildTag(entity, "Variant", IntTag.class, Integer.class);
 
         Item item = null;
 
@@ -1344,6 +1492,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         String id = getChildTag(entity, "id", StringTag.class, String.class);
         String motive = getChildTag(entity, "Motive", StringTag.class, String.class);
         String customname = getChildTag(entity, "CustomName", StringTag.class, String.class);
+        String owneruuid = getChildTag(entity, "OwnerUUID", StringTag.class, String.class);
 
         List<Double> motion = convert(getChildTag(entity, "Motion", ListTag.class, List.class), Double.class);
         List<Double> pos = convert(getChildTag(entity, "Pos", ListTag.class, List.class), Double.class);
@@ -1396,7 +1545,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
                           age, inlove, absorptionamount,
                           healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor,
                           skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
-                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                          itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid);
     }
 
     protected Leash getLeash(CompoundTag leashelement) {
