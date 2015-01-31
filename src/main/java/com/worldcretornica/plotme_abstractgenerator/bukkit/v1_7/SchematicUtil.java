@@ -5,6 +5,7 @@ import com.worldcretornica.schematic.*;
 import com.worldcretornica.schematic.Entity;
 import com.worldcretornica.schematic.Item;
 import com.worldcretornica.schematic.jnbt.*;
+
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.enchantments.*;
@@ -17,6 +18,7 @@ import org.bukkit.util.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +27,59 @@ import java.util.Set;
 public class SchematicUtil extends AbstractSchematicUtil {
 
     protected Plugin plugin;
-
+    
+    @SuppressWarnings("deprecation")
     public SchematicUtil(Plugin instance) {
         this.plugin = instance;
+        
+        blockPlacedLast.add(Material.SAPLING.getId());
+        blockPlacedLast.add(Material.BED.getId());
+        blockPlacedLast.add(Material.POWERED_RAIL.getId());
+        blockPlacedLast.add(Material.DETECTOR_RAIL.getId());
+        blockPlacedLast.add(Material.LONG_GRASS.getId());
+        blockPlacedLast.add(Material.DEAD_BUSH.getId());
+        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
+        blockPlacedLast.add(Material.YELLOW_FLOWER.getId());
+        blockPlacedLast.add(Material.RED_ROSE.getId());
+        blockPlacedLast.add(Material.BROWN_MUSHROOM.getId());
+        blockPlacedLast.add(Material.RED_MUSHROOM.getId());
+        blockPlacedLast.add(Material.TORCH.getId());
+        blockPlacedLast.add(Material.FIRE.getId());
+        blockPlacedLast.add(Material.REDSTONE_WIRE.getId());
+        blockPlacedLast.add(Material.CROPS.getId());
+        blockPlacedLast.add(Material.LADDER.getId());
+        blockPlacedLast.add(Material.RAILS.getId());
+        blockPlacedLast.add(Material.LEVER.getId());
+        blockPlacedLast.add(Material.STONE_PLATE.getId());
+        blockPlacedLast.add(Material.WOOD_PLATE.getId());
+        blockPlacedLast.add(Material.REDSTONE_TORCH_OFF.getId());
+        blockPlacedLast.add(Material.REDSTONE_TORCH_ON.getId());
+        blockPlacedLast.add(Material.STONE_BUTTON.getId());
+        blockPlacedLast.add(Material.SNOW.getId());
+        blockPlacedLast.add(Material.PORTAL.getId());
+        blockPlacedLast.add(Material.DIODE_BLOCK_OFF.getId());
+        blockPlacedLast.add(Material.DIODE_BLOCK_ON.getId());
+        blockPlacedLast.add(Material.TRAP_DOOR.getId());
+        blockPlacedLast.add(Material.VINE.getId());
+        blockPlacedLast.add(Material.WATER_LILY.getId());
+        blockPlacedLast.add(Material.NETHER_WARTS.getId());
+        blockPlacedLast.add(Material.PISTON_BASE.getId());
+        blockPlacedLast.add(Material.PISTON_STICKY_BASE.getId());
+        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
+        blockPlacedLast.add(Material.PISTON_MOVING_PIECE.getId());
+        blockPlacedLast.add(Material.COCOA.getId());
+        blockPlacedLast.add(Material.TRIPWIRE_HOOK.getId());
+        blockPlacedLast.add(Material.TRIPWIRE.getId());
+        blockPlacedLast.add(Material.FLOWER_POT.getId());
+        blockPlacedLast.add(Material.CARROT.getId());
+        blockPlacedLast.add(Material.POTATO.getId());
+        blockPlacedLast.add(Material.WOOD_BUTTON.getId());
+        blockPlacedLast.add(Material.SKULL.getId());
+        blockPlacedLast.add(Material.GOLD_PLATE.getId());
+        blockPlacedLast.add(Material.IRON_PLATE.getId());
+        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_OFF.getId());
+        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_ON.getId());
+        blockPlacedLast.add(Material.ACTIVATOR_RAIL.getId());
     }
 
     @Override
@@ -446,7 +498,15 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
             if (livingentity instanceof Skeleton) {
                 Skeleton skeleton = (Skeleton) livingentity;
-                skeletontype = (byte) skeleton.getType().ordinal();
+                
+                switch(skeleton.getSkeletonType()) {
+                    case NORMAL:
+                        skeletontype = 0;
+                        break;
+                    case WITHER:
+                        skeletontype = 1;
+                        break;
+                }
             } else if (livingentity instanceof Sheep) {
                 Sheep sheep = (Sheep) livingentity;
                 sheared = (byte) (sheep.isSheared() ? 1 : 0);
@@ -681,23 +741,56 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Short width = schematic.getWidth();
         Short height = schematic.getHeight();
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
+        for (int y = 0; y < height; ++y) {
+            
+            Collection<LastBlock> lastblocks = new HashSet<>();
+            
+            for (int x = 0; x < width; ++x) {
                 for (int z = 0; z < length; ++z) {
                     int index = y * width * length + z * width + x;
 
                     Block block = world.getBlockAt(x + loc.getBlockX(), y + loc.getBlockY(), z + loc.getBlockZ());
 
-                    try {
-                        if (setBlock) {
-                            block.setTypeIdAndData(blocks[index], blockData[index], false);
+                    if (!blockPlacedLast.contains(blocks[index])) {
+                        try {
+                            if (setBlock) {
+                                block.setTypeIdAndData(blocks[index], blockData[index], false);
+                            }
+                            block.setData(blockData[index], false);
+                        } catch (NullPointerException e) {
+                            plugin.getLogger().info("Error pasting block : " + blocks[index] + " of data " + blockData[index]);
                         }
-                        block.setData(blockData[index], false);
-                    } catch (NullPointerException e) {
-                        plugin.getLogger().info("Error pasting block : " + blocks[index] + " of data " + blockData[index]);
+                    
+                    } else {
+                        lastblocks.add(new LastBlock(block, blocks[index], blockData[index]));
                     }
                 }
             }
+            
+            for (LastBlock lastblock : lastblocks) {
+                try {
+                    if (setBlock) {
+                        lastblock.block.setTypeIdAndData(lastblock.id, lastblock.data, false);
+                    }
+                    lastblock.block.setData(lastblock.data, false);
+                } catch (NullPointerException e) {
+                    plugin.getLogger().info("Error pasting block : " + lastblock.id + " of data " + lastblock.data);
+                }
+            }
+            
+            lastblocks.clear();
+        }
+    }
+    
+    private class LastBlock {
+        Block block;
+        int id;
+        byte data;
+        
+        public LastBlock(Block block, int id, byte data) {
+            this.block = block;
+            this.id = id;
+            this.data = data;
         }
     }
 
@@ -1131,7 +1224,17 @@ public class SchematicUtil extends AbstractSchematicUtil {
 
                 if (livingentity instanceof Skeleton && skeletontype != null) {
                     Skeleton skeleton = (Skeleton) livingentity;
-                    SkeletonType st = SkeletonType.getType(skeletontype);
+                    SkeletonType st = null;
+                    
+                    switch(skeletontype) {
+                        case 0: 
+                            st = SkeletonType.NORMAL; 
+                            break;
+                        default: 
+                            st = SkeletonType.WITHER; 
+                            break;
+                    }
+                    
                     skeleton.setSkeletonType(st);
                 } else if (livingentity instanceof Sheep) {
                     Sheep sheep = (Sheep) livingentity;

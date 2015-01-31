@@ -3,94 +3,31 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
-import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
+import com.worldcretornica.schematic.Schematic;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
-    // List of blocks that should be placed last in world generation
-    private static final Collection<Integer> blockPlacedLast = new HashSet<>();
-
-    private final AbstractGenerator plugin;
+    private final BukkitAbstractGenerator plugin;
     private final Map<String, WorldGenConfig> worldConfigs;
 
-    @SuppressWarnings("deprecation")
-    public BukkitAbstractGenManager(AbstractGenerator instance) {
+    public BukkitAbstractGenManager(BukkitAbstractGenerator instance) {
         plugin = instance;
         worldConfigs = new HashMap<>();
-
-        blockPlacedLast.add(Material.SAPLING.getId());
-        blockPlacedLast.add(Material.BED.getId());
-        blockPlacedLast.add(Material.POWERED_RAIL.getId());
-        blockPlacedLast.add(Material.DETECTOR_RAIL.getId());
-        blockPlacedLast.add(Material.LONG_GRASS.getId());
-        blockPlacedLast.add(Material.DEAD_BUSH.getId());
-        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
-        blockPlacedLast.add(Material.YELLOW_FLOWER.getId());
-        blockPlacedLast.add(Material.RED_ROSE.getId());
-        blockPlacedLast.add(Material.BROWN_MUSHROOM.getId());
-        blockPlacedLast.add(Material.RED_MUSHROOM.getId());
-        blockPlacedLast.add(Material.TORCH.getId());
-        blockPlacedLast.add(Material.FIRE.getId());
-        blockPlacedLast.add(Material.REDSTONE_WIRE.getId());
-        blockPlacedLast.add(Material.CROPS.getId());
-        blockPlacedLast.add(Material.LADDER.getId());
-        blockPlacedLast.add(Material.RAILS.getId());
-        blockPlacedLast.add(Material.LEVER.getId());
-        blockPlacedLast.add(Material.STONE_PLATE.getId());
-        blockPlacedLast.add(Material.WOOD_PLATE.getId());
-        blockPlacedLast.add(Material.REDSTONE_TORCH_OFF.getId());
-        blockPlacedLast.add(Material.REDSTONE_TORCH_ON.getId());
-        blockPlacedLast.add(Material.STONE_BUTTON.getId());
-        blockPlacedLast.add(Material.SNOW.getId());
-        blockPlacedLast.add(Material.PORTAL.getId());
-        blockPlacedLast.add(Material.DIODE_BLOCK_OFF.getId());
-        blockPlacedLast.add(Material.DIODE_BLOCK_ON.getId());
-        blockPlacedLast.add(Material.TRAP_DOOR.getId());
-        blockPlacedLast.add(Material.VINE.getId());
-        blockPlacedLast.add(Material.WATER_LILY.getId());
-        blockPlacedLast.add(Material.NETHER_WARTS.getId());
-        blockPlacedLast.add(Material.PISTON_BASE.getId());
-        blockPlacedLast.add(Material.PISTON_STICKY_BASE.getId());
-        blockPlacedLast.add(Material.PISTON_EXTENSION.getId());
-        blockPlacedLast.add(Material.PISTON_MOVING_PIECE.getId());
-        blockPlacedLast.add(Material.COCOA.getId());
-        blockPlacedLast.add(Material.TRIPWIRE_HOOK.getId());
-        blockPlacedLast.add(Material.TRIPWIRE.getId());
-        blockPlacedLast.add(Material.FLOWER_POT.getId());
-        blockPlacedLast.add(Material.CARROT.getId());
-        blockPlacedLast.add(Material.POTATO.getId());
-        blockPlacedLast.add(Material.WOOD_BUTTON.getId());
-        blockPlacedLast.add(Material.SKULL.getId());
-        blockPlacedLast.add(Material.GOLD_PLATE.getId());
-        blockPlacedLast.add(Material.IRON_PLATE.getId());
-        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_OFF.getId());
-        blockPlacedLast.add(Material.REDSTONE_COMPARATOR_ON.getId());
-        blockPlacedLast.add(Material.ACTIVATOR_RAIL.getId());
     }
 
     public void clearEntities(Location bottom, Location top) {
@@ -212,6 +149,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         refreshPlotChunks(world, id);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void refreshPlotChunks(World world, String id) {
         double bottomX = bottomX(id, world);
@@ -258,15 +196,23 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean movePlot(World world, String idFrom, String idTo) {
         Location plot1Bottom = getPlotBottomLoc(world, idFrom);
         Location plot2Bottom = getPlotBottomLoc(world, idTo);
         Location plot1Top = getPlotTopLoc(world, idFrom);
         Location plot2Top = getPlotTopLoc(world, idTo);
+        
+        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plot1Bottom, plot1Top);
+        Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(plot2Bottom, plot2Top);
+        
+        clearEntities(plot1Bottom, plot1Top);
+        clearEntities(plot2Bottom, plot2Top);
+        
+        plugin.getSchematicUtil().pasteSchematic(plot1Bottom, schem2);
+        plugin.getSchematicUtil().pasteSchematic(plot2Bottom, schem1);
 
-        int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
+        /*int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
         int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
 
         Collection<Block> lastblocks = new HashSet<>();
@@ -288,14 +234,14 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                     plot1Block = world.getBlockAt(x, y, z);
                     plot2Block = world.getBlockAt(x - distanceX, y, z - distanceZ);
 
-                    if (!blockPlacedLast.contains(plot2Block.getTypeId())) {
+                    if (!plugin.getSchematicUtil().blockPlacedLast.contains(plot2Block.getTypeId())) {
                         plot2Block.setTypeIdAndData(plot1Block.getTypeId(), plot1Block.getData(), false);
                     } else {
                         plot1Block.setType(Material.AIR);
                         lastblocks.add(plot2Block);
                     }
 
-                    if (!blockPlacedLast.contains(plot1Block.getTypeId())) {
+                    if (!plugin.getSchematicUtil().blockPlacedLast.contains(plot1Block.getTypeId())) {
                         plot1Block.setTypeIdAndData(plot2Block.getTypeId(), plot2Block.getData(), false);
                     } else {
                         plot2Block.setType(Material.AIR);
@@ -333,7 +279,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 for (Entity entity : chunk.getEntities()) {
                     Location location = entity.getLocation();
 
-                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot1Bottom.getBlockX()
+                    if (!(entity instanceof Player) && location.getBlockX() >= plot1Bottom.getBlockX()
                         && location.getBlockX() <= plot1Top.getBlockX()
                         && location.getBlockZ() >= plot1Bottom.getBlockZ() && location.getBlockZ() <= plot1Top.getBlockZ()) {
                         entities1.add(entity);
@@ -349,7 +295,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                 for (Entity entity : chunk.getEntities()) {
                     Location location = entity.getLocation();
 
-                    if (!(entity instanceof Player) /*&& !(entity instanceof Hanging)*/ && location.getBlockX() >= plot2Bottom.getBlockX()
+                    if (!(entity instanceof Player) && location.getBlockX() >= plot2Bottom.getBlockX()
                         && location.getBlockX() <= plot2Top.getBlockX()
                         && location.getBlockZ() >= plot2Bottom.getBlockZ() && location.getBlockZ() <= plot2Top.getBlockZ()) {
                         entities2.add(entity);
@@ -407,7 +353,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             } else {
                 entity.teleport(location1);
             }
-        }
+        }*/
 
         return true;
     }
@@ -432,7 +378,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         return getPlotTopLoc(world, id).getBlockZ();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public boolean isValidId(String id) {
         String[] coords = id.split(";");

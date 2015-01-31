@@ -480,7 +480,15 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
             if (livingentity instanceof Skeleton) {
                 Skeleton skeleton = (Skeleton) livingentity;
-                skeletontype = (byte) skeleton.getType().ordinal();
+
+                switch(skeleton.getSkeletonType()) {
+                    case NORMAL:
+                        skeletontype = 0;
+                        break;
+                    case WITHER:
+                        skeletontype = 1;
+                        break;
+                }
             } else if (livingentity instanceof Rabbit) {
                 Rabbit rabbit = (Rabbit) livingentity;
 
@@ -1134,8 +1142,18 @@ public class SchematicUtil extends com.worldcretornica.plotme_abstractgenerator.
 
                     if (livingentity instanceof Skeleton && skeletontype != null) {
                         Skeleton skeleton = (Skeleton) livingentity;
-                        @SuppressWarnings("deprecation")
-                        SkeletonType st = SkeletonType.getType(skeletontype);
+                        
+                        SkeletonType st = null;
+                        
+                        switch(skeletontype) {
+                            case 0:
+                                st = SkeletonType.NORMAL;
+                                break;
+                            default:
+                                st = SkeletonType.WITHER;
+                                break;
+                        }
+                        
                         skeleton.setSkeletonType(st);
                     } else if (livingentity instanceof Rabbit && rabbittype != null) {
                         Rabbit rabbit = (Rabbit) livingentity;
