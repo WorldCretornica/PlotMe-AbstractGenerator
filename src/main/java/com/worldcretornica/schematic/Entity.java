@@ -32,6 +32,7 @@ public class Entity extends AbstractSchematicElement {
     private final Byte eatinghaystack;
     private final Byte hasreproduced;
     private final Byte tame;
+    private final Byte facing;
 
     private final Double pushx;
     private final Double pushz;
@@ -101,7 +102,7 @@ public class Entity extends AbstractSchematicElement {
             Float itemdropchance, Byte agelocked, Byte invisible, Byte nobaseplate, Byte nogravity, Byte showarms, Byte silent, Byte small,
             Byte elder, Integer forcedage, Integer hurtbytimestamp, Integer morecarrotsticks, Integer rabbittype, Integer disabledslots,
             Pose pose, Byte bred, Byte chestedhorse, Byte eatinghaystack, Byte hasreproduced, Byte tame, Integer temper, Integer type, Integer variant,
-            String owneruuid) {
+            String owneruuid, Byte facing) {
         this.dir = dir;
         this.direction = direction;
         this.invulnerable = invulnerable;
@@ -177,6 +178,7 @@ public class Entity extends AbstractSchematicElement {
         this.type = type;
         this.variant = variant;
         this.owneruuid = owneruuid;
+        this.facing = facing;
     }
 
     public Byte getDir() { return dir; }
@@ -205,6 +207,7 @@ public class Entity extends AbstractSchematicElement {
     public Byte getEatingHaystack() { return eatinghaystack; }
     public Byte getHasReproduced() { return hasreproduced; }
     public Byte getTame() { return tame; }
+    public Byte getFacing() { return facing; }
 
     public Double getPushX() { return pushx; }
     public Double getPushZ() { return pushz; }
@@ -343,6 +346,7 @@ public class Entity extends AbstractSchematicElement {
                 ", temper=" + Sanitize(temper) + 
                 ", type=" + Sanitize(type) + 
                 ", variant=" + Sanitize(variant) + 
-                ", owneruuid=" + Sanitize(owneruuid) + "}";
+                ", owneruuid=" + Sanitize(owneruuid) + 
+                ", facing=" + Sanitize(facing) + "}";
     }
 }

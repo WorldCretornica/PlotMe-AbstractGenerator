@@ -351,12 +351,6 @@ public class SchematicUtil extends AbstractSchematicUtil {
         double y = entLoc.getY() - minY;
         double z = entLoc.getZ() - minZ;
 
-        List<Double> positions = new ArrayList<>();
-
-        positions.add(x);
-        positions.add(y);
-        positions.add(z);
-
         Byte dir = null;
         Byte direction = null;
         Byte invulnerable = null;
@@ -375,6 +369,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte eatinghaystack = null;
         Byte hasreproduced = null;
         Byte tame = null;
+        Byte facing = null;
 
         Entity riding = null;
 
@@ -467,6 +462,29 @@ public class SchematicUtil extends AbstractSchematicUtil {
             ItemFrame itemframe = (ItemFrame) bukkitentity;
             itemrotation = (byte) itemframe.getRotation().ordinal();
             item = getItem(itemframe.getItem(), null);
+        } else if (bukkitentity instanceof Painting) {
+            Painting painting = (Painting) bukkitentity;
+            Art art = painting.getArt();
+            motive = art.name();
+            
+            switch(painting.getFacing()) {
+                case EAST: facing = 3; break;
+                case WEST: facing = 1; break;
+                case NORTH: facing = 2; break;
+                case SOUTH: facing = 0; break;
+                default: facing = 0; break;
+            }
+            
+            if (art.getBlockHeight() == 2 || art.getBlockHeight() == 4) {
+                y -= 1;
+            }
+            if (art.getBlockWidth() > 1) {
+                if (facing == 1) {
+                    z -= 1;
+                } else if (facing == 0) {
+                    x -= 1;
+                }
+            }
         }
 
         if (bukkitentity instanceof LivingEntity) {
@@ -568,6 +586,12 @@ public class SchematicUtil extends AbstractSchematicUtil {
             }
         }
 
+        List<Double> positions = new ArrayList<>();
+
+        positions.add(x);
+        positions.add(y);
+        positions.add(z);
+
         return new Entity(dir, direction, invulnerable, onground, air, fire, dimension, portalcooldown,
                           tilex, tiley, tilez, falldistance, id, motive, motion, positions, rotation, canpickuploot,
                           color, customnamevisible, leashed, persistencerequired, sheared, attacktime, deathtime, health,
@@ -575,7 +599,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
                           itemheld, feetarmor, headarmor, chestarmor, legarmor,
                           skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
                           itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid);
+                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid,
+                          facing);
     }
 
     protected Leash getLeash(org.bukkit.entity.Entity leashHolder) {
@@ -1097,6 +1122,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
             Byte eatinghaystack = e.getEatingHaystack();
             Byte hasreproduced = e.getHasReproduced();
             Byte tame = e.getTame();
+            Byte facing = e.getFacing();
 
             //Double pushx = e.getPushX();
             //Double pushz = e.getPushZ();
@@ -1164,6 +1190,21 @@ public class SchematicUtil extends AbstractSchematicUtil {
                 etloc.setZ(Math.floor(etloc.getZ()));
 
                 ent = world.spawnEntity(etloc, EntityType.PAINTING);
+                
+                Painting painting = (Painting) ent;
+                
+                BlockFace bf = BlockFace.SOUTH;
+                
+                switch(facing) {
+                    case 0: bf = BlockFace.SOUTH; break;
+                    case 1: bf = BlockFace.WEST; break;
+                    case 2: bf = BlockFace.NORTH; break;
+                    case 3: bf = BlockFace.EAST; break;
+                }
+                
+                painting.setFacingDirection(bf, true);
+                painting.setArt(Art.getByName(motive), true);
+                
             } else if (entitytype == EntityType.LEASH_HITCH) {                        
                 /*etloc.setX(Math.floor(etloc.getX()));
                 etloc.setY(Math.floor(etloc.getY()));
@@ -1453,6 +1494,7 @@ public class SchematicUtil extends AbstractSchematicUtil {
         Byte eatinghaystack = getChildTag(entity, "EatingHaystack", ByteTag.class, Byte.class);
         Byte hasreproduced = getChildTag(entity, "HasReproduced", ByteTag.class, Byte.class);
         Byte tame = getChildTag(entity, "Tame", ByteTag.class, Byte.class);
+        Byte facing = getChildTag(entity, "Facing", ByteTag.class, Byte.class);
 
         Double pushx = getChildTag(entity, "PushX", DoubleTag.class, Double.class);
         Double pushz = getChildTag(entity, "PushZ", DoubleTag.class, Double.class);
@@ -1546,7 +1588,8 @@ public class SchematicUtil extends AbstractSchematicUtil {
                           healf, customname, attributes, dropchances, itemheld, feetarmor, legarmor, chestarmor, headarmor,
                           skeletontype, riding, leash, item, isbaby, items, transfercooldown, fuel, pushx, pushz, tntfuse,
                           itemrotation, itemdropchance, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid);
+                          bred, chestedhorse, eatinghaystack, hasreproduced, tame, temper, type, variant, owneruuid,
+                          facing);
     }
 
     protected Leash getLeash(CompoundTag leashelement) {
