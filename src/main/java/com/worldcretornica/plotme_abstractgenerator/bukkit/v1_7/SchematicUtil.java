@@ -210,28 +210,40 @@ public class SchematicUtil extends AbstractSchematicUtil {
                                     break;
                                 case EAST_SOUTH_EAST:
                                     rot = 5;
+                                    break;
                                 case SOUTH_EAST:
                                     rot = 6;
+                                    break;
                                 case SOUTH_SOUTH_EAST:
                                     rot = 7;
+                                    break;
                                 case SOUTH:
                                     rot = 8;
+                                    break;
                                 case SOUTH_SOUTH_WEST:
                                     rot = 9;
+                                    break;
                                 case SOUTH_WEST:
                                     rot = 10;
+                                    break;
                                 case WEST_SOUTH_WEST:
                                     rot = 11;
+                                    break;
                                 case WEST:
                                     rot = 12;
+                                    break;
                                 case WEST_NORTH_WEST:
                                     rot = 13;
+                                    break;
                                 case NORTH_WEST:
                                     rot = 14;
+                                    break;
                                 case NORTH_NORTH_WEST:
                                     rot = 15;
+                                    break;
                                 default:
                                     rot = 0;
+                                    break;
                             }
 
                             skulltype = (byte) skull.getSkullType().ordinal();
