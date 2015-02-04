@@ -205,157 +205,19 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         Location plot1Top = getPlotTopLoc(world, idFrom);
         Location plot2Top = getPlotTopLoc(world, idTo);
         
-        Schematic schem1 = (Schematic) getPlotSchematic(world, idFrom);
-        Schematic schem2 = (Schematic) getPlotSchematic(world, idTo);
+        plot1Bottom.subtract(1, 0, 1);
+        plot2Bottom.subtract(1, 0, 1);
+        plot1Top.add(1, 0, 1);
+        plot2Top.add(1, 0, 1);
+        
+        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plot1Bottom, plot1Top);
+        Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(plot2Bottom, plot2Top);
         
         clearEntities(plot1Bottom, plot1Top);
         clearEntities(plot2Bottom, plot2Top);
         
         plugin.getSchematicUtil().pasteSchematic(plot1Bottom, schem2);
         plugin.getSchematicUtil().pasteSchematic(plot2Bottom, schem1);
-
-        /*int distanceX = plot1Bottom.getBlockX() - plot2Bottom.getBlockX();
-        int distanceZ = plot1Bottom.getBlockZ() - plot2Bottom.getBlockZ();
-
-        Collection<Block> lastblocks = new HashSet<>();
-
-        int bottomX = plot1Bottom.getBlockX();
-        int topX = plot1Top.getBlockX();
-        int bottomZ = plot1Bottom.getBlockZ();
-        int topZ = plot1Top.getBlockZ();
-
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                Block plot1Block = world.getBlockAt(x, 0, z);
-                Block plot2Block = world.getBlockAt(x - distanceX, 0, z - distanceZ);
-
-                plot1Block.setBiome(plot2Block.getBiome());
-                plot2Block.setBiome(plot1Block.getBiome());
-
-                for (int y = 0; y < 256; y++) {
-                    plot1Block = world.getBlockAt(x, y, z);
-                    plot2Block = world.getBlockAt(x - distanceX, y, z - distanceZ);
-
-                    if (!plugin.getSchematicUtil().blockPlacedLast.contains(plot2Block.getTypeId())) {
-                        plot2Block.setTypeIdAndData(plot1Block.getTypeId(), plot1Block.getData(), false);
-                    } else {
-                        plot1Block.setType(Material.AIR);
-                        lastblocks.add(plot2Block);
-                    }
-
-                    if (!plugin.getSchematicUtil().blockPlacedLast.contains(plot1Block.getTypeId())) {
-                        plot1Block.setTypeIdAndData(plot2Block.getTypeId(), plot2Block.getData(), false);
-                    } else {
-                        plot2Block.setType(Material.AIR);
-                        lastblocks.add(plot1Block);
-                    }
-                }
-            }
-        }
-
-        for (Block bi : lastblocks) {
-            Block block = bi.getLocation().getBlock();
-            bi.setTypeIdAndData(block.getTypeId(), block.getData(), false);
-        }
-
-        lastblocks.clear();
-
-        //Move entities
-        int minChunkX1 = (int) Math.floor(bottomX / 16);
-        int maxChunkX1 = (int) Math.floor(topX / 16);
-        int minChunkZ1 = (int) Math.floor(bottomZ / 16);
-        int maxChunkZ1 = (int) Math.floor(topZ / 16);
-
-        int minChunkX2 = (int) Math.floor((bottomX - distanceX) / 16);
-        int maxChunkX2 = (int) Math.floor((topX - distanceX) / 16);
-        int minChunkZ2 = (int) Math.floor((bottomZ - distanceZ) / 16);
-        int maxChunkZ2 = (int) Math.floor((topZ - distanceZ) / 16);
-
-        Collection<Entity> entities1 = new HashSet<>();
-        Collection<Entity> entities2 = new HashSet<>();
-
-        for (int cx = minChunkX1; cx <= maxChunkX1; cx++) {
-            for (int cz = minChunkZ1; cz <= maxChunkZ1; cz++) {
-                Chunk chunk = world.getChunkAt(cx, cz);
-
-                for (Entity entity : chunk.getEntities()) {
-                    Location location = entity.getLocation();
-
-                    if (!(entity instanceof Player) && location.getBlockX() >= plot1Bottom.getBlockX()
-                        && location.getBlockX() <= plot1Top.getBlockX()
-                        && location.getBlockZ() >= plot1Bottom.getBlockZ() && location.getBlockZ() <= plot1Top.getBlockZ()) {
-                        entities1.add(entity);
-                    }
-                }
-            }
-        }
-
-        for (int cx = minChunkX2; cx <= maxChunkX2; cx++) {
-            for (int cz = minChunkZ2; cz <= maxChunkZ2; cz++) {
-                Chunk chunk = world.getChunkAt(cx, cz);
-
-                for (Entity entity : chunk.getEntities()) {
-                    Location location = entity.getLocation();
-
-                    if (!(entity instanceof Player) && location.getBlockX() >= plot2Bottom.getBlockX()
-                        && location.getBlockX() <= plot2Top.getBlockX()
-                        && location.getBlockZ() >= plot2Bottom.getBlockZ() && location.getBlockZ() <= plot2Top.getBlockZ()) {
-                        entities2.add(entity);
-                    }
-                }
-            }
-        }
-
-        for (Entity entity1 : entities1) {
-            Location location = entity1.getLocation();
-            Location location1 = new Location(world, location.getX() - distanceX, location.getY(), location.getZ() - distanceZ);
-
-            if (entity1.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame itemFrame = ((ItemFrame) entity1);
-                BlockFace blockFace = itemFrame.getFacing();
-                ItemStack item = itemFrame.getItem();
-                Rotation rotation = itemFrame.getRotation();
-
-                itemFrame.teleport(location1);
-                itemFrame.setItem(item);
-                itemFrame.setRotation(rotation);
-                itemFrame.setFacingDirection(blockFace, true);
-            } else if (entity1.getType() == EntityType.PAINTING) {
-                Painting painting = ((Painting) entity1);
-                BlockFace blockFace = painting.getFacing();
-                location1 = location1.add(painting.getLocation());
-                painting.teleport(location1);
-                painting.setFacingDirection(blockFace, true);
-            } else {
-                entity1.teleport(location1);
-            }
-        }
-
-        for (Entity entity : entities2) {
-            Location location = entity.getLocation();
-            Location location1 = new Location(world, location.getX() + distanceX, location.getY(), location.getZ() + distanceZ);
-
-            if (entity.getType() == EntityType.ITEM_FRAME) {
-                ItemFrame itemFrame = ((ItemFrame) entity);
-                BlockFace blockFace = itemFrame.getFacing();
-                ItemStack item = itemFrame.getItem();
-                Rotation rotation = itemFrame.getRotation();
-
-                itemFrame.teleport(location1);
-                itemFrame.setItem(item);
-                itemFrame.setRotation(rotation);
-                itemFrame.setFacingDirection(blockFace, true);
-
-            } else if (entity.getType() == EntityType.PAINTING) {
-                Painting painting = ((Painting) entity);
-                BlockFace blockFace = painting.getFacing();
-                location1 = location1.add(painting.getLocation());
-                painting.teleport(location1);
-                painting.setFacingDirection(blockFace, true);
-            } else {
-                entity.teleport(location1);
-            }
-        }*/
 
         return true;
     }
