@@ -14,6 +14,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -203,8 +205,8 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         Location plot1Top = getPlotTopLoc(world, idFrom);
         Location plot2Top = getPlotTopLoc(world, idTo);
         
-        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plot1Bottom, plot1Top);
-        Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(plot2Bottom, plot2Top);
+        Schematic schem1 = (Schematic) getPlotSchematic(world, idFrom);
+        Schematic schem2 = (Schematic) getPlotSchematic(world, idTo);
         
         clearEntities(plot1Bottom, plot1Top);
         clearEntities(plot2Bottom, plot2Top);
@@ -403,5 +405,15 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     @Override
     public int getIdZ(String id) {
         return Integer.parseInt(id.substring(id.indexOf(";") + 1));
+    }
+    
+    @Override
+    public Schematic getPlotSchematic(World world, String id) {
+        Location plotBottom = getPlotBottomLoc(world, id);
+        Location plotTop = getPlotTopLoc(world, id);
+        
+        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plotBottom, plotTop);
+        
+        return schem1;
     }
 }
