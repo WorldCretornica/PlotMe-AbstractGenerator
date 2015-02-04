@@ -34,6 +34,10 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public AbstractSchematicUtil getSchematicUtil() {
         return this.schematicutil;
     }
+    
+    public void setSchematicUtil(AbstractSchematicUtil schematicutil) {
+        this.schematicutil = schematicutil;
+    }
 
     /**
      * Called when this plugin is enabled.
