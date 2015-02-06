@@ -60,9 +60,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     private void setupConfigFolders() {
         File pluginsFolder = getDataFolder().getParentFile();
         coreFolder = new File(pluginsFolder, "PlotMe");
-        getLogger().info(coreFolder.getName());
         configFolder = new File(coreFolder, getName());
-        getLogger().info(configFolder.getName());
         //noinspection ResultOfMethodCallIgnored
         configFolder.mkdirs();
     }
