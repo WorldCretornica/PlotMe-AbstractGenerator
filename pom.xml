@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.worldcretornica</groupId>
             <artifactId>PlotMe-Core</artifactId>
-            <version>0.16-SNAPSHOT</version>
+            <version>0.17-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
