@@ -49,7 +49,7 @@ public class BukkitConfigAccessor {
     }
 
     public void saveConfig() {
-        if (fileConfiguration == null || configFile == null) {
+        if (fileConfiguration == null) {
             return;
         }
 
