@@ -1,12 +1,9 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
-
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
+import com.worldcretornica.plotme_core.PlotId;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import com.worldcretornica.schematic.Schematic;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -20,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
@@ -118,12 +118,12 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public String getPlotId(Player player) {
+    public PlotId getPlotId(Player player) {
         return getPlotId(player.getLocation());
     }
 
     @Override
-    public List<Player> getPlayersInPlot(String id) {
+    public List<Player> getPlayersInPlot(PlotId id) {
         List<Player> playersInPlot = new ArrayList<>();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -135,7 +135,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public void setBiome(World world, String id, Biome biome) {
+    public void setBiome(World world, PlotId id, Biome biome) {
         int bottomX = bottomX(id, world) - 1;
         int topX = topX(id, world) + 1;
         int bottomZ = bottomZ(id, world) - 1;
@@ -152,7 +152,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
     @SuppressWarnings("deprecation")
     @Override
-    public void refreshPlotChunks(World world, String id) {
+    public void refreshPlotChunks(World world, PlotId id) {
         double bottomX = bottomX(id, world);
         double topX = topX(id, world);
         double bottomZ = bottomZ(id, world);
@@ -171,22 +171,22 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public Location getTop(World world, String id) {
+    public Location getTop(World world, PlotId id) {
         return getPlotTopLoc(world, id);
     }
 
     @Override
-    public Location getBottom(World world, String id) {
+    public Location getBottom(World world, PlotId id) {
         return getPlotBottomLoc(world, id);
     }
 
     @Override
-    public Long[] clear(World world, String id, long maxBlocks, Long[] start) {
+    public Long[] clear(World world, PlotId id, long maxBlocks, Long[] start) {
         return clear(getBottom(world, id), getTop(world, id), maxBlocks, start);
     }
 
     @Override
-    public boolean isBlockInPlot(String id, Location location) {
+    public boolean isBlockInPlot(PlotId id, Location location) {
         World world = location.getWorld();
         int lowestX = Math.min(bottomX(id, world), topX(id, world));
         int highestX = Math.max(bottomX(id, world), topX(id, world));
@@ -198,7 +198,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public boolean movePlot(World world, String idFrom, String idTo) {
+    public boolean movePlot(World world, PlotId idFrom, PlotId idTo) {
         Location plot1Bottom = getPlotBottomLoc(world, idFrom);
         Location plot2Bottom = getPlotBottomLoc(world, idTo);
         Location plot1Top = getPlotTopLoc(world, idFrom);
@@ -222,22 +222,22 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public int bottomX(String id, World world) {
+    public int bottomX(PlotId id, World world) {
         return getPlotBottomLoc(world, id).getBlockX();
     }
 
     @Override
-    public int bottomZ(String id, World world) {
+    public int bottomZ(PlotId id, World world) {
         return getPlotBottomLoc(world, id).getBlockZ();
     }
 
     @Override
-    public int topX(String id, World world) {
+    public int topX(PlotId id, World world) {
         return getPlotTopLoc(world, id).getBlockX();
     }
 
     @Override
-    public int topZ(String id, World world) {
+    public int topZ(PlotId id, World world) {
         return getPlotTopLoc(world, id).getBlockZ();
     }
 
@@ -259,22 +259,10 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     }
 
     @Override
-    public int getIdX(String id) {
-        return Integer.parseInt(id.substring(0, id.indexOf(";")));
-    }
-
-    @Override
-    public int getIdZ(String id) {
-        return Integer.parseInt(id.substring(id.indexOf(";") + 1));
-    }
-    
-    @Override
-    public Schematic getPlotSchematic(World world, String id) {
+    public Schematic getPlotSchematic(World world, PlotId id) {
         Location plotBottom = getPlotBottomLoc(world, id);
         Location plotTop = getPlotTopLoc(world, id);
-        
-        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plotBottom, plotTop);
-        
-        return schem1;
+
+        return plugin.getSchematicUtil().createCompiledSchematic(plotBottom, plotTop);
     }
 }
