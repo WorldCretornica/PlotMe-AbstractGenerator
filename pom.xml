@@ -63,15 +63,15 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-			<id>WorldCretornica-repo</id>
-			<url>http://ci.worldcretornica.com/plugin/repository/everything/</url>
-			<releases>
-				<updatePolicy>always</updatePolicy>
-			</releases>
-			<snapshots>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
+            <id>WorldCretornica-repo</id>
+            <url>http://ci.worldcretornica.com/plugin/repository/everything/</url>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
         <repository>
             <id>sponge-maven-repo</id>
             <name>Sponge maven repo</name>
@@ -104,6 +104,12 @@
             <artifactId>spongeapi</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ninja.leaping.configurate</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>0.2-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

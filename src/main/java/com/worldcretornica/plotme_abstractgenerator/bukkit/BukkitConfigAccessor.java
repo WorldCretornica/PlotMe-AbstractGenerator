@@ -26,7 +26,6 @@ public class BukkitConfigAccessor {
         if (dataFolder == null) {
             throw new IllegalStateException();
         }
-
         this.configFile = new File(plugin.getConfigFolder(), fileName);
     }
 
