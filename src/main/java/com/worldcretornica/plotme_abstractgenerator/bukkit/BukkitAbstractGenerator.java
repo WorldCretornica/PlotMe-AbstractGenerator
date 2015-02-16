@@ -5,7 +5,6 @@ import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.PlotMe_Core;
 import com.worldcretornica.plotme_core.bukkit.AbstractSchematicUtil;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -129,7 +128,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
             WorldGenConfig.putDefault(configPath);
         }
 
-        // Set the config accessor for the main caption-english.yml
+        // Set the config accessor for the captions.yml
         captionsCA = new BukkitConfigAccessor(this, PlotMe_Core.CAPTION_FILE);
         // Save default config into file.
         captionsCA.saveConfig();
