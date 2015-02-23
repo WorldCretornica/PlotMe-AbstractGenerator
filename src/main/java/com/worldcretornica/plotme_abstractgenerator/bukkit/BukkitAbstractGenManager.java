@@ -1,5 +1,8 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
+
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.PlotId;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
@@ -17,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
-import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
@@ -239,23 +239,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     @Override
     public int topZ(PlotId id, World world) {
         return getPlotTopLoc(world, id).getBlockZ();
-    }
-
-    @Override
-    public boolean isValidId(String id) {
-        String[] coords = id.split(";");
-
-        if (coords.length == 2) {
-            try {
-                Integer.parseInt(coords[0]);
-                Integer.parseInt(coords[1]);
-                return true;
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        } else {
-            return false;
-        }
     }
 
     @Override
