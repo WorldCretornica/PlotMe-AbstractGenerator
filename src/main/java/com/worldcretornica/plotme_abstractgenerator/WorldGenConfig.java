@@ -22,7 +22,7 @@ public final class WorldGenConfig implements ConfigurationSection {
 
     //TODO Abstract this class
 
-    private static HashMap<String, Object> DEFAULTS = new HashMap<>();
+    private static final HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
 
@@ -370,7 +370,6 @@ public final class WorldGenConfig implements ConfigurationSection {
         world.set(string, o);
     }
 
-    @SuppressWarnings("SameParameterValue")
     public void set(WorldConfigPath wcp, Object o) {
         set(wcp.key(), o);
     }
