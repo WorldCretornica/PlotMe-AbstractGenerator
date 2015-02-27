@@ -3,9 +3,7 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
-import com.worldcretornica.plotme_core.PlotMe_Core;
 import com.worldcretornica.plotme_core.bukkit.AbstractSchematicUtil;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,12 +13,11 @@ import java.util.HashMap;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     public static final String CONFIG_NAME = "config.yml";
+    public com.worldcretornica.configuration.ConfigurationSection mainWorldsSection;
     private File coreFolder;
     private File configFolder;
-
     private BukkitConfigAccessor configCA;
     private BukkitConfigAccessor captionsCA;
-    
     private AbstractSchematicUtil schematicutil;
 
     @Override
@@ -92,13 +89,12 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *
      * @return Plugin configuration
      */
-    @Override
-    public FileConfiguration getConfig() {
+    public com.worldcretornica.configuration.file.FileConfiguration getConfiguration() {
         return configCA.getConfig();
     }
 
     /**
-     * Saves the {@link FileConfiguration} retrievable by {@link #getConfig()}.
+     * Saves the {@link FileConfiguration} retrievable by {@link #getConfiguration()}.
      */
     @Override
     public void saveConfig() {
@@ -107,7 +103,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     /**
      * Saves the raw contents of the default config.yml file to the location
-     * retrievable by {@link #getConfig()}. If there is no default config.yml
+     * retrievable by {@link #getConfiguration()}. If there is no default config.yml
      * embedded in the plugin, an empty config.yml file is saved. This should
      * fail silently if the config.yml already exists.
      */
@@ -117,7 +113,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     }
 
     /**
-     * Discards any data in {@link #getConfig()} and reloads from disk.
+     * Discards any data in {@link #getConfiguration()} and reloads from disk.
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
@@ -127,9 +123,14 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         for (AbstractWorldConfigPath configPath : AbstractWorldConfigPath.values()) {
             WorldGenConfig.putDefault(configPath);
         }
-
+        if (getConfiguration().contains("worlds")) {
+            mainWorldsSection = getConfiguration().getConfigurationSection("worlds");
+        } else {
+            mainWorldsSection = getConfiguration().createSection("worlds");
+        }
+        configCA.saveConfig();
         // Set the config accessor for the captions.yml
-        captionsCA = new BukkitConfigAccessor(this, PlotMe_Core.CAPTION_FILE);
+        captionsCA = new BukkitConfigAccessor(this, "captions.yml");
         // Save default config into file.
         captionsCA.saveConfig();
     }
@@ -144,7 +145,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     @Override
     public WorldGenConfig getWorldGenConfig(String worldName) {
-        return getWorldGenConfig(worldName, new HashMap<String, Object>());
+        return getWorldGenConfig(worldName.toLowerCase(), new HashMap<String, Object>());
     }
 
     /**
@@ -158,17 +159,11 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * @return The {@link WorldGenConfig}
      */
     protected WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
-        ConfigurationSection worldsConfigurationSection;
-        if (getConfig().contains(PlotMe_Core.WORLDS_CONFIG_SECTION)) {
-            worldsConfigurationSection = getConfig().getConfigurationSection(PlotMe_Core.WORLDS_CONFIG_SECTION);
+        com.worldcretornica.configuration.ConfigurationSection worldConfigurationSection;
+        if (mainWorldsSection.contains(world)) {
+            worldConfigurationSection = mainWorldsSection.getConfigurationSection(world);
         } else {
-            worldsConfigurationSection = getConfig().createSection(PlotMe_Core.WORLDS_CONFIG_SECTION);
-        }
-        ConfigurationSection worldConfigurationSection;
-        if (worldsConfigurationSection.contains(world)) {
-            worldConfigurationSection = worldsConfigurationSection.getConfigurationSection(world);
-        } else {
-            worldConfigurationSection = worldsConfigurationSection.createSection(world);
+            worldConfigurationSection = mainWorldsSection.createSection(world);
         }
         return new WorldGenConfig(worldConfigurationSection, defaults);
     }

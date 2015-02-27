@@ -72,10 +72,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         return worldConfigs.put(worldName.toLowerCase(), wgc);
     }
 
-    public boolean containsWGC(World world) {
-        return containsWGC(world.getName());
-    }
-
     public boolean containsWGC(String worldName) {
         return worldConfigs.containsKey(worldName.toLowerCase());
     }

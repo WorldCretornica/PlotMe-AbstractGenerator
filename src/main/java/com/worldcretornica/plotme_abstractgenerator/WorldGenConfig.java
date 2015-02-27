@@ -1,12 +1,8 @@
 package com.worldcretornica.plotme_abstractgenerator;
 
+import com.worldcretornica.configuration.Configuration;
+import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
-import org.bukkit.Color;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -634,108 +630,6 @@ public final class WorldGenConfig implements ConfigurationSection {
 
     public List<Map<?, ?>> getMapList(WorldConfigPath wcp) {
         return getMapList(wcp.key());
-    }
-
-    @Override
-    public Vector getVector(String string) {
-        return world.getVector(string);
-    }
-
-    public Vector getVector(WorldConfigPath wcp) {
-        return getVector(wcp.key());
-    }
-
-    @Override
-    public Vector getVector(String string, Vector vector) {
-        return world.getVector(string, vector);
-    }
-
-    public Vector getVector(WorldConfigPath wcp, Vector vector) {
-        return getVector(wcp.key(), vector);
-    }
-
-    @Override
-    public boolean isVector(String string) {
-        return world.isVector(string);
-    }
-
-    public boolean isVector(WorldConfigPath wcp) {
-        return isVector(wcp.key());
-    }
-
-    @Override
-    public OfflinePlayer getOfflinePlayer(String string) {
-        return world.getOfflinePlayer(string);
-    }
-
-    public OfflinePlayer getOfflinePlayer(WorldConfigPath wcp) {
-        return getOfflinePlayer(wcp.key());
-    }
-
-    @Override
-    public OfflinePlayer getOfflinePlayer(String string, OfflinePlayer op) {
-        return world.getOfflinePlayer(string, op);
-    }
-
-    public OfflinePlayer getOfflinePlayer(WorldConfigPath wcp, OfflinePlayer op) {
-        return getOfflinePlayer(wcp.key(), op);
-    }
-
-    @Override
-    public boolean isOfflinePlayer(String string) {
-        return world.isOfflinePlayer(string);
-    }
-
-    public boolean isOfflinePlayer(WorldConfigPath wcp) {
-        return isOfflinePlayer(wcp.key());
-    }
-
-    @Override
-    public ItemStack getItemStack(String string) {
-        return world.getItemStack(string);
-    }
-
-    public ItemStack getItemStack(WorldConfigPath wcp) {
-        return getItemStack(wcp.key());
-    }
-
-    @Override
-    public ItemStack getItemStack(String string, ItemStack is) {
-        return world.getItemStack(string, is);
-    }
-
-    public ItemStack getItemStack(WorldConfigPath wcp, ItemStack is) {
-        return getItemStack(wcp.key(), is);
-    }
-
-    @Override
-    public boolean isItemStack(String string) {
-        return world.isItemStack(string);
-    }
-
-    /**
-     * Gets the requested Color by key.
-     * <p/>
-     * If the Color does not exist but a default value has been specified,
-     * this will return the default value. If the Color does not exist and no
-     * default value was specified, this will return null.
-     *
-     * @param path Path of the Color to get.
-     * @return Requested Color.
-     */
-    @Override
-    public Color getColor(String path) {
-        return null;
-    }
-
-    @Override
-    public Color getColor(String path, Color def) {
-        return null;
-    }
-
-    @Override
-    public boolean isColor(String path) {
-        return false;
     }
 
     @Override

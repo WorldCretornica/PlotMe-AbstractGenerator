@@ -1,8 +1,8 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import com.worldcretornica.configuration.file.FileConfiguration;
+import com.worldcretornica.configuration.file.YamlConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,6 @@ public class BukkitConfigAccessor {
         if (fileConfiguration == null) {
             return;
         }
-
         try {
             getConfig().save(configFile);
         } catch (IOException e) {
@@ -61,7 +60,11 @@ public class BukkitConfigAccessor {
 
     public void saveDefaultConfig() {
         if (!configFile.exists()) {
-            this.plugin.saveResource(fileName, false);
+            saveResource(fileName, false);
         }
+    }
+
+    private void saveResource(String fileName, boolean b) {
+        this
     }
 }
