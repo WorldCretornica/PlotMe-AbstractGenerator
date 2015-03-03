@@ -1,5 +1,6 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     public static final String CONFIG_NAME = "config.yml";
-    public com.worldcretornica.configuration.ConfigurationSection mainWorldsSection;
+    public ConfigurationSection mainWorldsSection;
     private File coreFolder;
     private File configFolder;
     private BukkitConfigAccessor configCA;
@@ -26,11 +27,11 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         setupConfig();
         initialize();
     }
-    
+
     public AbstractSchematicUtil getSchematicUtil() {
         return this.schematicutil;
     }
-    
+
     public void setSchematicUtil(AbstractSchematicUtil schematicutil) {
         this.schematicutil = schematicutil;
     }
@@ -96,20 +97,8 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     /**
      * Saves the {@link FileConfiguration} retrievable by {@link #getConfiguration()}.
      */
-    @Override
-    public void saveConfig() {
+    public void saveConfigFile() {
         configCA.saveConfig();
-    }
-
-    /**
-     * Saves the raw contents of the default config.yml file to the location
-     * retrievable by {@link #getConfiguration()}. If there is no default config.yml
-     * embedded in the plugin, an empty config.yml file is saved. This should
-     * fail silently if the config.yml already exists.
-     */
-    @Override
-    public void saveDefaultConfig() {
-        configCA.saveDefaultConfig();
     }
 
     /**
@@ -159,7 +148,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      * @return The {@link WorldGenConfig}
      */
     protected WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
-        com.worldcretornica.configuration.ConfigurationSection worldConfigurationSection;
+        ConfigurationSection worldConfigurationSection;
         if (mainWorldsSection.contains(world)) {
             worldConfigurationSection = mainWorldsSection.getConfigurationSection(world);
         } else {

@@ -105,11 +105,5 @@
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>ninja.leaping.configurate</groupId>
-            <artifactId>configurate-yaml</artifactId>
-            <version>0.1</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>

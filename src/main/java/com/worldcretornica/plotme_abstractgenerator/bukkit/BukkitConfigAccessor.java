@@ -22,20 +22,16 @@ public class BukkitConfigAccessor {
         }
         this.plugin = plugin;
         this.fileName = fileName;
-        File dataFolder = plugin.getDataFolder();
-        if (dataFolder == null) {
-            throw new IllegalStateException();
-        }
         this.configFile = new File(plugin.getConfigFolder(), fileName);
     }
 
     public void reloadConfig() {
-        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
+        fileConfiguration = YamlConfiguration.loadConfig(configFile);
 
         // Look for defaults in the jar
         InputStream defConfigStream = plugin.getResource(fileName);
         if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
+            YamlConfiguration defConfig = YamlConfiguration.loadConfig(new InputStreamReader(defConfigStream));
             fileConfiguration.setDefaults(defConfig);
         }
     }
@@ -60,11 +56,7 @@ public class BukkitConfigAccessor {
 
     public void saveDefaultConfig() {
         if (!configFile.exists()) {
-            saveResource(fileName, false);
+            plugin.saveResource(fileName, false);
         }
-    }
-
-    private void saveResource(String fileName, boolean b) {
-        this
     }
 }
