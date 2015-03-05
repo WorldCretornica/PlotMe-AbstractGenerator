@@ -140,7 +140,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
     @Override
     public int getRoadHeight(String worldName) {
         if (containsWGC(worldName)) {
-            return getWGC(worldName).getInt(GROUND_LEVEL);
+            return getWGC(worldName).getInt(GROUND_LEVEL, 64);
         } else {
             plugin.getLogger().log(Level.WARNING, "Tried to get road height for undefined world '{0}'", worldName);
             return 64;

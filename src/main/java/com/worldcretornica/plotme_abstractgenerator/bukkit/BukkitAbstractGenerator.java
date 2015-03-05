@@ -15,10 +15,8 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     private static final String CONFIG_NAME = "config.yml";
     public ConfigurationSection mainWorldsSection;
-    private File coreFolder;
     private File configFolder;
     private BukkitConfigAccessor configCA;
-    private BukkitConfigAccessor captionsCA;
     private AbstractSchematicUtil schematicutil;
 
     @Override
@@ -45,7 +43,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onDisable() {
         configFolder = null;
         configCA = null;
-        captionsCA = null;
         takedown();
     }
 
@@ -56,23 +53,14 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     private void setupConfigFolders() {
         File pluginsFolder = getDataFolder().getParentFile();
-        coreFolder = new File(pluginsFolder, "PlotMe");
+        File coreFolder = new File(pluginsFolder, "PlotMe");
         configFolder = new File(coreFolder, getName());
         //noinspection ResultOfMethodCallIgnored
         configFolder.mkdirs();
     }
 
-    /**
-     * Get the folder that contains data files for PlotMe-Core
-     *
-     * @return the folder that contains data files for PlotMe-Core
-     */
-    public File getCoreFolder() {
-        return coreFolder;
-    }
-
     @Override
-    public File getConfigFolder() {
+    public File getPluginFolder() {
         return configFolder;
     }
 
@@ -118,10 +106,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
             mainWorldsSection = getConfiguration().createSection("worlds");
         }
         configCA.saveConfig();
-        // Set the config accessor for the captions.yml
-        captionsCA = new BukkitConfigAccessor(this, "captions.yml");
-        // Save default config into file.
-        captionsCA.saveConfig();
     }
 
     /**

@@ -4,6 +4,6 @@ public interface WorldConfigPath {
 
     String key();
 
-    Object def();
+    Object value();
 
 }

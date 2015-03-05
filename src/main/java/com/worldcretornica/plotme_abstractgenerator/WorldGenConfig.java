@@ -4,7 +4,6 @@ import com.worldcretornica.configuration.Configuration;
 import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_abstractgenerator.bukkit.BukkitBlockRepresentation;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,29 +42,17 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     /**
-     * Returns <tt>true</tt> if there are no default mappings for
-     * {@link WorldGenConfig}s.
-     *
-     * @return <tt>true</tt> if there are no default mappings for
-     * {@link WorldGenConfig}s.
-     * @see Map#isEmpty()
-     */
-    public static boolean isDefaultEmpty() {
-        return DEFAULTS.isEmpty();
-    }
-
-    /**
      * Associates the specified value with the specified key as the default for
      * {@link WorldGenConfig}s. If the map previously contained a default for
      * the key, the old value is replaced by the specified value.
      *
-     * @param path key with which the specified default is to be associated
+     * @param key key with which the specified default is to be associated
      * @param value default value to be associated with the specified key
      * @return the previous default value associated with <tt>key</tt>
      * @see Map#put(Object, Object)
      */
-    private static Object putDefault(String path, Object value) {
-        return DEFAULTS.put(path, value);
+    private static Object putDefault(String key, Object value) {
+        return DEFAULTS.put(key, value);
     }
 
     /**
@@ -80,18 +67,7 @@ public final class WorldGenConfig implements ConfigurationSection {
      * {@link WorldConfigPath}
      */
     public static Object putDefault(WorldConfigPath wcp) {
-        return putDefault(wcp.key(), wcp.def());
-    }
-
-    /**
-     * Copies all of the mappings from the specified map to the
-     * {@link WorldGenConfig} defaults.
-     *
-     * @param m mappings to be stored as defaults
-     * @see Map#putAll(Map)
-     */
-    public static void putAllDefaults(Map<? extends String, ?> m) {
-        DEFAULTS.putAll(m);
+        return putDefault(wcp.key(), wcp.value());
     }
 
     /**
@@ -101,51 +77,8 @@ public final class WorldGenConfig implements ConfigurationSection {
         DEFAULTS.clear();
     }
 
-    /**
-     * Returns <tt>true</tt> if this map maps one or more paths to the specified
-     * value.
-     *
-     * @param value value whose presence as a default is to be tested
-     * @return <tt>true</tt> if this map maps one or more paths to the specified
-     * value.
-     */
-    public static boolean containsDefaultValue(Object value) {
-        return DEFAULTS.containsValue(value);
-    }
-
     public static HashMap<String, Object> defaults() {
         return DEFAULTS;
-    }
-
-    /**
-     * Returns a {@link Set} view of the paths which defaults are defined for.
-     *
-     * @return
-     */
-    public static Set<String> defaultPathSet() {
-        return DEFAULTS.keySet();
-    }
-
-    /**
-     * Returns a {@link Collection} view of the default values defined for
-     * {@link WorldGenConfig}.
-     *
-     * @return a {@link Collection} view of the default values defined for
-     * {@link WorldGenConfig}.
-     */
-    public static Collection<Object> defaultValues() {
-        return DEFAULTS.values();
-    }
-
-    /**
-     * Returns a {@link Set} view of the mappings from key to default value
-     * defined for {@link WorldGenConfig}s.
-     *
-     * @return a {@link Set} view of the mappings from key to default value
-     * defined for {@link WorldGenConfig}s.
-     */
-    public static Set<Map.Entry<String, Object>> defaultEntrySet() {
-        return DEFAULTS.entrySet();
     }
 
     private BukkitBlockRepresentation getBlockRepresentation(String string) {

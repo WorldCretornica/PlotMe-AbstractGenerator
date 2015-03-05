@@ -22,7 +22,7 @@ public enum AbstractWorldConfigPath implements WorldConfigPath {
     }
 
     @Override
-    public Object def() {
+    public Object value() {
         return def;
     }
 
