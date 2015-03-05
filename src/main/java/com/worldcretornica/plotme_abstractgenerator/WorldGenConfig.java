@@ -55,59 +55,6 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     /**
-     * Returns the default value to which the specified key is mapped, or
-     * {@code null} if there is no default for the key.
-     *
-     * @param path the key whose default value is to be returned
-     * @return the default value to which the specified key is mapped
-     * @see Map#get(Object)
-     */
-    public static Object getDefault(String path) {
-        return DEFAULTS.get(path);
-    }
-
-    /**
-     * Returns the default value to which the specified key is mapped, or
-     * {@code null} if there is no default for the key.
-     *
-     * @param wcp the {@link WorldConfigPath} whose default value is to be
-     * returned
-     * @return the default value to which the specified key is mapped
-     * @see #getDefault(String)
-     */
-    public static Object getDefault(WorldConfigPath wcp) {
-        return getDefault(wcp.key());
-    }
-
-    /**
-     * Returns <tt>true</tt> if there is a default default for the specified
-     * <tt>key</tt>.
-     *
-     * @param path The key whose presence in the {@link WorldGenConfig}
-     * defaults is to be tested
-     * @return <tt>true</tt> if this map contains a mapping for the specified
-     * key.
-     * @see Map#containsKey(Object)
-     */
-    public static boolean defaultContainsPath(String path) {
-        return DEFAULTS.containsKey(path);
-    }
-
-    /**
-     * Returns <tt>true</tt> if there is a default default for the specified
-     * {@link WorldConfigPath}.
-     *
-     * @param wcp The {@link WorldConfigPath} whose presence in the
-     * {@link WorldGenConfig} defaults is to be tested
-     * @return <tt>true</tt> if this map contains a mapping for the specified
-     * key.
-     * @see #defaultContainsPath(String)
-     */
-    public static boolean defaultContainsPath(WorldConfigPath wcp) {
-        return defaultContainsPath(wcp.key());
-    }
-
-    /**
      * Associates the specified value with the specified key as the default for
      * {@link WorldGenConfig}s. If the map previously contained a default for
      * the key, the old value is replaced by the specified value.
@@ -117,25 +64,8 @@ public final class WorldGenConfig implements ConfigurationSection {
      * @return the previous default value associated with <tt>key</tt>
      * @see Map#put(Object, Object)
      */
-    public static Object putDefault(String path, Object value) {
+    private static Object putDefault(String path, Object value) {
         return DEFAULTS.put(path, value);
-    }
-
-    /**
-     * Associates the specified value with the specified {@link WorldConfigPath}
-     * as the default for {@link WorldGenConfig}s. If the map previously
-     * contained a default for the key, the old value is replaced by the
-     * specified value.
-     *
-     * @param wcp {@link WorldConfigPath} with which the specified default is to
-     * be associated
-     * @param value default value to be associated with the specified key
-     * @return the previous default value associated with
-     * {@link WorldConfigPath}
-     * @see Map#put(Object, Object)
-     */
-    public static Object putDefault(WorldConfigPath wcp, Object value) {
-        return putDefault(wcp.key(), value);
     }
 
     /**
@@ -162,31 +92,6 @@ public final class WorldGenConfig implements ConfigurationSection {
      */
     public static void putAllDefaults(Map<? extends String, ?> m) {
         DEFAULTS.putAll(m);
-    }
-
-    /**
-     * Removes the default for a key if it is present
-     *
-     * @param path key whose default is to be removed from the defaults
-     * @return the previous value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no default for <tt>key</tt>.
-     * @see Map#remove(Object)
-     */
-    public static Object removeDefault(String path) {
-        return DEFAULTS.remove(path);
-    }
-
-    /**
-     * Removes the default for a {@link WorldConfigPath} if it is present
-     *
-     * @param wcp {@link WorldConfigPath} whose default is to be removed from
-     * the defaults
-     * @return the previous value associated with <tt>wcp</tt>, or
-     * <tt>null</tt> if there was no default for <tt>wcp</tt>.
-     * @see #removeDefault(String)
-     */
-    public static Object removeDefault(WorldConfigPath wcp) {
-        return DEFAULTS.remove(wcp.key());
     }
 
     /**
@@ -243,25 +148,12 @@ public final class WorldGenConfig implements ConfigurationSection {
         return DEFAULTS.entrySet();
     }
 
-    public BukkitBlockRepresentation getBlockRepresentation(String string) {
+    private BukkitBlockRepresentation getBlockRepresentation(String string) {
         return new BukkitBlockRepresentation(getString(string));
     }
 
     public BukkitBlockRepresentation getBlockRepresentation(WorldConfigPath wcp) {
         return getBlockRepresentation(wcp.key());
-    }
-
-    public boolean isBlockRepresentation(String string) {
-        try {
-            getBlockRepresentation(string);
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isBlockRepresentation(WorldConfigPath wcp) {
-        return isBlockRepresentation(wcp.key());
     }
 
     @Override
@@ -331,15 +223,15 @@ public final class WorldGenConfig implements ConfigurationSection {
     }
 
     @Override
-    public void set(String string, Object o) {
-        if (o instanceof BukkitBlockRepresentation) {
-            o = ((BukkitBlockRepresentation) o).getBlockIdValue();
+    public void set(String string, Object object) {
+        if (object instanceof BukkitBlockRepresentation) {
+            object = ((BukkitBlockRepresentation) object).getBlockIdValue();
         }
-        world.set(string, o);
+        world.set(string, object);
     }
 
-    public void set(WorldConfigPath wcp, Object o) {
-        set(wcp.key(), o);
+    public void set(WorldConfigPath wcp, Object object) {
+        set(wcp.key(), object);
     }
 
     @Override

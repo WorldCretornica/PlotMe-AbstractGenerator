@@ -1,7 +1,5 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import org.bukkit.block.Block;
-
 public class BukkitBlockRepresentation {
 
     private final Short id;
@@ -14,11 +12,6 @@ public class BukkitBlockRepresentation {
 
     public BukkitBlockRepresentation(String idValue) {
         this(getBlockId(idValue), getBlockData(idValue));
-    }
-
-    @SuppressWarnings("deprecation")
-    public BukkitBlockRepresentation(Block block) {
-        this((short) block.getTypeId(), block.getData());
     }
 
     public static short getBlockId(String idValue) throws NumberFormatException {
