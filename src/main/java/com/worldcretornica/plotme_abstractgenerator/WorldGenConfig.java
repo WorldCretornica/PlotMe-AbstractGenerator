@@ -16,22 +16,11 @@ import java.util.Set;
  */
 public final class WorldGenConfig implements ConfigurationSection {
 
-    //TODO Abstract this class
+    //TODO Rethink the need for this class
 
     private static final HashMap<String, Object> DEFAULTS = new HashMap<>();
 
     private final ConfigurationSection world;
-
-    /**
-     * Creates a {@link WorldGenConfig} by wrapping a
-     * <tt>ConfigurationSection</tt> that represents the generation
-     * configuration for that world.
-     *
-     * @param world the <tt>ConfigurationSection</tt>
-     */
-    public WorldGenConfig(ConfigurationSection world) {
-        this(world, new HashMap<String, Object>());
-    }
 
     /**
      * Creates a {@link WorldGenConfig} by wrapping a
@@ -51,17 +40,6 @@ public final class WorldGenConfig implements ConfigurationSection {
                 world.set(def.getKey(), def.getValue());
             }
         }
-    }
-
-    /**
-     * Returns the number of items specified in the global default mapping for
-     * {@link WorldGenConfig}s.
-     *
-     * @return The number of default values
-     * @see Map#size()
-     */
-    public static int defaultSize() {
-        return DEFAULTS.size();
     }
 
     /**
@@ -230,14 +208,8 @@ public final class WorldGenConfig implements ConfigurationSection {
         return DEFAULTS.containsValue(value);
     }
 
-    /**
-     * Returns a clone of the Map representing the defaults
-     *
-     * @return a clone of the Map representing the defaults
-     */
-    @SuppressWarnings("unchecked")
-    public static HashMap<String, Object> cloneDefaults() {
-        return (HashMap<String, Object>) DEFAULTS.clone();
+    public static HashMap<String, Object> defaults() {
+        return DEFAULTS;
     }
 
     /**

@@ -26,9 +26,4 @@ public enum AbstractWorldConfigPath implements WorldConfigPath {
         return def;
     }
 
-    @Override
-    public String toString() {
-        return path;
-    }
-
 }

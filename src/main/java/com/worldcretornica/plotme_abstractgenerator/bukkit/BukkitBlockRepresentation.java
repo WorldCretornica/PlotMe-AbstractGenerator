@@ -5,7 +5,7 @@ import org.bukkit.block.Block;
 public class BukkitBlockRepresentation {
 
     private final Short id;
-    private final Byte data;
+    private final byte data;
 
     public BukkitBlockRepresentation(short id, byte value) {
         this.id = id;
@@ -46,16 +46,10 @@ public class BukkitBlockRepresentation {
     }
 
     public String getBlockIdValue() {
-        return data == 0 ? id.toString() : id + ":" + data;
+        if (data == 0) {
+            return id.toString();
+        } else {
+            return id + ":" + data;
+        }
     }
-
-    public boolean setBlock(Block b) {
-        return setBlock(b, true);
-    }
-
-    @SuppressWarnings("deprecation")
-    public boolean setBlock(Block block, boolean applyPhysics) {
-        return block.setTypeIdAndData(getId(), getData(), applyPhysics);
-    }
-
 }

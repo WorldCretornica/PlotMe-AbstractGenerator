@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    public static final String CONFIG_NAME = "config.yml";
+    private static final String CONFIG_NAME = "config.yml";
     public ConfigurationSection mainWorldsSection;
     private File coreFolder;
     private File configFolder;
@@ -147,12 +147,12 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *                 for the WorldGenConfig
      * @return The {@link WorldGenConfig}
      */
-    protected WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
+    public WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
         ConfigurationSection worldConfigurationSection;
         if (mainWorldsSection.contains(world)) {
             worldConfigurationSection = mainWorldsSection.getConfigurationSection(world);
         } else {
-            worldConfigurationSection = mainWorldsSection.createSection(world);
+            worldConfigurationSection = mainWorldsSection.createSection(world, defaults);
         }
         return new WorldGenConfig(worldConfigurationSection, defaults);
     }
