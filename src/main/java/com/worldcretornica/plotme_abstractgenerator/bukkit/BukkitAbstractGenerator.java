@@ -1,22 +1,24 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import com.worldcretornica.configuration.ConfigurationSection;
+import com.worldcretornica.configuration.MemorySection;
+import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
-import com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath;
 import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.AbstractSchematicUtil;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    private static final String CONFIG_NAME = "config.yml";
-    public ConfigurationSection mainWorldsSection;
+    public MemorySection mainWorldsSection;
     private File configFolder;
     private BukkitConfigAccessor configCA;
+    private Map<String, WorldGenConfig> worldConfigs = new HashMap<>();
     private AbstractSchematicUtil schematicutil;
 
     @Override
@@ -24,6 +26,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         setupConfigFolders();
         setupConfig();
         initialize();
+        setupMetrics();
     }
 
     public AbstractSchematicUtil getSchematicUtil() {
@@ -43,13 +46,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onDisable() {
         configFolder = null;
         configCA = null;
-        takedown();
     }
-
-    /**
-     * Called when this plugin is disabled.
-     */
-    public abstract void takedown();
 
     private void setupConfigFolders() {
         File pluginsFolder = getDataFolder().getParentFile();
@@ -78,7 +75,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      *
      * @return Plugin configuration
      */
-    public com.worldcretornica.configuration.file.FileConfiguration getConfiguration() {
+    public FileConfiguration getConfiguration() {
         return configCA.getConfig();
     }
 
@@ -94,52 +91,30 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
-        configCA = new BukkitConfigAccessor(this, CONFIG_NAME);
+        configCA = new BukkitConfigAccessor(this);
 
-        // Set defaults for WorldGenConfig
-        for (AbstractWorldConfigPath configPath : AbstractWorldConfigPath.values()) {
-            WorldGenConfig.putDefault(configPath);
-        }
         if (getConfiguration().contains("worlds")) {
-            mainWorldsSection = getConfiguration().getConfigurationSection("worlds");
+            mainWorldsSection = (MemorySection) getConfiguration().getConfigurationSection("worlds");
         } else {
-            mainWorldsSection = getConfiguration().createSection("worlds");
+            mainWorldsSection = (MemorySection) getConfiguration().createSection("worlds");
         }
         configCA.saveConfig();
     }
 
-    /**
-     * Gets a {@link WorldGenConfig} for the specified world with just the
-     * global defaults for {@link WorldGenConfig}.
-     *
-     * @param worldName The world to get the {@link WorldGenConfig} for
-     * @return The {@link WorldGenConfig}
-     * @see #getWorldGenConfig(String, HashMap)
-     */
-    @Override
-    public WorldGenConfig getWorldGenConfig(String worldName) {
-        return getWorldGenConfig(worldName.toLowerCase(), new HashMap<String, Object>());
-    }
-
-    /**
-     * Gets a {@link WorldGenConfig} for the specified world with default set as
-     * specified in the HashMap which maps config paths to default values to be
-     * added to or override the global defaults for {@link WorldGenConfig}.
-     *
-     * @param world    The world to get the {@link WorldGenConfig} for
-     * @param defaults A map of paths to their default values to be populated
-     *                 for the WorldGenConfig
-     * @return The {@link WorldGenConfig}
-     */
-    public WorldGenConfig getWorldGenConfig(String world, HashMap<String, Object> defaults) {
-        ConfigurationSection worldConfigurationSection;
-        if (mainWorldsSection.contains(world)) {
-            worldConfigurationSection = mainWorldsSection.getConfigurationSection(world);
-        } else {
-            worldConfigurationSection = mainWorldsSection.createSection(world, defaults);
+    private void setupMetrics() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException ignored) {
         }
-        return new WorldGenConfig(worldConfigurationSection, defaults);
     }
 
-    public abstract BukkitAbstractGenManager getGeneratorManager();
+    public WorldGenConfig putWGC(String world, WorldGenConfig worldGenConfig) {
+        return worldConfigs.put(world.toLowerCase(), worldGenConfig);
+    }
+
+    public WorldGenConfig getWGC(String world) {
+        return worldConfigs.get(world.toLowerCase());
+    }
+
 }

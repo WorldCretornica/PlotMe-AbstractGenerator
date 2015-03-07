@@ -8,12 +8,12 @@ public enum AbstractWorldConfigPath implements WorldConfigPath {
     GROUND_LEVEL("GroundHeight", 64),
     FILL_BLOCK("FillBlock", "3");
 
-    public final String path;
-    public final Object def;
+    private final String path;
+    private final Object value;
 
-    AbstractWorldConfigPath(String path, Object def) {
+    AbstractWorldConfigPath(String path, Object value) {
         this.path = path;
-        this.def = def;
+        this.value = value;
     }
 
     @Override
@@ -23,7 +23,7 @@ public enum AbstractWorldConfigPath implements WorldConfigPath {
 
     @Override
     public Object value() {
-        return def;
+        return value;
     }
 
 }

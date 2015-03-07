@@ -11,24 +11,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
+    public final WorldGenConfig wgc;
     private final BukkitAbstractGenerator plugin;
-    private final Map<String, WorldGenConfig> worldConfigs;
 
-    public BukkitAbstractGenManager(BukkitAbstractGenerator instance) {
+    public BukkitAbstractGenManager(BukkitAbstractGenerator instance, WorldGenConfig wgc) {
         plugin = instance;
-        worldConfigs = new HashMap<>();
+        this.wgc = wgc;
     }
 
     public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz) {
@@ -100,51 +96,14 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         }
     }
 
-    public WorldGenConfig getWGC(World world) {
-        return getWGC(world.getName());
-    }
-
-    public WorldGenConfig getWGC(String world) {
-        return worldConfigs.get(world.toLowerCase());
-    }
-
-    public WorldGenConfig putWGC(String worldName, WorldGenConfig wgc) {
-        return worldConfigs.put(worldName.toLowerCase(), wgc);
-    }
-
-    public boolean containsWGC(String worldName) {
-        return worldConfigs.containsKey(worldName.toLowerCase());
+    @Override
+    public int getPlotSize() {
+        return wgc.getInt(PLOT_SIZE, 32);
     }
 
     @Override
-    public int getPlotSize(String worldName) {
-        if (getWGC(worldName) != null) {
-            return getWGC(worldName).getInt(PLOT_SIZE);
-        } else {
-            plugin.getLogger().log(Level.WARNING, "Tried to get plot size for undefined world '{0}'", worldName);
-            return 0;
-        }
-    }
-
-    @Override
-    public boolean createConfig(String worldName, Map<String, String> args) {
-        WorldGenConfig wgc = plugin.getWorldGenConfig(worldName);
-
-        for (String key : args.keySet()) {
-            wgc.set(key, args.get(key));
-        }
-
-        return true;
-    }
-
-    @Override
-    public int getRoadHeight(String worldName) {
-        if (containsWGC(worldName)) {
-            return getWGC(worldName).getInt(GROUND_LEVEL, 64);
-        } else {
-            plugin.getLogger().log(Level.WARNING, "Tried to get road height for undefined world '{0}'", worldName);
-            return 64;
-        }
+    public int getRoadHeight() {
+        return wgc.getInt(GROUND_LEVEL, 64);
     }
 
     @Override
@@ -162,22 +121,6 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
             }
         }
         return playersInPlot;
-    }
-
-    @Override
-    public void setBiome(World world, PlotId id, Biome biome) {
-        int bottomX = bottomX(id, world) - 1;
-        int topX = topX(id, world) + 1;
-        int bottomZ = bottomZ(id, world) - 1;
-        int topZ = topZ(id, world) + 1;
-
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                world.getBlockAt(x, 0, z).setBiome(biome);
-            }
-        }
-
-        refreshPlotChunks(world, id);
     }
 
     @SuppressWarnings("deprecation")

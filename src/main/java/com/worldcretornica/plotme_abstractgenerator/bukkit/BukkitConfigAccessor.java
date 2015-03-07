@@ -13,13 +13,12 @@ import java.io.OutputStream;
 
 public class BukkitConfigAccessor {
 
-    private final String fileName;
+    private final String fileName = "config.yml";
     private final File configFile;
     private FileConfiguration fileConfiguration;
 
-    public BukkitConfigAccessor(AbstractGenerator plugin, String fileName) {
-        this.fileName = fileName;
-        this.configFile = new File(plugin.getPluginFolder(), fileName);
+    public BukkitConfigAccessor(AbstractGenerator plugin) {
+        this.configFile = new File(plugin.getPluginFolder(), "config.yml");
     }
 
     public void reloadConfig() {

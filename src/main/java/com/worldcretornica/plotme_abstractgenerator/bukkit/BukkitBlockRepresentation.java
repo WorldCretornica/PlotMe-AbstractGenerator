@@ -2,7 +2,7 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 public class BukkitBlockRepresentation {
 
-    private final Short id;
+    private final short id;
     private final byte data;
 
     public BukkitBlockRepresentation(short id, byte value) {
@@ -30,17 +30,17 @@ public class BukkitBlockRepresentation {
         }
     }
 
-    public Short getId() {
+    public short getId() {
         return id;
     }
 
-    public Byte getData() {
+    public byte getData() {
         return data;
     }
 
     public String getBlockIdValue() {
         if (data == 0) {
-            return id.toString();
+            return String.valueOf(id);
         } else {
             return id + ":" + data;
         }

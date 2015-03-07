@@ -20,6 +20,4 @@ public interface AbstractGenerator {
 
     void saveResource(String fileName, boolean b);
 
-    WorldGenConfig getWorldGenConfig(String worldName);
-
 }
