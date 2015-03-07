@@ -88,7 +88,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
                     Location location = entity.getLocation();
 
                     if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
-                        && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
+                            && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
                         entity.remove();
                     }
                 }
@@ -167,7 +167,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         int highestZ = Math.max(bottomZ(id, world), topZ(id, world));
 
         return location.getBlockX() >= lowestX && location.getBlockX() <= highestX
-               && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
+                && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
     }
 
     @Override
@@ -176,18 +176,18 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         Location plot2Bottom = getPlotBottomLoc(world, idTo);
         Location plot1Top = getPlotTopLoc(world, idFrom);
         Location plot2Top = getPlotTopLoc(world, idTo);
-        
+
         plot1Bottom.subtract(1, 0, 1);
         plot2Bottom.subtract(1, 0, 1);
         plot1Top.add(1, 0, 1);
         plot2Top.add(1, 0, 1);
-        
+
         Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plot1Bottom, plot1Top);
         Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(plot2Bottom, plot2Top);
-        
+
         clearEntities(plot1Bottom, plot1Top);
         clearEntities(plot2Bottom, plot2Top);
-        
+
         plugin.getSchematicUtil().pasteSchematic(plot1Bottom, schem2);
         plugin.getSchematicUtil().pasteSchematic(plot2Bottom, schem1);
 

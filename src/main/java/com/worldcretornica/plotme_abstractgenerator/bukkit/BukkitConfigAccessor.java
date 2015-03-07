@@ -63,7 +63,7 @@ public class BukkitConfigAccessor {
         return false;
     }
 
-        /**
+    /**
      * This will save the file contained in the plugin jar.
      *
      * @param overwrite if the configuration is already created, should it be overwritten
@@ -80,6 +80,7 @@ public class BukkitConfigAccessor {
             }
         }
     }
+
     private InputStream getResource(String fileName) {
         return getClass().getClassLoader().getResourceAsStream(fileName);
     }
