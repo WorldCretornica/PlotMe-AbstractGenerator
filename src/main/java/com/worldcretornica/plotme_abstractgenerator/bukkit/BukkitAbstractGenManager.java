@@ -3,7 +3,7 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
-import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
+import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_core.PlotId;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import com.worldcretornica.schematic.Schematic;
@@ -19,10 +19,10 @@ import java.util.List;
 
 public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_GeneratorManager {
 
-    public final WorldGenConfig wgc;
+    public final ConfigurationSection wgc;
     private final BukkitAbstractGenerator plugin;
 
-    public BukkitAbstractGenManager(BukkitAbstractGenerator instance, WorldGenConfig wgc) {
+    public BukkitAbstractGenManager(BukkitAbstractGenerator instance, ConfigurationSection wgc) {
         plugin = instance;
         this.wgc = wgc;
     }
@@ -98,12 +98,12 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
 
     @Override
     public int getPlotSize() {
-        return wgc.getInt(PLOT_SIZE, 32);
+        return wgc.getInt(PLOT_SIZE.key(), 32);
     }
 
     @Override
     public int getRoadHeight() {
-        return wgc.getInt(GROUND_LEVEL, 64);
+        return wgc.getInt(GROUND_LEVEL.key(), 64);
     }
 
     @Override

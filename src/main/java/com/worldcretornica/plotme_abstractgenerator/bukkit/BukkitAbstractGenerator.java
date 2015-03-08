@@ -1,9 +1,8 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import com.worldcretornica.configuration.MemorySection;
+import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
-import com.worldcretornica.plotme_abstractgenerator.WorldGenConfig;
 import com.worldcretornica.plotme_core.bukkit.AbstractSchematicUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -15,10 +14,10 @@ import java.util.Map;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
-    public MemorySection mainWorldsSection;
+    public ConfigurationSection mainWorldsSection;
     private File configFolder;
     private BukkitConfigAccessor configCA;
-    private Map<String, WorldGenConfig> worldConfigs = new HashMap<>();
+    private Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private AbstractSchematicUtil schematicutil;
 
     @Override
@@ -94,9 +93,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         configCA = new BukkitConfigAccessor(this);
 
         if (getConfiguration().contains("worlds")) {
-            mainWorldsSection = (MemorySection) getConfiguration().getConfigurationSection("worlds");
+            mainWorldsSection = getConfiguration().getConfigurationSection("worlds");
         } else {
-            mainWorldsSection = (MemorySection) getConfiguration().createSection("worlds");
+            mainWorldsSection = getConfiguration().createSection("worlds");
         }
         configCA.saveConfig();
     }
@@ -109,11 +108,11 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         }
     }
 
-    public WorldGenConfig putWGC(String world, WorldGenConfig worldGenConfig) {
+    public ConfigurationSection putWGC(String world, ConfigurationSection worldGenConfig) {
         return worldConfigs.put(world.toLowerCase(), worldGenConfig);
     }
 
-    public WorldGenConfig getWGC(String world) {
+    public ConfigurationSection getWGC(String world) {
         return worldConfigs.get(world.toLowerCase());
     }
 
