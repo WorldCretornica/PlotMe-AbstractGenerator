@@ -47,7 +47,7 @@ public abstract class BukkitAbstractGenManager implements IBukkitPlotMe_Generato
         if (pathSize % 2 == 1) {
             nwcorner = (int) Math.ceil(pathSize / 2) + 1;
         } else {
-            nwcorner = (int) Math.ceil(pathSize / 2) + 0;
+            nwcorner = (int) Math.ceil(pathSize / 2);
         }
 
         // are we inside or outside the plot?

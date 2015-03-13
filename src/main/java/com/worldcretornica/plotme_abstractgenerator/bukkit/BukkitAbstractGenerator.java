@@ -14,10 +14,10 @@ import java.util.Map;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
+    private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     public ConfigurationSection mainWorldsSection;
     private File configFolder;
     private BukkitConfigAccessor configCA;
-    private Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private AbstractSchematicUtil schematicutil;
 
     @Override
