@@ -16,7 +16,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     public ConfigurationSection mainWorldsSection;
-    private File configFolder;
+    private File configFolder = new File(new File(getDataFolder().getParentFile(), "PlotMe"), getName());
     private BukkitConfigAccessor configCA;
     private AbstractSchematicUtil schematicutil;
 
@@ -43,14 +43,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     @Override
     public final void onDisable() {
-        configFolder = null;
-        configCA = null;
     }
 
     private void setupConfigFolders() {
-        File pluginsFolder = getDataFolder().getParentFile();
-        File coreFolder = new File(pluginsFolder, "PlotMe");
-        configFolder = new File(coreFolder, getName());
         //noinspection ResultOfMethodCallIgnored
         configFolder.mkdirs();
     }
