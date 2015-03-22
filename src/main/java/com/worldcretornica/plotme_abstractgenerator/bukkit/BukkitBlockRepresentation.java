@@ -38,11 +38,4 @@ public class BukkitBlockRepresentation {
         return data;
     }
 
-    public String getBlockIdValue() {
-        if (data == 0) {
-            return String.valueOf(id);
-        } else {
-            return id + ":" + data;
-        }
-    }
 }
