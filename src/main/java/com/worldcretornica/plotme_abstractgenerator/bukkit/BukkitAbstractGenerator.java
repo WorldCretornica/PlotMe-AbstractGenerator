@@ -15,8 +15,8 @@ import java.util.Map;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
+    private final File configFolder = new File(new File(getDataFolder().getParentFile(), "PlotMe"), getName());
     public ConfigurationSection mainWorldsSection;
-    private File configFolder = new File(new File(getDataFolder().getParentFile(), "PlotMe"), getName());
     private BukkitConfigAccessor configCA;
     private AbstractSchematicUtil schematicutil;
 
