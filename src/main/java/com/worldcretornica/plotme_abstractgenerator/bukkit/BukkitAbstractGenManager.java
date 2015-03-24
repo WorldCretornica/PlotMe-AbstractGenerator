@@ -6,6 +6,10 @@ import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPa
 import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
+import com.worldcretornica.plotme_core.api.ILocation;
+import com.worldcretornica.plotme_core.api.IWorld;
+import com.worldcretornica.plotme_core.bukkit.api.BukkitLocation;
+import com.worldcretornica.plotme_core.bukkit.api.BukkitWorld;
 import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import com.worldcretornica.schematic.Schematic;
 import org.bukkit.Bukkit;
@@ -30,13 +34,13 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     }
 
-    public void clearEntities(Location bottom, Location top) {
+    public void clearEntities(ILocation bottom, ILocation top) {
         double bottomX = bottom.getBlockX();
         double topX = top.getBlockX();
         double bottomZ = bottom.getBlockZ();
         double topZ = top.getBlockZ();
 
-        World world = bottom.getWorld();
+        IWorld world = bottom.getWorld();
 
         int minChunkX = (int) Math.floor(bottomX / 16);
         int maxChunkX = (int) Math.floor(topX / 16);
@@ -45,7 +49,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Chunk chunk = world.getChunkAt(cx, cz);
+                Chunk chunk = ((BukkitWorld) world).getWorld().getChunkAt(cx, cz); //TODO Remove this cast later on for sponge support.
 
                 for (Entity entity : chunk.getEntities()) {
                     Location location = entity.getLocation();
@@ -135,10 +139,10 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     @Override
     public boolean movePlot(World world, PlotId idFrom, PlotId idTo) {
-        Location plot1Bottom = getPlotBottomLoc(world, idFrom);
-        Location plot2Bottom = getPlotBottomLoc(world, idTo);
-        Location plot1Top = getPlotTopLoc(world, idFrom);
-        Location plot2Top = getPlotTopLoc(world, idTo);
+        BukkitLocation plot1Bottom = new BukkitLocation(getPlotBottomLoc(world, idFrom));
+        BukkitLocation plot2Bottom = new BukkitLocation(getPlotBottomLoc(world, idTo));
+        BukkitLocation plot1Top = new BukkitLocation(getPlotTopLoc(world, idFrom));
+        BukkitLocation plot2Top = new BukkitLocation(getPlotTopLoc(world, idTo));
 
         plot1Bottom.subtract(1, 0, 1);
         plot2Bottom.subtract(1, 0, 1);
@@ -150,7 +154,6 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
         clearEntities(plot1Bottom, plot1Top);
         clearEntities(plot2Bottom, plot2Top);
-
         plugin.getSchematicUtil().pasteSchematic(plot1Bottom, schem2);
         plugin.getSchematicUtil().pasteSchematic(plot2Bottom, schem1);
 
@@ -179,8 +182,8 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     @Override
     public Schematic getPlotSchematic(World world, PlotId id) {
-        Location plotBottom = getPlotBottomLoc(world, id);
-        Location plotTop = getPlotTopLoc(world, id);
+        BukkitLocation plotBottom = new BukkitLocation(getPlotBottomLoc(world, id));
+        BukkitLocation plotTop = new BukkitLocation(getPlotTopLoc(world, id));
 
         return plugin.getSchematicUtil().createCompiledSchematic(plotBottom, plotTop);
     }

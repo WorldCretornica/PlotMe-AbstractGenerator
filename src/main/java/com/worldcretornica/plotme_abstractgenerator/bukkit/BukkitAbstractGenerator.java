@@ -3,7 +3,7 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
-import com.worldcretornica.plotme_core.bukkit.AbstractSchematicUtil;
+import com.worldcretornica.plotme_core.AbstractSchematicUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
