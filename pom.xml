@@ -65,12 +65,6 @@
         <repository>
             <id>WorldCretornica-repo</id>
             <url>http://ci.worldcretornica.com/plugin/repository/everything/</url>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
         </repository>
         <repository>
             <id>sponge-maven-repo</id>
@@ -89,7 +83,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
+            <version>1.8.3-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>

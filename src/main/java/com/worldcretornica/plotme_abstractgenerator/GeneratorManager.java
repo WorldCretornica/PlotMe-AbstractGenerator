@@ -1,5 +1,6 @@
 package com.worldcretornica.plotme_abstractgenerator;
 
+import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
 import com.worldcretornica.configuration.ConfigurationSection;
@@ -7,10 +8,12 @@ import com.worldcretornica.plotme_core.PlotId;
 
 public abstract class GeneratorManager {
 
-    public final int plotSize;
+    private final int plotSize;
+    private final int height;
 
     public GeneratorManager(ConfigurationSection wgc) {
         plotSize = wgc.getInt(PLOT_SIZE.key(), 32);
+        height = wgc.getInt(GROUND_LEVEL.key());
     }
 
     public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz) {
@@ -51,5 +54,13 @@ public abstract class GeneratorManager {
             // We hit the road, Jack!
             return null;
         }
+    }
+
+    public int getPlotSize() {
+        return plotSize;
+    }
+
+    public int getGroundHeight() {
+        return height;
     }
 }

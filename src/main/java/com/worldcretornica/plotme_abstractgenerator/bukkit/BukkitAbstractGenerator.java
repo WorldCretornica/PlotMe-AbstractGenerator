@@ -4,6 +4,9 @@ import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_core.AbstractSchematicUtil;
+import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
@@ -17,6 +20,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private final File configFolder = new File(new File(getDataFolder().getParentFile(), "PlotMe"), getName());
     public ConfigurationSection mainWorldsSection;
+    public PlotMe_CorePlugin plotMePlugin = null;
     private BukkitConfigAccessor configCA;
     private AbstractSchematicUtil schematicutil;
 
@@ -24,7 +28,11 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
-        initialize();
+        PluginManager pm = Bukkit.getPluginManager();
+        PlotMe_CorePlugin plotMePlugin = (PlotMe_CorePlugin) pm.getPlugin("PlotMe");
+        if (plotMePlugin != null) {
+            initialize(plotMePlugin);
+        }
         setupMetrics();
     }
 
@@ -32,14 +40,15 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         return this.schematicutil;
     }
 
-    public void setSchematicUtil(AbstractSchematicUtil schematicutil) {
+    protected void setSchematicUtil(AbstractSchematicUtil schematicutil) {
         this.schematicutil = schematicutil;
     }
 
     /**
      * Called when this plugin is enabled.
+     * @param plotMePlugin PlotMe-Core
      */
-    public abstract void initialize();
+    public abstract void initialize(PlotMe_CorePlugin plotMePlugin);
 
     @Override
     public final void onDisable() {
