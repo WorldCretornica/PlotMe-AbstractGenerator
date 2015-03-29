@@ -1,5 +1,6 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
+import com.worldcretornica.configuration.ConfigAccessor;
 import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
@@ -18,10 +19,10 @@ import java.util.Map;
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
 
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
-    private final File configFolder = new File(new File(getDataFolder().getParentFile(), "PlotMe"), getName());
+    private final File configFolder = new File(new File("plugins", "PlotMe"), getName());
     public ConfigurationSection mainWorldsSection;
     public PlotMe_CorePlugin plotMePlugin = null;
-    private BukkitConfigAccessor configCA;
+    private ConfigAccessor configCA;
     private AbstractSchematicUtil schematicutil;
 
     @Override
@@ -66,7 +67,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     @Override
     public void reloadConfig() {
-        configCA.reloadConfig();
+        configCA.reloadFile();
     }
 
     /**
@@ -94,7 +95,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
-        configCA = new BukkitConfigAccessor(this);
+        configCA = new ConfigAccessor(this, getPluginFolder(), "config.yml");
 
         if (getConfiguration().contains("worlds")) {
             mainWorldsSection = getConfiguration().getConfigurationSection("worlds");
