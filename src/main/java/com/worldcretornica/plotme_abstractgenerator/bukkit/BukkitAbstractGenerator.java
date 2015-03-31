@@ -30,7 +30,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         setupConfigFolders();
         setupConfig();
         PluginManager pm = Bukkit.getPluginManager();
-        PlotMe_CorePlugin plotMePlugin = (PlotMe_CorePlugin) pm.getPlugin("PlotMe");
+        plotMePlugin = (PlotMe_CorePlugin) pm.getPlugin("PlotMe");
         if (plotMePlugin != null) {
             initialize(plotMePlugin);
         }
