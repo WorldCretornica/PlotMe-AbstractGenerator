@@ -95,7 +95,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
      */
     private void setupConfig() {
         // Set the config accessor for the main config.yml
-        configCA = new ConfigAccessor(this, getPluginFolder(), "config.yml");
+        configCA = new ConfigAccessor(BukkitAbstractGenerator.class, getPluginFolder(), "config.yml");
 
         if (getConfiguration().contains("worlds")) {
             mainWorldsSection = getConfiguration().getConfigurationSection("worlds");
