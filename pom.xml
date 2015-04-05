@@ -8,7 +8,6 @@
     <packaging>jar</packaging>
 
     <name>PlotMe-AbstractGenerator</name>
-    <url>http://maven.apache.org</url>
 
     <build>
         <defaultGoal>clean package install</defaultGoal>
@@ -91,12 +90,6 @@
             <groupId>com.worldcretornica</groupId>
             <artifactId>PlotMe-Core</artifactId>
             <version>0.17-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>spongeapi</artifactId>
-            <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
