@@ -1,6 +1,5 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
-import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
 import com.worldcretornica.plotme_core.api.ILocation;
@@ -13,6 +12,7 @@ import com.worldcretornica.schematic.Schematic;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 

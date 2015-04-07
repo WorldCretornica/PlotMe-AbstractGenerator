@@ -3,8 +3,9 @@ package com.worldcretornica.plotme_abstractgenerator;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.GROUND_LEVEL;
 import static com.worldcretornica.plotme_abstractgenerator.AbstractWorldConfigPath.PLOT_SIZE;
 
-import com.worldcretornica.configuration.ConfigurationSection;
 import com.worldcretornica.plotme_core.PlotId;
+import com.worldcretornica.plotme_core.api.IWorld;
+import org.bukkit.configuration.ConfigurationSection;
 
 public abstract class GeneratorManager {
 
@@ -16,7 +17,7 @@ public abstract class GeneratorManager {
         height = wgc.getInt(GROUND_LEVEL.key());
     }
 
-    public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz) {
+    public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz, IWorld world) {
 
         int xmod = posx % size;
         int zmod = posz % size;
@@ -49,7 +50,7 @@ public abstract class GeneratorManager {
             double idx = 1 + Math.floor((float) posx / (float) size);
             double idz = 1 + Math.floor((float) posz / (float) size);
             //noinspection NumericCastThatLosesPrecision
-            return new PlotId((int) idx, (int) idz);
+            return new PlotId((int) idx, (int) idz, world);
         } else {
             // We hit the road, Jack!
             return null;

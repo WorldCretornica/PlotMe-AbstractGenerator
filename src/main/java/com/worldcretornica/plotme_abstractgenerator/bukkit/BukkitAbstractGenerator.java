@@ -1,12 +1,12 @@
 package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import com.worldcretornica.configuration.ConfigAccessor;
-import com.worldcretornica.configuration.ConfigurationSection;
-import com.worldcretornica.configuration.file.FileConfiguration;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_core.AbstractSchematicUtil;
 import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
