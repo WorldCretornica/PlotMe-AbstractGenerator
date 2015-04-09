@@ -9,12 +9,14 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public abstract class GeneratorManager {
 
+    public final ConfigurationSection wgc;
     private final int plotSize;
     private final int height;
 
     public GeneratorManager(ConfigurationSection wgc) {
-        plotSize = wgc.getInt(PLOT_SIZE.key(), 32);
-        height = wgc.getInt(GROUND_LEVEL.key());
+        this.wgc = wgc;
+        plotSize = this.wgc.getInt(PLOT_SIZE.key(), 32);
+        height = this.wgc.getInt(GROUND_LEVEL.key());
     }
 
     public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz, IWorld world) {

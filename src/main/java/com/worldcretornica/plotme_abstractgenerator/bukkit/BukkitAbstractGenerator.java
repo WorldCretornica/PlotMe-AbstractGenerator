@@ -32,7 +32,8 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         PluginManager pm = Bukkit.getPluginManager();
         plotMePlugin = (PlotMe_CorePlugin) pm.getPlugin("PlotMe");
         if (plotMePlugin != null) {
-            initialize(plotMePlugin);
+            getLogger().severe("Something went extremely wrong.");
+            this.getPluginLoader().disablePlugin(this);
         }
         setupMetrics();
     }
@@ -115,10 +116,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
 
     public ConfigurationSection putWGC(String world, ConfigurationSection worldGenConfig) {
         return worldConfigs.put(world.toLowerCase(), worldGenConfig);
-    }
-
-    public ConfigurationSection getWGC(String world) {
-        return worldConfigs.get(world.toLowerCase());
     }
 
 }
