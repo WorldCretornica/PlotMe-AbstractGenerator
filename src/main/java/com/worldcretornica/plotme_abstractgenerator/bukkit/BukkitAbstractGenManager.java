@@ -2,23 +2,19 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
+import com.worldcretornica.plotme_core.api.IChunk;
+import com.worldcretornica.plotme_core.api.IEntity;
 import com.worldcretornica.plotme_core.api.ILocation;
 import com.worldcretornica.plotme_core.api.IPlayer;
+import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
-import com.worldcretornica.plotme_core.bukkit.api.BukkitWorld;
-import com.worldcretornica.plotme_core.bukkit.api.IBukkitPlotMe_GeneratorManager;
 import com.worldcretornica.schematic.Schematic;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BukkitAbstractGenManager extends GeneratorManager implements IBukkitPlotMe_GeneratorManager {
+public abstract class BukkitAbstractGenManager extends GeneratorManager implements IPlotMe_GeneratorManager {
 
     private final BukkitAbstractGenerator plugin;
 
@@ -40,13 +36,15 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
         int maxChunkZ = (int) Math.floor(topZ / 16);
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Chunk chunk = ((BukkitWorld) world).getWorld().getChunkAt(cx, cz);
-                for (Entity entity : chunk.getEntities()) {
-                    Location location = entity.getLocation();
+                IChunk chunk = world.getChunkAt(cx, cz);
+                for (IEntity entity : chunk.getEntities()) {
+                    ILocation location = entity.getLocation();
 
-                    if (!(entity instanceof Player) && location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
-                            && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
-                        entity.remove();
+                    if (!(entity instanceof IPlayer)) {
+                        if (location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
+                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
+                            entity.remove();
+                        }
                     }
                 }
             }
@@ -62,10 +60,9 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     public List<IPlayer> getPlayersInPlot(PlotId id) {
         List<IPlayer> playersInPlot = new ArrayList<>();
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            IPlayer player = plugin.plotMePlugin.wrapPlayer(p);
-            if (getPlotId(player).equals(id)) {
-                playersInPlot.add(player);
+        for (IPlayer p : plugin.plotMePlugin.getServerObjectBuilder().getOnlinePlayers()) {
+            if (getPlotId(p).equals(id)) {
+                playersInPlot.add(p);
             }
         }
         return playersInPlot;
@@ -86,7 +83,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                ((BukkitWorld) id.getWorld()).getWorld().refreshChunk(x, z);
+                id.getWorld().refreshChunk(x, z);
             }
         }
     }
