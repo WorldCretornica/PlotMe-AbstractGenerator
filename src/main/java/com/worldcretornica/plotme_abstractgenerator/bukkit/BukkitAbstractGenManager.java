@@ -8,6 +8,7 @@ import com.worldcretornica.plotme_core.api.ILocation;
 import com.worldcretornica.plotme_core.api.IPlayer;
 import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
+import com.worldcretornica.plotme_core.api.Vector;
 import com.worldcretornica.schematic.Schematic;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -104,7 +105,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     }
 
     @Override
-    public boolean isBlockInPlot(PlotId id, ILocation location) {
+    public boolean isBlockInPlot(PlotId id, Vector location) {
         int lowestX = Math.min(bottomX(id), topX(id));
         int highestX = Math.max(bottomX(id), topX(id));
         int lowestZ = Math.min(bottomZ(id), topZ(id));
