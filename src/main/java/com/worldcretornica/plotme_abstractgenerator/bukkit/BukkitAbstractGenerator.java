@@ -9,10 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +21,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public ConfigurationSection mainWorldsSection;
     public PlotMe_CorePlugin plotMePlugin = null;
     private ConfigAccessor configCA;
-    private AbstractSchematicUtil schematicutil;
 
     @Override
     public final void onEnable() {
@@ -35,22 +32,17 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
         }
-        setupMetrics();
+        initialize();
     }
 
     public AbstractSchematicUtil getSchematicUtil() {
-        return this.schematicutil;
-    }
-
-    protected void setSchematicUtil(AbstractSchematicUtil schematicutil) {
-        this.schematicutil = schematicutil;
+        return this.plotMePlugin.getAPI().getSchematicUtil();
     }
 
     /**
      * Called when this plugin is enabled.
-     * @param plotMePlugin PlotMe-Core
      */
-    public abstract void initialize(PlotMe_CorePlugin plotMePlugin);
+    public abstract void initialize();
 
     @Override
     public final void onDisable() {
@@ -104,14 +96,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
             mainWorldsSection = getConfiguration().createSection("worlds");
         }
         configCA.saveConfig();
-    }
-
-    private void setupMetrics() {
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException ignored) {
-        }
     }
 
     public ConfigurationSection putWGC(String world, ConfigurationSection worldGenConfig) {
