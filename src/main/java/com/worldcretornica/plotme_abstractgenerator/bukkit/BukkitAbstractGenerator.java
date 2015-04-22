@@ -5,8 +5,12 @@ import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_core.AbstractSchematicUtil;
 import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +18,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator {
+public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator, Listener {
 
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private final File configFolder = new File(new File("plugins", "PlotMe"), getName());
@@ -31,6 +35,9 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         if (plotMePlugin != null) {
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
+        }
+        for (World world : getServer().getWorlds()) {
+            getServer().unloadWorld(world, false);
         }
         initialize();
     }
@@ -101,5 +108,12 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public ConfigurationSection putWGC(String world, ConfigurationSection worldGenConfig) {
         return worldConfigs.put(world.toLowerCase(), worldGenConfig);
     }
+
+    @EventHandler
+    public void onWorldEnable(WorldInitEvent event) {
+        worldLoadEvent(event.getWorld());
+    }
+
+    protected abstract void worldLoadEvent(World world);
 
 }

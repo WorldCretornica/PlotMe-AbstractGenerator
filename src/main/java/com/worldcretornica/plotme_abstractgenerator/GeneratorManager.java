@@ -10,16 +10,18 @@ import org.bukkit.configuration.ConfigurationSection;
 public abstract class GeneratorManager {
 
     public final ConfigurationSection wgc;
+    public final IWorld world;
     private final int plotSize;
     private final int height;
 
-    public GeneratorManager(ConfigurationSection wgc) {
+    public GeneratorManager(ConfigurationSection wgc, IWorld world) {
         this.wgc = wgc;
+        this.world = world;
         plotSize = this.wgc.getInt(PLOT_SIZE.key(), 32);
         height = this.wgc.getInt(GROUND_LEVEL.key());
     }
 
-    public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz, IWorld world) {
+    public static PlotId internalgetPlotId(int pathSize, int size, int posx, int posz) {
 
         int xmod = posx % size;
         int zmod = posz % size;
@@ -52,7 +54,7 @@ public abstract class GeneratorManager {
             double idx = 1 + Math.floor((float) posx / (float) size);
             double idz = 1 + Math.floor((float) posz / (float) size);
             //noinspection NumericCastThatLosesPrecision
-            return new PlotId((int) idx, (int) idz, world);
+            return new PlotId((int) idx, (int) idz);
         } else {
             // We hit the road, Jack!
             return null;

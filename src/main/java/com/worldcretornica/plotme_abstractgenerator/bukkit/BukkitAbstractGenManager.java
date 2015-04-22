@@ -19,18 +19,17 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     private final BukkitAbstractGenerator plugin;
 
-    public BukkitAbstractGenManager(BukkitAbstractGenerator instance, ConfigurationSection wgc) {
-        super(wgc);
+    public BukkitAbstractGenManager(BukkitAbstractGenerator instance, ConfigurationSection wgc, IWorld world) {
+        super(wgc, world);
         plugin = instance;
     }
 
-    public void clearEntities(ILocation bottom, ILocation top) {
+    public void clearEntities(Vector bottom, Vector top) {
         double bottomX = bottom.getBlockX();
         double topX = top.getBlockX();
         double bottomZ = bottom.getBlockZ();
         double topZ = top.getBlockZ();
 
-        IWorld world = bottom.getWorld();
         int minChunkX = (int) Math.floor(bottomX / 16);
         int maxChunkX = (int) Math.floor(topX / 16);
         int minChunkZ = (int) Math.floor(bottomZ / 16);
@@ -54,7 +53,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     @Override
     public PlotId getPlotId(IPlayer player) {
-        return getPlotId(player.getLocation());
+        return getPlotId(player.getPosition());
     }
 
     @Override
@@ -84,23 +83,23 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                id.getWorld().refreshChunk(x, z);
+                world.refreshChunk(x, z);
             }
         }
     }
 
     @Override
-    public ILocation getTop(PlotId id) {
+    public Vector getTop(PlotId id) {
         return getPlotTopLoc(id);
     }
 
     @Override
-    public ILocation getBottom(PlotId id) {
+    public Vector getBottom(PlotId id) {
         return getPlotBottomLoc(id);
     }
 
     @Override
-    public Long[] clear(PlotId id, long maxBlocks, Long[] start) {
+    public long[] clear(PlotId id, long maxBlocks, long[] start) {
         return clear(getBottom(id), getTop(id), maxBlocks, start);
     }
 
@@ -117,23 +116,23 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     @Override
     public boolean movePlot(PlotId idFrom, PlotId idTo) {
-        ILocation plot1Bottom = getPlotBottomLoc(idFrom);
-        ILocation plot2Bottom = getPlotBottomLoc(idTo);
-        ILocation plot1Top = getPlotTopLoc(idFrom);
-        ILocation plot2Top = getPlotTopLoc(idTo);
+        Vector plot1Bottom = getPlotBottomLoc(idFrom);
+        Vector plot2Bottom = getPlotBottomLoc(idTo);
+        Vector plot1Top = getPlotTopLoc(idFrom);
+        Vector plot2Top = getPlotTopLoc(idTo);
 
         plot1Bottom.subtract(1, 0, 1);
         plot2Bottom.subtract(1, 0, 1);
         plot1Top.add(1, 0, 1);
         plot2Top.add(1, 0, 1);
 
-        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(plot1Bottom, plot1Top);
-        Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(plot2Bottom, plot2Top);
+        Schematic schem1 = plugin.getSchematicUtil().createCompiledSchematic(world, plot1Bottom, plot1Top);
+        Schematic schem2 = plugin.getSchematicUtil().createCompiledSchematic(world, plot2Bottom, plot2Top);
 
         clearEntities(plot1Bottom, plot1Top);
         clearEntities(plot2Bottom, plot2Top);
-        plugin.getSchematicUtil().pasteSchematic(plot1Bottom, schem2);
-        plugin.getSchematicUtil().pasteSchematic(plot2Bottom, schem1);
+        plugin.getSchematicUtil().pasteSchematic(world, plot1Bottom, schem2);
+        plugin.getSchematicUtil().pasteSchematic(world, plot2Bottom, schem1);
 
         return true;
     }
@@ -160,9 +159,9 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
 
     @Override
     public Schematic getPlotSchematic(PlotId id) {
-        ILocation plotBottom = getPlotBottomLoc(id);
-        ILocation plotTop = getPlotTopLoc(id);
+        Vector plotBottom = getPlotBottomLoc(id);
+        Vector plotTop = getPlotTopLoc(id);
 
-        return plugin.getSchematicUtil().createCompiledSchematic(plotBottom, plotTop);
+        return plugin.getSchematicUtil().createCompiledSchematic(world, plotBottom, plotTop);
     }
 }

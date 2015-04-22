@@ -14,11 +14,11 @@ public class BukkitBlockRepresentation {
         this(getBlockId(idValue), getBlockData(idValue));
     }
 
-    public static short getBlockId(String idValue) throws NumberFormatException {
+    public static byte getBlockId(String idValue) throws NumberFormatException {
         if (idValue.indexOf(":") > 0) {
-            return Short.parseShort(idValue.split(":")[0]);
+            return Byte.parseByte(idValue.split(":")[0]);
         } else {
-            return Short.parseShort(idValue);
+            return Byte.parseByte(idValue);
         }
     }
 
