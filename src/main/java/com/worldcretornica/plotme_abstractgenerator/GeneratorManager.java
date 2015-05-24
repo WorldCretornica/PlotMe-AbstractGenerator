@@ -61,6 +61,10 @@ public abstract class GeneratorManager {
         }
     }
 
+    /**
+     * Retrieves the size of the plot
+     * @return the size of the plot in blocks
+     */
     public int getPlotSize() {
         return plotSize;
     }
