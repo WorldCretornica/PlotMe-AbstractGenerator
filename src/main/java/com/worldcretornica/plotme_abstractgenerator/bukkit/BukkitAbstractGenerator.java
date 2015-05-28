@@ -20,10 +20,10 @@ import java.util.Map;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator, Listener {
 
+    public final PlotMe_CorePlugin plotMePlugin = PlotMe_CorePlugin.getInstance();
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private final File configFolder = new File(new File("plugins", "PlotMe"), getName());
     public ConfigurationSection mainWorldsSection;
-    public PlotMe_CorePlugin plotMePlugin = null;
     private ConfigAccessor configCA;
 
     @Override
@@ -31,7 +31,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         setupConfigFolders();
         setupConfig();
         PluginManager pm = Bukkit.getPluginManager();
-        plotMePlugin = (PlotMe_CorePlugin) pm.getPlugin("PlotMe");
         if (plotMePlugin != null) {
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
