@@ -2,13 +2,13 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
-import com.worldcretornica.plotme_core.api.IChunk;
 import com.worldcretornica.plotme_core.api.IEntity;
 import com.worldcretornica.plotme_core.api.ILocation;
 import com.worldcretornica.plotme_core.api.IPlayer;
 import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
 import com.worldcretornica.plotme_core.api.Vector;
+import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import com.worldcretornica.schematic.Schematic;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -25,27 +25,16 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     }
 
     public void clearEntities(Vector bottom, Vector top) {
-        double bottomX = bottom.getBlockX();
-        double topX = top.getBlockX();
-        double bottomZ = bottom.getBlockZ();
-        double topZ = top.getBlockZ();
 
-        int minChunkX = (int) Math.floor(bottomX / 16);
-        int maxChunkX = (int) Math.floor(topX / 16);
-        int minChunkZ = (int) Math.floor(bottomZ / 16);
-        int maxChunkZ = (int) Math.floor(topZ / 16);
-        for (int cx = minChunkX; cx <= maxChunkX; cx++) {
-            for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                IChunk chunk = world.getChunkAt(cx, cz);
-                for (IEntity entity : chunk.getEntities()) {
-                    ILocation location = entity.getLocation();
+        for (IEntity entity : world.getEntities()) {
+            ILocation location = entity.getLocation();
 
-                    if (!(entity instanceof IPlayer)) {
-                        if (location.getBlockX() >= bottom.getBlockX() && location.getBlockX() <= top.getBlockX()
-                                && location.getBlockZ() >= bottom.getBlockZ() && location.getBlockZ() <= top.getBlockZ()) {
-                            entity.remove();
-                        }
-                    }
+            if (!(entity instanceof IPlayer)) {
+                final int x = location.getBlockX();
+                final int z = location.getBlockZ();
+                if (x >= bottom.getBlockX() && x <= top.getBlockX()
+                        && z >= bottom.getBlockZ() && z <= top.getBlockZ()) {
+                    entity.remove();
                 }
             }
         }
@@ -60,7 +49,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     public List<IPlayer> getPlayersInPlot(PlotId id) {
         List<IPlayer> playersInPlot = new ArrayList<>();
 
-        for (IPlayer p : plugin.plotMePlugin.getServerObjectBuilder().getOnlinePlayers()) {
+        for (IPlayer p : PlotMe_CorePlugin.getInstance().getServerObjectBuilder().getOnlinePlayers()) {
             if (getPlotId(p).equals(id)) {
                 playersInPlot.add(p);
             }
