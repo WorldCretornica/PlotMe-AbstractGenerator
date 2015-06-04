@@ -3,10 +3,10 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
 import com.worldcretornica.plotme_core.api.IEntity;
-import com.worldcretornica.plotme_core.api.ILocation;
 import com.worldcretornica.plotme_core.api.IPlayer;
 import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
+import com.worldcretornica.plotme_core.api.Location;
 import com.worldcretornica.plotme_core.api.Vector;
 import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import com.worldcretornica.schematic.Schematic;
@@ -27,7 +27,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     public void clearEntities(Vector bottom, Vector top) {
 
         for (IEntity entity : world.getEntities()) {
-            ILocation location = entity.getLocation();
+            Location location = entity.getLocation();
 
             if (!(entity instanceof IPlayer)) {
                 final int x = location.getBlockX();
