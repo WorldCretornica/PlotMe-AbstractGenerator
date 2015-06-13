@@ -4,14 +4,12 @@ import com.worldcretornica.configuration.ConfigAccessor;
 import com.worldcretornica.plotme_abstractgenerator.AbstractGenerator;
 import com.worldcretornica.plotme_core.AbstractSchematicUtil;
 import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -30,7 +28,6 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
-        PluginManager pm = Bukkit.getPluginManager();
         if (plotMePlugin != null) {
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
@@ -38,6 +35,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         for (World world : getServer().getWorlds()) {
             getServer().unloadWorld(world, false);
         }
+        getServer().getPluginManager().registerEvents(this, this);
         initialize();
     }
 
