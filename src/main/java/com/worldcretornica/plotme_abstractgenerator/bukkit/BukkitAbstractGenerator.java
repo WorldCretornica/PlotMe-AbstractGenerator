@@ -18,9 +18,9 @@ import java.util.Map;
 
 public abstract class BukkitAbstractGenerator extends JavaPlugin implements AbstractGenerator, Listener {
 
-    public final PlotMe_CorePlugin plotMePlugin = PlotMe_CorePlugin.getInstance();
     private final Map<String, ConfigurationSection> worldConfigs = new HashMap<>();
     private final File configFolder = new File(new File("plugins", "PlotMe"), getName());
+    public PlotMe_CorePlugin plotMePlugin;
     public ConfigurationSection mainWorldsSection;
     private ConfigAccessor configCA;
 
@@ -28,9 +28,11 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
+        plotMePlugin = (PlotMe_CorePlugin) getServer().getPluginManager().getPlugin("PlotMe");
         if (plotMePlugin == null) {
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
+            return;
         }
         for (World world : getServer().getWorlds()) {
             getServer().unloadWorld(world, false);
