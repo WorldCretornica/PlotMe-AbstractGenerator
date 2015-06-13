@@ -28,7 +28,7 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
     public final void onEnable() {
         setupConfigFolders();
         setupConfig();
-        if (plotMePlugin != null) {
+        if (plotMePlugin == null) {
             getLogger().severe("Something went extremely wrong.");
             this.getPluginLoader().disablePlugin(this);
         }
