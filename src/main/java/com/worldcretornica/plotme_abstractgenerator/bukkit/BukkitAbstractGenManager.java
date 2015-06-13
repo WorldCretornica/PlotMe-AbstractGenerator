@@ -10,6 +10,7 @@ import com.worldcretornica.plotme_core.api.Location;
 import com.worldcretornica.plotme_core.api.Vector;
 import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import com.worldcretornica.schematic.Schematic;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
@@ -152,5 +153,136 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
         Vector plotTop = getPlotTopLoc(id);
 
         return plugin.getSchematicUtil().createCompiledSchematic(world, plotBottom, plotTop);
+    }
+
+    @Override public void setBiome(PlotId id, String biome) {
+        int bottomX = bottomX(id) - 1;
+        int topX = topX(id) + 1;
+        int bottomZ = bottomZ(id) - 1;
+        int topZ = topZ(id) + 1;
+        Biome bukkitBiome = null;
+        switch (biome) {
+            case "Ocean":
+                bukkitBiome = Biome.OCEAN;
+                break;
+            case "Plains":
+                bukkitBiome = Biome.PLAINS;
+                break;
+            case "Desert":
+                bukkitBiome = Biome.DESERT;
+                break;
+            case "Extreme Hills":
+                bukkitBiome = Biome.EXTREME_HILLS;
+                break;
+            case "Forest":
+                bukkitBiome = Biome.FOREST;
+                break;
+            case "MushroomIsland":
+                bukkitBiome = Biome.MUSHROOM_ISLAND;
+                break;
+            case "MushroomIslandShore":
+                bukkitBiome = Biome.MUSHROOM_SHORE;
+                break;
+            case "Tiaga":
+                bukkitBiome = Biome.TAIGA;
+                break;
+            case "Swampland":
+                bukkitBiome = Biome.SWAMPLAND;
+                break;
+            case "River":
+                bukkitBiome = Biome.RIVER;
+                break;
+            case "Hell":
+                bukkitBiome = Biome.HELL;
+                break;
+            case "The End":
+                bukkitBiome = Biome.SKY;
+                break;
+            case "Cold Taiga Hills":
+                bukkitBiome = Biome.COLD_TAIGA_HILLS;
+                break;
+            case "FrozenOcean":
+                bukkitBiome = Biome.FROZEN_OCEAN;
+                break;
+            case "FrozenRiver":
+                bukkitBiome = Biome.FROZEN_RIVER;
+                break;
+            case "Ice Plains":
+                bukkitBiome = Biome.ICE_PLAINS;
+                break;
+            case "Ice Mountains":
+                bukkitBiome = Biome.ICE_MOUNTAINS;
+                break;
+            case "Beach":
+                bukkitBiome = Biome.BEACH;
+                break;
+            case "DesertHills":
+                bukkitBiome = Biome.DESERT_HILLS;
+                break;
+            case "ForestHills":
+                bukkitBiome = Biome.FOREST_HILLS;
+                break;
+            case "TiagaHills":
+                bukkitBiome = Biome.TAIGA_HILLS;
+                break;
+            case "Jungle":
+                bukkitBiome = Biome.JUNGLE;
+                break;
+            case "JungleHills":
+                bukkitBiome = Biome.JUNGLE_HILLS;
+                break;
+            case "Deep Ocean":
+                bukkitBiome = Biome.DEEP_OCEAN;
+                break;
+            case "Stone Beach":
+                bukkitBiome = Biome.STONE_BEACH;
+                break;
+            case "Cold Beach":
+                bukkitBiome = Biome.COLD_BEACH;
+                break;
+            case "Birch Forest":
+                bukkitBiome = Biome.BIRCH_FOREST;
+                break;
+            case "Birch Forest Hills":
+                bukkitBiome = Biome.BIRCH_FOREST_HILLS;
+                break;
+            case "Roofed Forest":
+                bukkitBiome = Biome.ROOFED_FOREST;
+                break;
+            case "Cold Taiga":
+                bukkitBiome = Biome.COLD_TAIGA;
+                break;
+            case "Mega Taiga":
+                bukkitBiome = Biome.MEGA_TAIGA;
+                break;
+            case "Mega Taiga Hills":
+                bukkitBiome = Biome.MEGA_TAIGA_HILLS;
+                break;
+            case "Extreme Hills+":
+                bukkitBiome = Biome.EXTREME_HILLS_PLUS;
+                break;
+            case "Savanna":
+                bukkitBiome = Biome.SAVANNA;
+                break;
+            case "Savanna Plateau":
+                bukkitBiome = Biome.SAVANNA_PLATEAU;
+                break;
+            case "Mesa":
+                bukkitBiome = Biome.MESA;
+                break;
+            case "Mesa Plateau F":
+                bukkitBiome = Biome.MESA_PLATEAU_FOREST;
+                break;
+            case "Mesa Plateau":
+                bukkitBiome = Biome.MESA_PLATEAU;
+                break;
+        }
+
+        for (int x = bottomX; x <= topX; x++) {
+            for (int z = bottomZ; z <= topZ; z++) {
+                world.getBlockAt(x, 0, z).setBiome(bukkitBiome);
+            }
+        }
+
     }
 }
