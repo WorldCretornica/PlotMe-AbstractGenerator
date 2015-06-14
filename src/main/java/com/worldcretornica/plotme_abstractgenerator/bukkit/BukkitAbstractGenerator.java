@@ -10,6 +10,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -30,9 +33,26 @@ public abstract class BukkitAbstractGenerator extends JavaPlugin implements Abst
         setupConfig();
         plotMePlugin = (PlotMe_CorePlugin) getServer().getPluginManager().getPlugin("PlotMe");
         if (plotMePlugin == null) {
-            getLogger().severe("Something went extremely wrong.");
-            this.getPluginLoader().disablePlugin(this);
-            return;
+            try {
+                Plugin plugin = getServer().getPluginManager().loadPlugin(new File("PlotMe-Core.jar"));
+                getServer().getPluginManager().enablePlugin(plugin);
+                plotMePlugin = (PlotMe_CorePlugin) getServer().getPluginManager().getPlugin("PlotMe");
+                if (plotMePlugin == null) {
+                    getLogger().severe("Bukkit/Spigot have a really bad plugin dependency system. Despite all attempts to");
+                    getLogger().severe("work around the bugged system, PlotMe was unable to work like it should have.");
+                    getLogger().severe("If you see this message, please report a bug to the Spigot team to fix the aweful plugin");
+                    getLogger().severe("dependency system.");
+                    this.getPluginLoader().disablePlugin(this);
+                    return;
+                }
+            } catch (InvalidPluginException | InvalidDescriptionException e) {
+                getLogger().severe("Bukkit/Spigot have a really bad plugin dependency system. Despite all attempts to");
+                getLogger().severe("work around the bugged system, PlotMe was unable to work like it should have.");
+                getLogger().severe("If you see this message, please report a bug to the Spigot team to fix the aweful plugin");
+                getLogger().severe("dependency system.");
+                this.getPluginLoader().disablePlugin(this);
+                return;
+            }
         }
         for (World world : getServer().getWorlds()) {
             getServer().unloadWorld(world, false);
