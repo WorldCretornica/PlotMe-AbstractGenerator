@@ -8,7 +8,6 @@ import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
 import com.worldcretornica.plotme_core.api.Location;
 import com.worldcretornica.plotme_core.api.Vector;
-import com.worldcretornica.plotme_core.bukkit.PlotMe_CorePlugin;
 import com.worldcretornica.schematic.Schematic;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -50,7 +49,7 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     public List<IPlayer> getPlayersInPlot(PlotId id) {
         List<IPlayer> playersInPlot = new ArrayList<>();
 
-        for (IPlayer p : PlotMe_CorePlugin.getInstance().getServerObjectBuilder().getOnlinePlayers()) {
+        for (IPlayer p : plugin.plotMePlugin.getServerObjectBuilder().getOnlinePlayers()) {
             if (getPlotId(p).equals(id)) {
                 playersInPlot.add(p);
             }
