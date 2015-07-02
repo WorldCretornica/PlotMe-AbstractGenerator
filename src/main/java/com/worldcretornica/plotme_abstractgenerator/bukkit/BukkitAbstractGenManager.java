@@ -2,15 +2,16 @@ package com.worldcretornica.plotme_abstractgenerator.bukkit;
 
 import com.worldcretornica.plotme_abstractgenerator.GeneratorManager;
 import com.worldcretornica.plotme_core.PlotId;
-import com.worldcretornica.plotme_core.api.IEntity;
 import com.worldcretornica.plotme_core.api.IPlayer;
 import com.worldcretornica.plotme_core.api.IPlotMe_GeneratorManager;
 import com.worldcretornica.plotme_core.api.IWorld;
-import com.worldcretornica.plotme_core.api.Location;
 import com.worldcretornica.plotme_core.api.Vector;
+import com.worldcretornica.plotme_core.bukkit.api.BukkitWorld;
 import com.worldcretornica.schematic.Schematic;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +26,18 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     }
 
     public void clearEntities(Vector bottom, Vector top) {
+        if (world instanceof BukkitWorld) {
+            BukkitWorld bukkitWorld = (BukkitWorld) world;
+            for (Entity entity : bukkitWorld.getWorld().getEntities()) {
+                org.bukkit.Location location = entity.getLocation();
 
-        for (IEntity entity : world.getEntities()) {
-            Location location = entity.getLocation();
-
-            if (!(entity instanceof IPlayer)) {
-                final int x = location.getBlockX();
-                final int z = location.getBlockZ();
-                if (x >= bottom.getBlockX() && x <= top.getBlockX()
-                        && z >= bottom.getBlockZ() && z <= top.getBlockZ()) {
-                    entity.remove();
+                if (!entity.getType().equals(EntityType.PLAYER)) {
+                    final int x = location.getBlockX();
+                    final int z = location.getBlockZ();
+                    if (x >= bottom.getBlockX() && x <= top.getBlockX()
+                            && z >= bottom.getBlockZ() && z <= top.getBlockZ()) {
+                        entity.remove();
+                    }
                 }
             }
         }
