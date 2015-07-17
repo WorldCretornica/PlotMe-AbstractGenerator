@@ -4,7 +4,7 @@
 
     <groupId>com.worldcretornica</groupId>
     <artifactId>PlotMe-AbstractGenerator</artifactId>
-    <version>0.17.1</version>
+    <version>0.17.2</version>
     <packaging>jar</packaging>
 
     <name>PlotMe-AbstractGenerator</name>
@@ -82,14 +82,14 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8.3-R0.1-SNAPSHOT</version>
+            <version>1.8.7-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.worldcretornica</groupId>
             <artifactId>PlotMe-Core</artifactId>
-            <version>0.17.1</version>
+            <version>0.17.5-BETA</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

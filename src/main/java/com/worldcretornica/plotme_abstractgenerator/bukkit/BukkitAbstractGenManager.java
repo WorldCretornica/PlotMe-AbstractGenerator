@@ -91,19 +91,22 @@ public abstract class BukkitAbstractGenManager extends GeneratorManager implemen
     }
 
     @Override
-    public long[] clear(PlotId id, long maxBlocks, long[] start) {
-        return clear(getBottom(id), getTop(id), maxBlocks, start);
-    }
-
-    @Override
     public boolean isBlockInPlot(PlotId id, Vector location) {
         int lowestX = Math.min(bottomX(id), topX(id));
         int highestX = Math.max(bottomX(id), topX(id));
         int lowestZ = Math.min(bottomZ(id), topZ(id));
         int highestZ = Math.max(bottomZ(id), topZ(id));
 
-        return location.getBlockX() >= lowestX && location.getBlockX() <= highestX
-                && location.getBlockZ() >= lowestZ && location.getBlockZ() <= highestZ;
+        if (location.getBlockX() >= lowestX) {
+            if (location.getBlockX() <= highestX) {
+                if (location.getBlockZ() >= lowestZ) {
+                    if (location.getBlockZ() <= highestZ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
